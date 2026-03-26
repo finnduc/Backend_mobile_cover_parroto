@@ -1,15 +1,27 @@
 package repo
 
-type UserRepo struct{}
-
-func NewUserRepo() *UserRepo{
-	return &UserRepo{}
+type IuserRepo interface {
+	GetUserByEmail(email string) bool
+	GetInfoUser() string
+	GetFamyly() []string // Keeping the typo for compatibility with existing service calls
 }
 
-func (ur *UserRepo) GetInfoUser() string {
+type userRepo struct {
+}
+
+// GetUserByEmail implements [IuserRepo].
+func (u *userRepo) GetUserByEmail(email string) bool {
+	return true
+}
+
+func (u *userRepo) GetInfoUser() string {
 	return "Finn"
 }
 
-func (ur *UserRepo) GetFamyly() []string {
+func (u *userRepo) GetFamyly() []string {
 	return []string{"Father", "mother", "brother"}
+}
+
+func NewUserRepo() IuserRepo {
+	return &userRepo{}
 }

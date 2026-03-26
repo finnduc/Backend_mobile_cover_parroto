@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: parroto-postgres
+    environment:
+      - POSTGRES_USER=backend_parroto
+      - POSTGRES_PASSWORD=nguyen123
+      - POSTGRES_DB=parroto
+    ports:
+      - "5432:5433"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    container_name: parroto-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  crm.parroto.com:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_backend_crm_parroto
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - JWT_SECRET=your_jwt_secret_here
+    ports:
+      - "8008:8002"
+
+volumes:
+  postgres_data:
+  redis_data:
