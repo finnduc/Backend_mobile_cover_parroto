@@ -1,0 +1,30 @@
+1.773635723956675e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.773635723957021e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357443373098e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357443374987e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357460826306e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357460828245e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357471587634e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357471589577e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357481412349e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357481414852e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357491206834e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357491209567e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357500190928e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.773635750019347e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+1.7736357507923026e+09	info	cli/main.go:16	Server started	{"port": 8080}
+1.7736357507925012e+09	error	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:38:51	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:38:51	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:41:53	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:41:53	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:41:58	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:41:58	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:42:02	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:42:02	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:42:05	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:42:05	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+2026-03-16 11:42:09	INFO	cli/main.go:16	Server started	{"port": 8080}
+2026-03-16 11:42:09	ERROR	cli/main.go:17	Database error	{"db": "postgres"}
+{"level":"INFO","time":"2026-03-16 11:44:31","caller":"cli/main.go:16","msg":"Server started","port":8080}
+{"level":"ERROR","time":"2026-03-16 11:44:31","caller":"cli/main.go:17","msg":"Database error","db":"postgres"}

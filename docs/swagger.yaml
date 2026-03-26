@@ -1,0 +1,691 @@
+basePath: /api/v1
+definitions:
+  go-familytree_internal_models.Attempt:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/go-familytree_internal_models.UserAnswer'
+        type: array
+      completed:
+        type: boolean
+      created_at:
+        type: string
+      id:
+        type: integer
+      lesson_id:
+        type: integer
+      total_score:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  go-familytree_internal_models.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  go-familytree_internal_models.Lesson:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      duration:
+        type: number
+      id:
+        type: integer
+      level:
+        description: easy|medium|hard
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      transcripts:
+        items:
+          $ref: '#/definitions/go-familytree_internal_models.Transcript'
+        type: array
+      updated_at:
+        type: string
+      video_url:
+        type: string
+    type: object
+  go-familytree_internal_models.Transcript:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      end_timestamp:
+        type: number
+      id:
+        type: integer
+      lesson_id:
+        type: integer
+      phonetic:
+        type: string
+      sequence:
+        type: integer
+      start_timestamp:
+        type: number
+      updated_at:
+        type: string
+      vietnamese:
+        type: string
+    type: object
+  go-familytree_internal_models.UserAnswer:
+    properties:
+      answer_text:
+        type: string
+      attempt_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_correct:
+        type: boolean
+      score:
+        type: number
+      transcript_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  go-familytree_internal_models.UserProgress:
+    properties:
+      answer_count:
+        type: integer
+      completed:
+        type: boolean
+      id:
+        type: integer
+      last_sequence:
+        type: integer
+      lesson_id:
+        type: integer
+      score_avg:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  go-familytree_internal_service.AnswerItemInput:
+    properties:
+      answer_text:
+        type: string
+      transcript_id:
+        type: integer
+    required:
+    - answer_text
+    - transcript_id
+    type: object
+  go-familytree_internal_service.AnswerResult:
+    properties:
+      correct_text:
+        type: string
+      is_correct:
+        type: boolean
+      score:
+        type: number
+    type: object
+  go-familytree_internal_service.BulkAnswerResult:
+    properties:
+      results:
+        items:
+          $ref: '#/definitions/go-familytree_internal_service.AnswerResult'
+        type: array
+    type: object
+  go-familytree_internal_service.BulkSubmitInput:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/go-familytree_internal_service.AnswerItemInput'
+        minItems: 1
+        type: array
+      attempt_id:
+        type: integer
+    required:
+    - answers
+    - attempt_id
+    type: object
+  go-familytree_internal_service.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  go-familytree_internal_service.RegisterInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  go-familytree_internal_service.SubmitAnswerInput:
+    properties:
+      answer_text:
+        type: string
+      attempt_id:
+        type: integer
+      transcript_id:
+        type: integer
+    required:
+    - answer_text
+    - attempt_id
+    - transcript_id
+    type: object
+  go-familytree_internal_service.TokenPair:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        description: seconds
+        type: integer
+      refresh_token:
+        type: string
+    type: object
+  go-familytree_pkg_response.ResponseData:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  go-familytree_pkg_utils.ListResponse:
+    properties:
+      items: {}
+      meta:
+        $ref: '#/definitions/go-familytree_pkg_utils.PaginationMeta'
+    type: object
+  go-familytree_pkg_utils.PaginationMeta:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+host: localhost:8002
+info:
+  contact: {}
+  description: API for learning English via dictation (video-based).
+  title: Dictation Learning System API
+  version: "1.0"
+paths:
+  /answers:
+    post:
+      consumes:
+      - application/json
+      description: Submit an answer for a specific transcript and calculate score
+      parameters:
+      - description: Answer info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-familytree_internal_service.SubmitAnswerInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Submit successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_service.AnswerResult'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Submit a single answer
+      tags:
+      - answers
+  /answers/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Submit multiple answers at once (e.g. for sync)
+      parameters:
+      - description: Bulk answers info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-familytree_internal_service.BulkSubmitInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bulk submit successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_service.BulkAnswerResult'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Bulk submit answers
+      tags:
+      - answers
+  /attempts:
+    post:
+      consumes:
+      - application/json
+      description: Start a new learning attempt for a specific lesson
+      parameters:
+      - description: Attempt request
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            lesson_id:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Attempt created
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_models.Attempt'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new attempt
+      tags:
+      - attempts
+  /attempts/{id}:
+    get:
+      description: Get detailed information about a specific attempt by ID
+      parameters:
+      - description: Attempt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Attempt details
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_models.Attempt'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get attempt details
+      tags:
+      - attempts
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return access + refresh tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-familytree_internal_service.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_service.TokenPair'
+              type: object
+      summary: Login user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      description: Invalidate the current access token (blacklist) and delete refresh
+        token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logout successful
+          schema:
+            $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: Logout user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Exchange a valid refresh token for a new access + refresh token
+        pair
+      parameters:
+      - description: Refresh request
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            refresh_token:
+              type: string
+            user_id:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tokens refreshed
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_service.TokenPair'
+              type: object
+      summary: Refresh access token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with email, password and name
+      parameters:
+      - description: Registration info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-familytree_internal_service.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User created
+          schema:
+            $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+      summary: Register a new user
+      tags:
+      - auth
+  /bookmarks:
+    get:
+      description: Get a paginated list of lessons marked as favorite by the user
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of bookmarked lessons
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_pkg_utils.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List bookmarked lessons
+      tags:
+      - bookmarks
+    post:
+      consumes:
+      - application/json
+      description: Add or remove a lesson from user bookmarks
+      parameters:
+      - description: Bookmark request
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            lesson_id:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Toggle successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  properties:
+                    bookmarked:
+                      type: boolean
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Toggle bookmark
+      tags:
+      - bookmarks
+  /categories:
+    get:
+      description: Get a list of all lesson categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of categories
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/go-familytree_internal_models.Category'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List all categories
+      tags:
+      - categories
+  /categories/{id}/lessons:
+    get:
+      description: Get a paginated list of lessons belonging to a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of lessons
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_pkg_utils.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get lessons by category
+      tags:
+      - categories
+  /lessons:
+    get:
+      description: Get a paginated list of lessons, optionally filtered by level or
+        category
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by level (easy|medium|hard)
+        in: query
+        name: level
+        type: string
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of lessons
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_pkg_utils.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List all lessons
+      tags:
+      - lessons
+  /lessons/{id}:
+    get:
+      description: Get detailed information about a specific lesson by ID
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lesson details
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_models.Lesson'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get lesson details
+      tags:
+      - lessons
+  /lessons/{id}/transcripts:
+    get:
+      description: Get all transcripts for a specific lesson, ordered by sequence
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transcripts
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/go-familytree_internal_models.Transcript'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get lesson transcripts
+      tags:
+      - lessons
+  /progress/{lesson_id}:
+    get:
+      description: Get current progress (last sequence, average score) for a specific
+        lesson
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lesson_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User progress
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_models.UserProgress'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get user progress for a lesson
+      tags:
+      - progress
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

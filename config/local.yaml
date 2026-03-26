@@ -1,0 +1,42 @@
+server:
+  port: 8002
+  mode: debug
+  read_timeout: 10
+  write_timeout: 10
+
+postgres:
+  host: localhost
+  port: 5433
+  username: backend_parroto
+  password: nguyen123
+  dbname: parroto
+  sslmode: disable
+  maxIdleConns: 10
+  maxOpenConns: 100
+  connMaxLifetime: 3600
+
+redis:
+  host: localhost
+  port: 6380
+  password: nguyen123
+  db: 1
+  ttl:
+    transcript_cache: 1h
+    token_blacklist: 15m
+    refresh_token: 168h  # 7d
+
+jwt:
+  access_token_ttl: 15m
+  refresh_token_ttl: 168h  # 7d
+  # secret: loaded from env JWT_SECRET
+
+logger:
+  level: debug
+  file_path: ./log/app.log
+  max_size: 100
+  max_backups: 5
+  max_age: 30
+  compress: true
+
+scoring:
+  threshold: 0.95
