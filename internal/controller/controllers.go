@@ -25,14 +25,14 @@ func NewAttemptController(attemptSvc service.IAttemptService) *AttemptController
 }
 
 // Create godoc
-// @Summary Create a new attempt
-// @Description Start a new learning attempt for a specific lesson
+// @Summary Tao lan luyen tap moi
+// @Description Bat dau mot lan luyen tap moi cho bai hoc duoc chon.
 // @Tags attempts
 // @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param body body object{lesson_id=uint} true "Attempt request"
-// @Success 200 {object} response.ResponseData{data=models.Attempt} "Attempt created"
+// @Success 200 {object} response.ResponseData{data=models.Attempt} "Tao attempt thanh cong"
 // @Router /attempts [post]
 func (ctrl *AttemptController) Create(c *gin.Context) {
 	var req struct {
@@ -57,13 +57,13 @@ func (ctrl *AttemptController) Create(c *gin.Context) {
 }
 
 // Get godoc
-// @Summary Get attempt details
-// @Description Get detailed information about a specific attempt by ID
+// @Summary Chi tiet lan luyen tap
+// @Description Lay thong tin chi tiet cua mot attempt theo ID.
 // @Tags attempts
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "Attempt ID"
-// @Success 200 {object} response.ResponseData{data=models.Attempt} "Attempt details"
+// @Success 200 {object} response.ResponseData{data=models.Attempt} "Lay chi tiet attempt thanh cong"
 // @Router /attempts/{id} [get]
 func (ctrl *AttemptController) Get(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -95,14 +95,14 @@ func NewAnswerController(answerSvc service.IAnswerService) *AnswerController {
 }
 
 // Submit godoc
-// @Summary Submit a single answer
-// @Description Submit an answer for a specific transcript and calculate score
+// @Summary Nop 1 cau tra loi
+// @Description Gui cau tra loi cho mot transcript cu the va tinh diem.
 // @Tags answers
 // @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param body body service.SubmitAnswerInput true "Answer info"
-// @Success 200 {object} response.ResponseData{data=service.AnswerResult} "Submit successful"
+// @Success 200 {object} response.ResponseData{data=service.AnswerResult} "Nop cau tra loi thanh cong"
 // @Router /answers [post]
 func (ctrl *AnswerController) Submit(c *gin.Context) {
 	var input service.SubmitAnswerInput
@@ -127,14 +127,14 @@ func (ctrl *AnswerController) Submit(c *gin.Context) {
 }
 
 // BulkSubmit godoc
-// @Summary Bulk submit answers
-// @Description Submit multiple answers at once (e.g. for sync)
+// @Summary Nop nhieu cau tra loi
+// @Description Gui nhieu cau tra loi cung luc (phu hop dong bo du lieu).
 // @Tags answers
 // @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param body body service.BulkSubmitInput true "Bulk answers info"
-// @Success 200 {object} response.ResponseData{data=service.BulkAnswerResult} "Bulk submit successful"
+// @Success 200 {object} response.ResponseData{data=service.BulkAnswerResult} "Nop nhieu cau tra loi thanh cong"
 // @Router /answers/bulk [post]
 func (ctrl *AnswerController) BulkSubmit(c *gin.Context) {
 	var input service.BulkSubmitInput
@@ -169,13 +169,13 @@ func NewProgressController(progressSvc service.IProgressService) *ProgressContro
 }
 
 // Get godoc
-// @Summary Get user progress for a lesson
-// @Description Get current progress (last sequence, average score) for a specific lesson
+// @Summary Tien do hoc cua nguoi dung
+// @Description Lay tien do hien tai cua nguoi dung tren bai hoc (sequence cuoi, diem trung binh).
 // @Tags progress
 // @Security BearerAuth
 // @Produce json
 // @Param lesson_id path int true "Lesson ID"
-// @Success 200 {object} response.ResponseData{data=models.UserProgress} "User progress"
+// @Success 200 {object} response.ResponseData{data=models.UserProgress} "Lay tien do thanh cong"
 // @Router /progress/{lesson_id} [get]
 func (ctrl *ProgressController) Get(c *gin.Context) {
 	lessonID, err := strconv.ParseUint(c.Param("lesson_id"), 10, 64)
@@ -203,14 +203,14 @@ func NewBookmarkController(bookmarkSvc service.IBookmarkService) *BookmarkContro
 }
 
 // Toggle godoc
-// @Summary Toggle bookmark
-// @Description Add or remove a lesson from user bookmarks
+// @Summary Them/bo danh dau yeu thich
+// @Description Bat/tat trang thai bookmark cho bai hoc cua nguoi dung.
 // @Tags bookmarks
 // @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param body body object{lesson_id=uint} true "Bookmark request"
-// @Success 200 {object} response.ResponseData{data=object{bookmarked=bool}} "Toggle successful"
+// @Success 200 {object} response.ResponseData{data=object{bookmarked=bool}} "Cap nhat bookmark thanh cong"
 // @Router /bookmarks [post]
 func (ctrl *BookmarkController) Toggle(c *gin.Context) {
 	var req struct {
@@ -230,14 +230,14 @@ func (ctrl *BookmarkController) Toggle(c *gin.Context) {
 }
 
 // List godoc
-// @Summary List bookmarked lessons
-// @Description Get a paginated list of lessons marked as favorite by the user
+// @Summary Danh sach bai hoc da bookmark
+// @Description Lay danh sach bai hoc da danh dau yeu thich co phan trang.
 // @Tags bookmarks
 // @Security BearerAuth
 // @Produce json
 // @Param page query int false "Page number (default 1)"
 // @Param limit query int false "Page size (default 10, max 100)"
-// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "List of bookmarked lessons"
+// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "Lay danh sach bookmark thanh cong"
 // @Router /bookmarks [get]
 func (ctrl *BookmarkController) List(c *gin.Context) {
 	userID := c.GetUint("user_id")
@@ -264,12 +264,12 @@ func NewCategoryController(categorySvc service.ICategoryService) *CategoryContro
 }
 
 // List godoc
-// @Summary List all categories
-// @Description Get a list of all lesson categories
+// @Summary Danh sach category
+// @Description Lay toan bo danh muc bai hoc.
 // @Tags categories
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} response.ResponseData{data=[]models.Category} "List of categories"
+// @Success 200 {object} response.ResponseData{data=[]models.Category} "Lay danh sach category thanh cong"
 // @Router /categories [get]
 func (ctrl *CategoryController) List(c *gin.Context) {
 	cats, err := ctrl.categorySvc.ListCategories(c.Request.Context())
@@ -281,15 +281,15 @@ func (ctrl *CategoryController) List(c *gin.Context) {
 }
 
 // GetLessons godoc
-// @Summary Get lessons by category
-// @Description Get a paginated list of lessons belonging to a specific category
+// @Summary Danh sach bai hoc theo category
+// @Description Lay danh sach bai hoc theo category co phan trang.
 // @Tags categories
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "Category ID"
 // @Param page query int false "Page number (default 1)"
 // @Param limit query int false "Page size (default 10, max 100)"
-// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "List of lessons"
+// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "Lay danh sach bai hoc theo category thanh cong"
 // @Router /categories/{id}/lessons [get]
 func (ctrl *CategoryController) GetLessons(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

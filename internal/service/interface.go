@@ -36,8 +36,30 @@ type IAuthService interface {
 
 type ILessonService interface {
 	ListLessons(ctx context.Context, level string, categoryID *uint, q utils.PaginationQuery) ([]models.Lesson, int64, error)
+	CreateLesson(ctx context.Context, input CreateLessonInput) (*models.Lesson, error)
 	GetLesson(ctx context.Context, id uint) (*models.Lesson, error)
 	GetTranscripts(ctx context.Context, lessonID uint) ([]models.Transcript, error)
+}
+
+type CreateLessonInput struct {
+	Title        string `json:"title" binding:"required"`
+	Description  string `json:"description"`
+	URL          string `json:"url" binding:"required_without=VideoURL,url"`
+	VideoURL     string `json:"video_url" binding:"omitempty,url"`
+	ThumbnailURL string `json:"thumbnail_url" binding:"omitempty,url"`
+	Level        string `json:"level" binding:"omitempty,oneof=easy medium hard"`
+	Duration     float64 `json:"duration" binding:"omitempty,gte=0"`
+	CategoryIDs  []uint `json:"category_ids"`
+	Transcripts  []CreateTranscriptInput `json:"transcripts" binding:"required,min=1,dive"`
+}
+
+type CreateTranscriptInput struct {
+	Sequence       int     `json:"sequence" binding:"required,gte=1"`
+	Content        string  `json:"content" binding:"required"`
+	Phonetic       string  `json:"phonetic"`
+	Vietnamese     string  `json:"vietnamese"`
+	StartTimestamp float64 `json:"start_timestamp" binding:"required,gte=0"`
+	EndTimestamp   float64 `json:"end_timestamp" binding:"required,gte=0"`
 }
 
 // ===== Attempt Service =====

@@ -18,6 +18,7 @@ func (pr *LessonRouter) InitLessonRouter(r *gin.RouterGroup,
 	lesson := r.Group("/lessons")
 	lesson.Use(middlewares.AuthMiddleware())
 	{
+		lesson.POST("/", lessonCtrl.CreateLesson)
 		lesson.GET("/", lessonCtrl.ListLessons)
 		lesson.GET("/:id", lessonCtrl.GetLesson)
 		lesson.GET("/:id/transcripts", lessonCtrl.GetTranscripts)

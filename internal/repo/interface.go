@@ -24,6 +24,7 @@ type LessonFilter struct {
 
 type ILessonRepo interface {
 	FindAll(ctx context.Context, filter LessonFilter) ([]models.Lesson, int64, error)
+	Create(ctx context.Context, lesson *models.Lesson, categoryIDs []uint, transcripts []models.Transcript) error
 	FindByID(ctx context.Context, id uint) (*models.Lesson, error)
 	FindTranscriptsByLessonID(ctx context.Context, lessonID uint) ([]models.Transcript, error)
 }

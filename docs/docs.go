@@ -22,7 +22,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Submit an answer for a specific transcript and calculate score",
+                "description": "Gui cau tra loi cho mot transcript cu the va tinh diem.",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "answers"
                 ],
-                "summary": "Submit a single answer",
+                "summary": "Nop 1 cau tra loi",
                 "parameters": [
                     {
                         "description": "Answer info",
@@ -46,7 +46,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Submit successful",
+                        "description": "Nop cau tra loi thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -73,7 +73,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Submit multiple answers at once (e.g. for sync)",
+                "description": "Gui nhieu cau tra loi cung luc (phu hop dong bo du lieu).",
                 "consumes": [
                     "application/json"
                 ],
@@ -83,7 +83,7 @@ const docTemplate = `{
                 "tags": [
                     "answers"
                 ],
-                "summary": "Bulk submit answers",
+                "summary": "Nop nhieu cau tra loi",
                 "parameters": [
                     {
                         "description": "Bulk answers info",
@@ -97,7 +97,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Bulk submit successful",
+                        "description": "Nop nhieu cau tra loi thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -124,7 +124,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Start a new learning attempt for a specific lesson",
+                "description": "Bat dau mot lan luyen tap moi cho bai hoc duoc chon.",
                 "consumes": [
                     "application/json"
                 ],
@@ -134,7 +134,7 @@ const docTemplate = `{
                 "tags": [
                     "attempts"
                 ],
-                "summary": "Create a new attempt",
+                "summary": "Tao lan luyen tap moi",
                 "parameters": [
                     {
                         "description": "Attempt request",
@@ -153,7 +153,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Attempt created",
+                        "description": "Tao attempt thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -180,14 +180,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get detailed information about a specific attempt by ID",
+                "description": "Lay thong tin chi tiet cua mot attempt theo ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "attempts"
                 ],
-                "summary": "Get attempt details",
+                "summary": "Chi tiet lan luyen tap",
                 "parameters": [
                     {
                         "type": "integer",
@@ -199,7 +199,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Attempt details",
+                        "description": "Lay chi tiet attempt thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -221,7 +221,7 @@ const docTemplate = `{
         },
         "/auth/login": {
             "post": {
-                "description": "Authenticate user and return access + refresh tokens",
+                "description": "Xac thuc thong tin dang nhap va tra ve access token + refresh token.",
                 "consumes": [
                     "application/json"
                 ],
@@ -231,7 +231,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login user",
+                "summary": "Dang nhap",
                 "parameters": [
                     {
                         "description": "Login credentials",
@@ -245,7 +245,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Login successful",
+                        "description": "Dang nhap thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -272,17 +272,17 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Invalidate the current access token (blacklist) and delete refresh token",
+                "description": "Vo hieu hoa access token hien tai (dua vao blacklist) va xoa refresh token.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Logout user",
+                "summary": "Dang xuat",
                 "responses": {
                     "200": {
-                        "description": "Logout successful",
+                        "description": "Dang xuat thanh cong",
                         "schema": {
                             "$ref": "#/definitions/go-familytree_pkg_response.ResponseData"
                         }
@@ -292,7 +292,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "Exchange a valid refresh token for a new access + refresh token pair",
+                "description": "Dung refresh token hop le de cap cap access token + refresh token moi.",
                 "consumes": [
                     "application/json"
                 ],
@@ -302,7 +302,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Refresh access token",
+                "summary": "Lam moi token",
                 "parameters": [
                     {
                         "description": "Refresh request",
@@ -324,7 +324,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Tokens refreshed",
+                        "description": "Lam moi token thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -346,7 +346,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Create a new user account with email, password and name",
+                "description": "Tao tai khoan nguoi dung moi bang email, mat khau va ten hien thi.",
                 "consumes": [
                     "application/json"
                 ],
@@ -356,7 +356,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register a new user",
+                "summary": "Dang ky tai khoan moi",
                 "parameters": [
                     {
                         "description": "Registration info",
@@ -370,7 +370,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "User created",
+                        "description": "Tao tai khoan thanh cong",
                         "schema": {
                             "$ref": "#/definitions/go-familytree_pkg_response.ResponseData"
                         }
@@ -385,14 +385,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a paginated list of lessons marked as favorite by the user",
+                "description": "Lay danh sach bai hoc da danh dau yeu thich co phan trang.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "bookmarks"
                 ],
-                "summary": "List bookmarked lessons",
+                "summary": "Danh sach bai hoc da bookmark",
                 "parameters": [
                     {
                         "type": "integer",
@@ -409,7 +409,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of bookmarked lessons",
+                        "description": "Lay danh sach bookmark thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -434,7 +434,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Add or remove a lesson from user bookmarks",
+                "description": "Bat/tat trang thai bookmark cho bai hoc cua nguoi dung.",
                 "consumes": [
                     "application/json"
                 ],
@@ -444,7 +444,7 @@ const docTemplate = `{
                 "tags": [
                     "bookmarks"
                 ],
-                "summary": "Toggle bookmark",
+                "summary": "Them/bo danh dau yeu thich",
                 "parameters": [
                     {
                         "description": "Bookmark request",
@@ -463,7 +463,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Toggle successful",
+                        "description": "Cap nhat bookmark thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -495,17 +495,17 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a list of all lesson categories",
+                "description": "Lay toan bo danh muc bai hoc.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "categories"
                 ],
-                "summary": "List all categories",
+                "summary": "Danh sach category",
                 "responses": {
                     "200": {
-                        "description": "List of categories",
+                        "description": "Lay danh sach category thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -535,14 +535,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a paginated list of lessons belonging to a specific category",
+                "description": "Lay danh sach bai hoc theo category co phan trang.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "categories"
                 ],
-                "summary": "Get lessons by category",
+                "summary": "Danh sach bai hoc theo category",
                 "parameters": [
                     {
                         "type": "integer",
@@ -566,7 +566,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of lessons",
+                        "description": "Lay danh sach bai hoc theo category thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -593,14 +593,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a paginated list of lessons, optionally filtered by level or category",
+                "description": "Lay danh sach bai hoc co phan trang; ho tro loc theo do kho va category.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "lessons"
                 ],
-                "summary": "List all lessons",
+                "summary": "Danh sach bai hoc",
                 "parameters": [
                     {
                         "type": "integer",
@@ -629,7 +629,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of lessons",
+                        "description": "Lay danh sach bai hoc thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -647,6 +647,55 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tao bai hoc moi tu payload frontend (url + transcripts), va co the gan category.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lessons"
+                ],
+                "summary": "Tao bai hoc",
+                "parameters": [
+                    {
+                        "description": "Du lieu bai hoc tu frontend",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-familytree_internal_service.CreateLessonInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tao bai hoc thanh cong",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/go-familytree_pkg_response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/go-familytree_internal_models.Lesson"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/lessons/{id}": {
@@ -656,14 +705,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get detailed information about a specific lesson by ID",
+                "description": "Lay thong tin chi tiet cua mot bai hoc theo ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "lessons"
                 ],
-                "summary": "Get lesson details",
+                "summary": "Chi tiet bai hoc",
                 "parameters": [
                     {
                         "type": "integer",
@@ -675,7 +724,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lesson details",
+                        "description": "Lay chi tiet bai hoc thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -702,14 +751,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get all transcripts for a specific lesson, ordered by sequence",
+                "description": "Lay toan bo transcript cua bai hoc, sap xep theo thu tu sequence.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "lessons"
                 ],
-                "summary": "Get lesson transcripts",
+                "summary": "Danh sach transcript cua bai hoc",
                 "parameters": [
                     {
                         "type": "integer",
@@ -721,7 +770,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of transcripts",
+                        "description": "Lay transcript thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -751,14 +800,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get current progress (last sequence, average score) for a specific lesson",
+                "description": "Lay tien do hien tai cua nguoi dung tren bai hoc (sequence cuoi, diem trung binh).",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "progress"
                 ],
-                "summary": "Get user progress for a lesson",
+                "summary": "Tien do hoc cua nguoi dung",
                 "parameters": [
                     {
                         "type": "integer",
@@ -770,7 +819,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "User progress",
+                        "description": "Lay tien do thanh cong",
                         "schema": {
                             "allOf": [
                                 {
@@ -1023,6 +1072,87 @@ const docTemplate = `{
                 },
                 "attempt_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "go-familytree_internal_service.CreateLessonInput": {
+            "type": "object",
+            "required": [
+                "title",
+                "transcripts"
+            ],
+            "properties": {
+                "category_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "level": {
+                    "type": "string",
+                    "enum": [
+                        "easy",
+                        "medium",
+                        "hard"
+                    ]
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "transcripts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/go-familytree_internal_service.CreateTranscriptInput"
+                    }
+                },
+                "url": {
+                    "type": "string"
+                },
+                "video_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-familytree_internal_service.CreateTranscriptInput": {
+            "type": "object",
+            "required": [
+                "content",
+                "end_timestamp",
+                "sequence",
+                "start_timestamp"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "end_timestamp": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "phonetic": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "start_timestamp": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "vietnamese": {
+                    "type": "string"
                 }
             }
         },

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "go-familytree/docs"
 	"go-familytree/internal/initialize"
 )
 

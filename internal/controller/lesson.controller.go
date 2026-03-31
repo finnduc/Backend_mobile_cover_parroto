@@ -22,9 +22,34 @@ func NewLessonController(lessonSvc service.ILessonService) *LessonController {
 	return &LessonController{lessonSvc: lessonSvc}
 }
 
+// CreateLesson godoc
+// @Summary Tao bai hoc
+// @Description Tao bai hoc moi tu payload frontend (url + transcripts), va co the gan category.
+// @Tags lessons
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param body body service.CreateLessonInput true "Du lieu bai hoc tu frontend"
+// @Success 200 {object} response.ResponseData{data=models.Lesson} "Tao bai hoc thanh cong"
+// @Router /lessons [post]
+func (ctrl *LessonController) CreateLesson(c *gin.Context) {
+	var input service.CreateLessonInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		response.ErrorResponseData(c, response.CodeInvalidParams, nil)
+		return
+	}
+
+	lesson, err := ctrl.lessonSvc.CreateLesson(c.Request.Context(), input)
+	if err != nil {
+		response.ErrorResponseData(c, response.CodeInternalServerError, nil)
+		return
+	}
+	response.SuccessReponseData(c, lesson)
+}
+
 // ListLessons godoc
-// @Summary List all lessons
-// @Description Get a paginated list of lessons, optionally filtered by level or category
+// @Summary Danh sach bai hoc
+// @Description Lay danh sach bai hoc co phan trang; ho tro loc theo do kho va category.
 // @Tags lessons
 // @Security BearerAuth
 // @Produce json
@@ -32,7 +57,7 @@ func NewLessonController(lessonSvc service.ILessonService) *LessonController {
 // @Param limit query int false "Page size (default 10, max 100)"
 // @Param level query string false "Filter by level (easy|medium|hard)"
 // @Param category_id query int false "Filter by category ID"
-// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "List of lessons"
+// @Success 200 {object} response.ResponseData{data=utils.ListResponse} "Lay danh sach bai hoc thanh cong"
 // @Router /lessons [get]
 func (ctrl *LessonController) ListLessons(c *gin.Context) {
 	var q utils.PaginationQuery
@@ -63,13 +88,13 @@ func (ctrl *LessonController) ListLessons(c *gin.Context) {
 }
 
 // GetLesson godoc
-// @Summary Get lesson details
-// @Description Get detailed information about a specific lesson by ID
+// @Summary Chi tiet bai hoc
+// @Description Lay thong tin chi tiet cua mot bai hoc theo ID.
 // @Tags lessons
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "Lesson ID"
-// @Success 200 {object} response.ResponseData{data=models.Lesson} "Lesson details"
+// @Success 200 {object} response.ResponseData{data=models.Lesson} "Lay chi tiet bai hoc thanh cong"
 // @Router /lessons/{id} [get]
 func (ctrl *LessonController) GetLesson(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -91,13 +116,13 @@ func (ctrl *LessonController) GetLesson(c *gin.Context) {
 }
 
 // GetTranscripts godoc
-// @Summary Get lesson transcripts
-// @Description Get all transcripts for a specific lesson, ordered by sequence
+// @Summary Danh sach transcript cua bai hoc
+// @Description Lay toan bo transcript cua bai hoc, sap xep theo thu tu sequence.
 // @Tags lessons
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "Lesson ID"
-// @Success 200 {object} response.ResponseData{data=[]models.Transcript} "List of transcripts"
+// @Success 200 {object} response.ResponseData{data=[]models.Transcript} "Lay transcript thanh cong"
 // @Router /lessons/{id}/transcripts [get]
 func (ctrl *LessonController) GetTranscripts(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

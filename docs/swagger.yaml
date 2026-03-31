@@ -154,6 +154,63 @@ definitions:
     - answers
     - attempt_id
     type: object
+  go-familytree_internal_service.CreateLessonInput:
+    properties:
+      category_ids:
+        items:
+          type: integer
+        type: array
+      description:
+        type: string
+      duration:
+        minimum: 0
+        type: number
+      level:
+        enum:
+        - easy
+        - medium
+        - hard
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      transcripts:
+        items:
+          $ref: '#/definitions/go-familytree_internal_service.CreateTranscriptInput'
+        minItems: 1
+        type: array
+      url:
+        type: string
+      video_url:
+        type: string
+    required:
+    - title
+    - transcripts
+    type: object
+  go-familytree_internal_service.CreateTranscriptInput:
+    properties:
+      content:
+        type: string
+      end_timestamp:
+        minimum: 0
+        type: number
+      phonetic:
+        type: string
+      sequence:
+        minimum: 1
+        type: integer
+      start_timestamp:
+        minimum: 0
+        type: number
+      vietnamese:
+        type: string
+    required:
+    - content
+    - end_timestamp
+    - sequence
+    - start_timestamp
+    type: object
   go-familytree_internal_service.LoginInput:
     properties:
       email:
@@ -235,7 +292,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Submit an answer for a specific transcript and calculate score
+      description: Gui cau tra loi cho mot transcript cu the va tinh diem.
       parameters:
       - description: Answer info
         in: body
@@ -247,7 +304,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Submit successful
+          description: Nop cau tra loi thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -257,14 +314,14 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Submit a single answer
+      summary: Nop 1 cau tra loi
       tags:
       - answers
   /answers/bulk:
     post:
       consumes:
       - application/json
-      description: Submit multiple answers at once (e.g. for sync)
+      description: Gui nhieu cau tra loi cung luc (phu hop dong bo du lieu).
       parameters:
       - description: Bulk answers info
         in: body
@@ -276,7 +333,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Bulk submit successful
+          description: Nop nhieu cau tra loi thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -286,14 +343,14 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Bulk submit answers
+      summary: Nop nhieu cau tra loi
       tags:
       - answers
   /attempts:
     post:
       consumes:
       - application/json
-      description: Start a new learning attempt for a specific lesson
+      description: Bat dau mot lan luyen tap moi cho bai hoc duoc chon.
       parameters:
       - description: Attempt request
         in: body
@@ -308,7 +365,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Attempt created
+          description: Tao attempt thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -318,12 +375,12 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Create a new attempt
+      summary: Tao lan luyen tap moi
       tags:
       - attempts
   /attempts/{id}:
     get:
-      description: Get detailed information about a specific attempt by ID
+      description: Lay thong tin chi tiet cua mot attempt theo ID.
       parameters:
       - description: Attempt ID
         in: path
@@ -334,7 +391,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Attempt details
+          description: Lay chi tiet attempt thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -344,14 +401,14 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Get attempt details
+      summary: Chi tiet lan luyen tap
       tags:
       - attempts
   /auth/login:
     post:
       consumes:
       - application/json
-      description: Authenticate user and return access + refresh tokens
+      description: Xac thuc thong tin dang nhap va tra ve access token + refresh token.
       parameters:
       - description: Login credentials
         in: body
@@ -363,7 +420,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Login successful
+          description: Dang nhap thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -371,31 +428,31 @@ paths:
                 data:
                   $ref: '#/definitions/go-familytree_internal_service.TokenPair'
               type: object
-      summary: Login user
+      summary: Dang nhap
       tags:
       - auth
   /auth/logout:
     post:
-      description: Invalidate the current access token (blacklist) and delete refresh
-        token
+      description: Vo hieu hoa access token hien tai (dua vao blacklist) va xoa refresh
+        token.
       produces:
       - application/json
       responses:
         "200":
-          description: Logout successful
+          description: Dang xuat thanh cong
           schema:
             $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
       security:
       - BearerAuth: []
-      summary: Logout user
+      summary: Dang xuat
       tags:
       - auth
   /auth/refresh:
     post:
       consumes:
       - application/json
-      description: Exchange a valid refresh token for a new access + refresh token
-        pair
+      description: Dung refresh token hop le de cap cap access token + refresh token
+        moi.
       parameters:
       - description: Refresh request
         in: body
@@ -412,7 +469,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Tokens refreshed
+          description: Lam moi token thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -420,14 +477,14 @@ paths:
                 data:
                   $ref: '#/definitions/go-familytree_internal_service.TokenPair'
               type: object
-      summary: Refresh access token
+      summary: Lam moi token
       tags:
       - auth
   /auth/register:
     post:
       consumes:
       - application/json
-      description: Create a new user account with email, password and name
+      description: Tao tai khoan nguoi dung moi bang email, mat khau va ten hien thi.
       parameters:
       - description: Registration info
         in: body
@@ -439,15 +496,15 @@ paths:
       - application/json
       responses:
         "200":
-          description: User created
+          description: Tao tai khoan thanh cong
           schema:
             $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
-      summary: Register a new user
+      summary: Dang ky tai khoan moi
       tags:
       - auth
   /bookmarks:
     get:
-      description: Get a paginated list of lessons marked as favorite by the user
+      description: Lay danh sach bai hoc da danh dau yeu thich co phan trang.
       parameters:
       - description: Page number (default 1)
         in: query
@@ -461,7 +518,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: List of bookmarked lessons
+          description: Lay danh sach bookmark thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -471,13 +528,13 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: List bookmarked lessons
+      summary: Danh sach bai hoc da bookmark
       tags:
       - bookmarks
     post:
       consumes:
       - application/json
-      description: Add or remove a lesson from user bookmarks
+      description: Bat/tat trang thai bookmark cho bai hoc cua nguoi dung.
       parameters:
       - description: Bookmark request
         in: body
@@ -492,7 +549,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Toggle successful
+          description: Cap nhat bookmark thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -505,17 +562,17 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Toggle bookmark
+      summary: Them/bo danh dau yeu thich
       tags:
       - bookmarks
   /categories:
     get:
-      description: Get a list of all lesson categories
+      description: Lay toan bo danh muc bai hoc.
       produces:
       - application/json
       responses:
         "200":
-          description: List of categories
+          description: Lay danh sach category thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -527,12 +584,12 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: List all categories
+      summary: Danh sach category
       tags:
       - categories
   /categories/{id}/lessons:
     get:
-      description: Get a paginated list of lessons belonging to a specific category
+      description: Lay danh sach bai hoc theo category co phan trang.
       parameters:
       - description: Category ID
         in: path
@@ -551,7 +608,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: List of lessons
+          description: Lay danh sach bai hoc theo category thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -561,13 +618,13 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Get lessons by category
+      summary: Danh sach bai hoc theo category
       tags:
       - categories
   /lessons:
     get:
-      description: Get a paginated list of lessons, optionally filtered by level or
-        category
+      description: Lay danh sach bai hoc co phan trang; ho tro loc theo do kho va
+        category.
       parameters:
       - description: Page number (default 1)
         in: query
@@ -589,7 +646,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: List of lessons
+          description: Lay danh sach bai hoc thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -599,23 +656,26 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: List all lessons
+      summary: Danh sach bai hoc
       tags:
       - lessons
-  /lessons/{id}:
-    get:
-      description: Get detailed information about a specific lesson by ID
+    post:
+      consumes:
+      - application/json
+      description: Tao bai hoc moi tu payload frontend (url + transcripts), va co
+        the gan category.
       parameters:
-      - description: Lesson ID
-        in: path
-        name: id
+      - description: Du lieu bai hoc tu frontend
+        in: body
+        name: body
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/go-familytree_internal_service.CreateLessonInput'
       produces:
       - application/json
       responses:
         "200":
-          description: Lesson details
+          description: Tao bai hoc thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -625,12 +685,12 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Get lesson details
+      summary: Tao bai hoc
       tags:
       - lessons
-  /lessons/{id}/transcripts:
+  /lessons/{id}:
     get:
-      description: Get all transcripts for a specific lesson, ordered by sequence
+      description: Lay thong tin chi tiet cua mot bai hoc theo ID.
       parameters:
       - description: Lesson ID
         in: path
@@ -641,7 +701,33 @@ paths:
       - application/json
       responses:
         "200":
-          description: List of transcripts
+          description: Lay chi tiet bai hoc thanh cong
+          schema:
+            allOf:
+            - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-familytree_internal_models.Lesson'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Chi tiet bai hoc
+      tags:
+      - lessons
+  /lessons/{id}/transcripts:
+    get:
+      description: Lay toan bo transcript cua bai hoc, sap xep theo thu tu sequence.
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lay transcript thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -653,13 +739,13 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Get lesson transcripts
+      summary: Danh sach transcript cua bai hoc
       tags:
       - lessons
   /progress/{lesson_id}:
     get:
-      description: Get current progress (last sequence, average score) for a specific
-        lesson
+      description: Lay tien do hien tai cua nguoi dung tren bai hoc (sequence cuoi,
+        diem trung binh).
       parameters:
       - description: Lesson ID
         in: path
@@ -670,7 +756,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: User progress
+          description: Lay tien do thanh cong
           schema:
             allOf:
             - $ref: '#/definitions/go-familytree_pkg_response.ResponseData'
@@ -680,7 +766,7 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Get user progress for a lesson
+      summary: Tien do hoc cua nguoi dung
       tags:
       - progress
 securityDefinitions:

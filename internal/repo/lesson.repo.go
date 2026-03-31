@@ -42,6 +42,38 @@ func (r *lessonRepo) FindAll(ctx context.Context, filter LessonFilter) ([]models
 	return lessons, total, err
 }
 
+func (r *lessonRepo) Create(ctx context.Context, lesson *models.Lesson, categoryIDs []uint, transcripts []models.Transcript) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(lesson).Error; err != nil {
+			return err
+		}
+
+		if len(categoryIDs) > 0 {
+			lessonCategories := make([]models.LessonCategory, 0, len(categoryIDs))
+			for _, categoryID := range categoryIDs {
+				lessonCategories = append(lessonCategories, models.LessonCategory{
+					LessonID:   lesson.ID,
+					CategoryID: categoryID,
+				})
+			}
+			if err := tx.Create(&lessonCategories).Error; err != nil {
+				return err
+			}
+		}
+
+		if len(transcripts) > 0 {
+			for i := range transcripts {
+				transcripts[i].LessonID = lesson.ID
+			}
+			if err := tx.Create(&transcripts).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
 func (r *lessonRepo) FindByID(ctx context.Context, id uint) (*models.Lesson, error) {
 	var lesson models.Lesson
 	err := r.db.WithContext(ctx).First(&lesson, id).Error

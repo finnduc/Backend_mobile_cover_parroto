@@ -18,13 +18,13 @@ func NewAuthController(authSvc service.IAuthService) *AuthController {
 }
 
 // Register godoc
-// @Summary Register a new user
-// @Description Create a new user account with email, password and name
+// @Summary Dang ky tai khoan moi
+// @Description Tao tai khoan nguoi dung moi bang email, mat khau va ten hien thi.
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param body body service.RegisterInput true "Registration info"
-// @Success 200 {object} response.ResponseData "User created"
+// @Success 200 {object} response.ResponseData "Tao tai khoan thanh cong"
 // @Router /auth/register [post]
 func (ctrl *AuthController) Register(c *gin.Context) {
 	var input service.RegisterInput
@@ -46,13 +46,13 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 }
 
 // Login godoc
-// @Summary Login user
-// @Description Authenticate user and return access + refresh tokens
+// @Summary Dang nhap
+// @Description Xac thuc thong tin dang nhap va tra ve access token + refresh token.
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param body body service.LoginInput true "Login credentials"
-// @Success 200 {object} response.ResponseData{data=service.TokenPair} "Login successful"
+// @Success 200 {object} response.ResponseData{data=service.TokenPair} "Dang nhap thanh cong"
 // @Router /auth/login [post]
 func (ctrl *AuthController) Login(c *gin.Context) {
 	var input service.LoginInput
@@ -76,12 +76,12 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 }
 
 // Logout godoc
-// @Summary Logout user
-// @Description Invalidate the current access token (blacklist) and delete refresh token
+// @Summary Dang xuat
+// @Description Vo hieu hoa access token hien tai (dua vao blacklist) va xoa refresh token.
 // @Tags auth
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} response.ResponseData "Logout successful"
+// @Success 200 {object} response.ResponseData "Dang xuat thanh cong"
 // @Router /auth/logout [post]
 func (ctrl *AuthController) Logout(c *gin.Context) {
 	userID := c.GetUint("user_id")
@@ -91,13 +91,13 @@ func (ctrl *AuthController) Logout(c *gin.Context) {
 }
 
 // Refresh godoc
-// @Summary Refresh access token
-// @Description Exchange a valid refresh token for a new access + refresh token pair
+// @Summary Lam moi token
+// @Description Dung refresh token hop le de cap cap access token + refresh token moi.
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param body body object{refresh_token=string,user_id=uint} true "Refresh request"
-// @Success 200 {object} response.ResponseData{data=service.TokenPair} "Tokens refreshed"
+// @Success 200 {object} response.ResponseData{data=service.TokenPair} "Lam moi token thanh cong"
 // @Router /auth/refresh [post]
 func (ctrl *AuthController) Refresh(c *gin.Context) {
 	var req struct {

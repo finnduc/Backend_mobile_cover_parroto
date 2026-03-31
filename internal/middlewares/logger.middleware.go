@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"fmt"
 	"go-familytree/global"
 	"time"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -20,7 +20,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 		latency := time.Since(start)
 
 		if global.Logger != nil {
-			global.Logger.Info("HTTP Request",
+			fields := []zap.Field{
 				zap.Int("status", c.Writer.Status()),
 				zap.String("method", c.Request.Method),
 				zap.String("path", path),
@@ -30,7 +30,19 @@ func LoggerMiddleware() gin.HandlerFunc {
 				zap.String("request_id", c.GetString("request_id")),
 				zap.String("user_id", fmt.Sprintf("%v", c.GetUint("user_id"))),
 				zap.Duration("latency", latency),
-			)
+			}
+			if len(c.Errors) > 0 {
+				fields = append(fields, zap.String("errors", c.Errors.String()))
+			}
+
+			switch status := c.Writer.Status(); {
+			case status >= 500:
+				global.Logger.Error("HTTP Request", fields...)
+			case status >= 400:
+				global.Logger.Warn("HTTP Request", fields...)
+			default:
+				global.Logger.Info("HTTP Request", fields...)
+			}
 		}
 	}
 }

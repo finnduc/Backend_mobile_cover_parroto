@@ -49,7 +49,8 @@ func NewLogger(cfg settings.LoggerSetting) *zap.Logger {
 	consoleWriter := zapcore.AddSync(os.Stdout)
 
 	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderCfg), fileWriter, level),
+		// Always persist every log level to file for troubleshooting/audit.
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderCfg), fileWriter, zapcore.DebugLevel),
 		zapcore.NewCore(zapcore.NewConsoleEncoder(encoderCfg), consoleWriter, level),
 	)
 
