@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"go-familytree/internal/models"
+	"go-cover-parroto/internal/models"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

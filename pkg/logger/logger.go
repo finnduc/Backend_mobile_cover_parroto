@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"go-familytree/pkg/settings"
+	"go-cover-parroto/pkg/settings"
 	"os"
 
 	"go.uber.org/zap"

@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"fmt"
-	"go-familytree/global"
-	"go-familytree/pkg/logger"
+	"go-cover-parroto/global"
+	"go-cover-parroto/pkg/logger"
 	"os"
 
 	"github.com/spf13/viper"

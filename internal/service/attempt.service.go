@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	"go-familytree/internal/models"
-	"go-familytree/internal/repo"
-	pkgerrors "go-familytree/pkg/errors"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/internal/repo"
+	pkgerrors "go-cover-parroto/pkg/errors"
 
 	"gorm.io/gorm"
 )

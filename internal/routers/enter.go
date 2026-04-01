@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"go-familytree/internal/controller"
-	"go-familytree/internal/routers/admin"
-	"go-familytree/internal/routers/user"
+	"go-cover-parroto/internal/controller"
+	"go-cover-parroto/internal/routers/admin"
+	"go-cover-parroto/internal/routers/user"
 
 	"github.com/gin-gonic/gin"
 )

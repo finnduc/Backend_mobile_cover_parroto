@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )

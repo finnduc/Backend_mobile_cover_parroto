@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "go-familytree/docs"
-	"go-familytree/internal/initialize"
+	_ "go-cover-parroto/docs"
+	"go-cover-parroto/internal/initialize"
 )
 
 // @title Dictation Learning System API

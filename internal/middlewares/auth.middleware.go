@@ -3,10 +3,10 @@ package middlewares
 import (
 	"context"
 	"fmt"
-	"go-familytree/global"
-	pkgerrors "go-familytree/pkg/errors"
-	"go-familytree/pkg/response"
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/global"
+	pkgerrors "go-cover-parroto/pkg/errors"
+	"go-cover-parroto/pkg/response"
+	"go-cover-parroto/pkg/utils"
 	"strings"
 
 	"github.com/gin-gonic/gin"

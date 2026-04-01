@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"fmt"
-	"go-familytree/global"
+	"go-cover-parroto/global"
 	"time"
 
 	"gorm.io/driver/postgres"

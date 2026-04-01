@@ -2,9 +2,9 @@
 package wire
 
 import (
-	"go-familytree/internal/controller"
-	"go-familytree/internal/repo"
-	"go-familytree/internal/service"
+	"go-cover-parroto/internal/controller"
+	"go-cover-parroto/internal/repo"
+	"go-cover-parroto/internal/service"
 
 	"github.com/google/wire"
 )

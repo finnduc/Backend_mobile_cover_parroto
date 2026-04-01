@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"go-familytree/internal/service"
-	"go-familytree/pkg/response"
+	"go-cover-parroto/internal/service"
+	"go-cover-parroto/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

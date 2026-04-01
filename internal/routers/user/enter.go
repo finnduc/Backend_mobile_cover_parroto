@@ -1,7 +1,7 @@
 package user
 
 import (
-	"go-familytree/internal/controller"
+	"go-cover-parroto/internal/controller"
 
 	"github.com/gin-gonic/gin"
 )

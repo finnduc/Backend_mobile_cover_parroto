@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"go-familytree/internal/mocks"
-	"go-familytree/internal/models"
-	"go-familytree/internal/service"
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/internal/mocks"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/internal/service"
+	"go-cover-parroto/pkg/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

@@ -2,8 +2,8 @@ package mocks
 
 import (
 	"context"
-	"go-familytree/internal/models"
-	"go-familytree/internal/repo"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/internal/repo"
 
 	"github.com/stretchr/testify/mock"
 )

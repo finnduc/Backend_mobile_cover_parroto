@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"go-familytree/internal/models"
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/pkg/utils"
 )
 
 // ===== Auth Service =====

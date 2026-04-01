@@ -1,7 +1,7 @@
 package global
 
 import (
-	"go-familytree/pkg/settings"
+	"go-cover-parroto/pkg/settings"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"

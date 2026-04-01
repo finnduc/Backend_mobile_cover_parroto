@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"fmt"
-	"go-familytree/global"
+	"go-cover-parroto/global"
 	"time"
 
 	"github.com/gin-gonic/gin"

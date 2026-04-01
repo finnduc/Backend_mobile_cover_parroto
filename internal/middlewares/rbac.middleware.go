@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"go-familytree/pkg/response"
+	"go-cover-parroto/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

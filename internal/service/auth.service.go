@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	"go-familytree/internal/models"
-	"go-familytree/internal/repo"
-	pkgerrors "go-familytree/pkg/errors"
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/internal/repo"
+	pkgerrors "go-cover-parroto/pkg/errors"
+	"go-cover-parroto/pkg/utils"
 	"os"
 	"time"
 

@@ -1,8 +1,8 @@
 package user
 
 import (
-	"go-familytree/internal/controller"
-	"go-familytree/internal/middlewares"
+	"go-cover-parroto/internal/controller"
+	"go-cover-parroto/internal/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

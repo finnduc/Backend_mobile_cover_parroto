@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"fmt"
-	"go-familytree/global"
+	"go-cover-parroto/global"
 
 	"go.uber.org/zap"
 )

@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"go-familytree/global"
-	"go-familytree/internal/middlewares"
-	"go-familytree/internal/routers"
+	"go-cover-parroto/global"
+	"go-cover-parroto/internal/middlewares"
+	"go-cover-parroto/internal/routers"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

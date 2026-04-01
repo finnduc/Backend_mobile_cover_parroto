@@ -2,8 +2,8 @@ package repo
 
 import (
 	"context"
-	"go-familytree/internal/models"
-	"go-familytree/internal/repo"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/internal/repo"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"

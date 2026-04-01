@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 	"errors"
-	"go-familytree/internal/models"
-	"go-familytree/pkg/utils"
+	"go-cover-parroto/internal/models"
+	"go-cover-parroto/pkg/utils"
 
 	"gorm.io/gorm"
 )

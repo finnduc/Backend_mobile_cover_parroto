@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"go-familytree/internal/repo"
+	"go-cover-parroto/internal/repo"
 )
 
 type UserRegisterInput struct {

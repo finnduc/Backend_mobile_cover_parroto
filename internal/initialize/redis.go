@@ -3,7 +3,7 @@ package initialize
 import (
 	"context"
 	"fmt"
-	"go-familytree/global"
+	"go-cover-parroto/global"
 
 	"github.com/redis/go-redis/v9"
 )

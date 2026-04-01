@@ -2,9 +2,9 @@ package controller
 
 import (
 	"errors"
-	"go-familytree/internal/service"
-	pkgerrors "go-familytree/pkg/errors"
-	"go-familytree/pkg/response"
+	"go-cover-parroto/internal/service"
+	pkgerrors "go-cover-parroto/pkg/errors"
+	"go-cover-parroto/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
