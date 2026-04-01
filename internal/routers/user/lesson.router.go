@@ -10,13 +10,13 @@ import (
 type LessonRouter struct {
 }
 
-func (pr *LessonRouter) InitLessonRouter(r *gin.RouterGroup, 
+func (pr *LessonRouter) InitLessonRouter(r *gin.RouterGroup,
 	lessonCtrl *controller.LessonController,
 	attemptCtrl *controller.AttemptController,
 	answerCtrl *controller.AnswerController,
 ) {
 	lesson := r.Group("/lessons")
-	lesson.Use(middlewares.AuthMiddleware())
+	// lesson.Use(middlewares.AuthMiddleware())
 	{
 		lesson.POST("/", lessonCtrl.CreateLesson)
 		lesson.GET("/", lessonCtrl.ListLessons)

@@ -35,7 +35,7 @@ func NewLessonController(lessonSvc service.ILessonService) *LessonController {
 func (ctrl *LessonController) CreateLesson(c *gin.Context) {
 	var input service.CreateLessonInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		response.ErrorResponseData(c, response.CodeInvalidParams, nil)
+		response.ErrorResponseData(c, response.CodeInvalidParams, err.Error())
 		return
 	}
 

@@ -17,19 +17,19 @@ type Base struct {
 // User entity
 type User struct {
 	Base
-	Email        string `gorm:"type:varchar(255);uniqueIndex;not null" json:"email"`
-	PasswordHash string `gorm:"type:varchar(255);not null"            json:"-"`
-	Name         string `gorm:"type:varchar(255)"                     json:"name"`
-	AvatarURL    string `gorm:"type:varchar(500)"                     json:"avatar_url"`
-	IsActive     bool   `gorm:"default:true"                          json:"is_active"`
+	Email        string     `gorm:"type:varchar(255);uniqueIndex;not null" json:"email"`
+	PasswordHash string     `gorm:"type:varchar(255);not null"            json:"-"`
+	Name         string     `gorm:"type:varchar(255)"                     json:"name"`
+	AvatarURL    string     `gorm:"type:varchar(500)"                     json:"avatar_url"`
+	IsActive     bool       `gorm:"default:true"                          json:"is_active"`
 	UserRoles    []UserRole `gorm:"foreignKey:UserID"                json:"-"`
 }
 
 // Role entity
 type Role struct {
-	ID          uint       `gorm:"primaryKey"              json:"id"`
-	Name        string     `gorm:"type:varchar(50);uniqueIndex;not null" json:"name"`
-	CreatedAt   time.Time  `json:"created_at"`
+	ID          uint             `gorm:"primaryKey"              json:"id"`
+	Name        string           `gorm:"type:varchar(50);uniqueIndex;not null" json:"name"`
+	CreatedAt   time.Time        `json:"created_at"`
 	Permissions []RolePermission `gorm:"foreignKey:RoleID"  json:"-"`
 }
 
@@ -55,13 +55,13 @@ type RolePermission struct {
 // Lesson entity
 type Lesson struct {
 	Base
-	Title        string       `gorm:"type:varchar(255)"             json:"title"`
-	Description  string       `gorm:"type:text"                     json:"description"`
-	VideoURL     string       `gorm:"type:varchar(500);not null"    json:"video_url"`
-	ThumbnailURL string       `gorm:"type:varchar(500)"             json:"thumbnail_url"`
-	Level        string       `gorm:"type:varchar(20)"              json:"level"` // easy|medium|hard
-	Duration     float64      `                                     json:"duration"`
-	Transcripts  []Transcript `gorm:"foreignKey:LessonID"           json:"transcripts,omitempty"`
+	Title        string           `gorm:"type:varchar(255)"             json:"title"`
+	Description  string           `gorm:"type:text"                     json:"description"`
+	VideoURL     string           `gorm:"type:varchar(500);not null"    json:"video_url"`
+	ThumbnailURL string           `gorm:"type:varchar(500)"             json:"thumbnail_url"`
+	Level        string           `gorm:"type:varchar(20)"              json:"level"` // easy|medium|hard
+	Duration     float64          `                                     json:"duration"`
+	Transcripts  []Transcript     `gorm:"foreignKey:LessonID"           json:"transcripts,omitempty"`
 	Categories   []LessonCategory `gorm:"foreignKey:LessonID"       json:"-"`
 }
 
@@ -90,12 +90,12 @@ type Attempt struct {
 // UserAnswer entity
 type UserAnswer struct {
 	Base
-	AttemptID    uint    `gorm:"not null;index"            json:"attempt_id"`
-	TranscriptID uint    `gorm:"not null;uniqueIndex:idx_attempt_transcript" json:"transcript_id"`
-	AttemptIDForIdx uint `gorm:"not null;uniqueIndex:idx_attempt_transcript" json:"-"` // paired composite index
-	AnswerText   string  `gorm:"type:text"                 json:"answer_text"`
-	Score        float64 `                                 json:"score"`
-	IsCorrect    bool    `                                 json:"is_correct"`
+	AttemptID       uint    `gorm:"not null;index"            json:"attempt_id"`
+	TranscriptID    uint    `gorm:"not null;uniqueIndex:idx_attempt_transcript" json:"transcript_id"`
+	AttemptIDForIdx uint    `gorm:"not null;uniqueIndex:idx_attempt_transcript" json:"-"` // paired composite index
+	AnswerText      string  `gorm:"type:text"                 json:"answer_text"`
+	Score           float64 `                                 json:"score"`
+	IsCorrect       bool    `                                 json:"is_correct"`
 }
 
 // UserProgress entity

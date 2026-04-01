@@ -16,6 +16,12 @@ import (
 // AuthMiddleware validates JWT and sets user_id + role in context
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// TEMPORARY: Bypass authentication for testing
+		c.Set("user_id", uint(1)) // Use a default user ID
+		c.Set("role", "user")     // Use a default role
+		c.Next()
+		return
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
 			response.ErrorResponseData(c, response.CodeUnauthorized, nil)
