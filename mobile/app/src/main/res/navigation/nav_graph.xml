@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/shadowingFragment">
+
+    <fragment
+        android:id="@+id/shadowingFragment"
+        android:name="com.example.app.feature.shadowing.ui.ShadowingFragment"
+        android:label="Học tập" />
+
+    <fragment
+        android:id="@+id/vocabularyFragment"
+        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:label="Từ vựng" />
+
+    <fragment
+        android:id="@+id/reviewFragment"
+        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:label="Ôn tập" />
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:label="Tiến độ" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:label="Cài đặt" />
 
 </navigation>
