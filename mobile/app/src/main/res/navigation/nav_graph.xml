@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/shadowingFragment"
-        android:name="com.example.app.feature.shadowing.ui.ShadowingFragment"
+        android:name="com.example.app.feature.topic.ui.fragment_study"
         android:label="Học tập" />
 
     <fragment
         android:id="@+id/vocabularyFragment"
-        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:name="com.example.app.feature.topic.ui.VocabularyFragment"
         android:label="Từ vựng" />
 
     <fragment
         android:id="@+id/reviewFragment"
-        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:name="com.example.app.feature.topic.ui.fragment_review"
         android:label="Ôn tập" />
 
     <fragment
         android:id="@+id/progressFragment"
-        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:name="com.example.app.feature.topic.ui.fragment_progress"
         android:label="Tiến độ" />
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.app.feature.topic.ui.TopicFragment"
+        android:name="com.example.app.feature.topic.ui.fragment_settings"
         android:label="Cài đặt" />
 
 </navigation>
