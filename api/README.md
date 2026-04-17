@@ -58,14 +58,32 @@ func RegisterRoutes() {
 
 ## Getting Started
 
-1. Install dependencies:
+1. Copy environment file:
    ```bash
-   go mod download
+   cp .env.example .env
    ```
 
-2. Run the server:
+2. Start Docker containers:
    ```bash
+   make up
+   ```
+
+3. Run database migrations:
+   ```bash
+   make migrate-up
+   ```
+
+4. Run the server (choose one):
+   ```bash
+   # Option 1: go run
    go run cmd/server/main.go
+
+   # Option 2: go build
+   go build -o server cmd/server/main.go
+   ./server
+
+   # Option 3: air (fast reload)
+   air -c server.air.toml
    ```
 
-3. Access Swagger documentation at `http://localhost:3001/swagger/index.html`
+5. Access Swagger documentation at `http://localhost:3001/swagger`
