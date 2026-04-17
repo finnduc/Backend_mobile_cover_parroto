@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
-	JWT      JWTConfig
+	Firebase FirebaseConfig
 }
 
 type ServerConfig struct {
@@ -27,10 +27,9 @@ type PostgresConfig struct {
 	SSLMode  string
 }
 
-type JWTConfig struct {
-	Secret        string
-	AccessExpiry  int
-	RefreshExpiry int
+type FirebaseConfig struct {
+	CredentialsFile string
+	ProjectID       string
 }
 
 func Load() Config {
@@ -48,10 +47,9 @@ func Load() Config {
 			DBName:   getEnv("POSTGRES_DB", "parroto"),
 			SSLMode:  getEnv("POSTGRES_SSLMODE", "disable"),
 		},
-		JWT: JWTConfig{
-			Secret:        getEnv("JWT_SECRET", ""),
-			AccessExpiry:  getEnvInt("JWT_ACCESS_EXPIRY", 3600),
-			RefreshExpiry: getEnvInt("JWT_REFRESH_EXPIRY", 604800),
+		Firebase: FirebaseConfig{
+			CredentialsFile: getEnv("FIREBASE_CREDENTIALS_FILE", ""),
+			ProjectID:       getEnv("FIREBASE_PROJECT_ID", ""),
 		},
 	}
 }

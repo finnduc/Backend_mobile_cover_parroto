@@ -13,8 +13,5 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	svc := services.NewAuthService(repo)
 	ctrl := NewAuthController(svc)
 
-	r.POST("/auth/register", ctrl.Register)
-	r.POST("/auth/login", ctrl.Login)
-	r.POST("/auth/refresh", ctrl.Refresh)
-	r.POST("/auth/logout", ctrl.Logout)
+	r.POST("/auth/sync", ctrl.Sync)
 }

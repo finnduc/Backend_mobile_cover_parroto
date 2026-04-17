@@ -6,10 +6,13 @@ import (
 
 	"go-cover-parroto/internal/configs"
 	"go-cover-parroto/internal/database"
+	fb "go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
 	"go-cover-parroto/internal/modules/lesson"
+	learninghistory "go-cover-parroto/internal/modules/learning_history"
+	"go-cover-parroto/internal/modules/transcript"
 	"go-cover-parroto/internal/modules/user"
 
 	_ "go-cover-parroto/cmd/server/docs"
@@ -23,7 +26,7 @@ import (
 
 // @title           Engflix API
 // @version         1.0
-// @description     This is a sample server celler server.
+// @description     Engflix - Language Learning Platform API
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
@@ -33,19 +36,24 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      localhost:3001
 // @BasePath  /api/v1
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-
 	cfg := configs.Load()
 
 	if err := database.Init(cfg.Postgres); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	if err := fb.Init(cfg.Firebase); err != nil {
+		log.Fatalf("Failed to initialize Firebase: %v", err)
 	}
 
 	port := cfg.Server.Port
@@ -85,6 +93,8 @@ func main() {
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
 		bookmark.RegisterRoutes(v1, db)
+		learninghistory.RegisterRoutes(v1, db)
+		transcript.RegisterRoutes(v1, db)
 	}
 
 	log.Printf("API server running, documentation at http://localhost:%s/swagger", port)

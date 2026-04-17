@@ -3,22 +3,18 @@ package services
 import (
 	"context"
 	"errors"
-	"time"
 
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
-	authreq "go-cover-parroto/internal/modules/auth/dtos/req"
 	authres "go-cover-parroto/internal/modules/auth/dtos/res"
 	"go-cover-parroto/internal/modules/auth/repositories"
 
-	"golang.org/x/crypto/bcrypt"
+	fb "go-cover-parroto/internal/firebase"
 )
 
 type IAuthService interface {
-	Register(ctx context.Context, body authreq.RegisterReq) (*authres.RegisterRes, *response.AppError)
-	Login(ctx context.Context, body authreq.LoginReq) (*authres.LoginRes, *response.AppError)
-	RefreshToken(ctx context.Context, body authreq.RefreshReq) (*authres.RefreshRes, *response.AppError)
+	SyncUser(ctx context.Context, firebaseToken string) (*authres.SyncRes, *response.AppError)
 }
 
 type authService struct {
@@ -29,70 +25,42 @@ func NewAuthService(repo repositories.IAuthRepo) IAuthService {
 	return &authService{repo: repo}
 }
 
-func (s *authService) Register(ctx context.Context, body authreq.RegisterReq) (*authres.RegisterRes, *response.AppError) {
-	existing, err := s.repo.FindByEmail(ctx, body.Email)
-	if err != nil && !errors.Is(err, coreError.ErrNotFound) {
-		return nil, response.Internal("failed to check existing user")
-	}
-	if existing != nil {
-		return nil, response.Conflict("email already exists")
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
+func (s *authService) SyncUser(ctx context.Context, firebaseToken string) (*authres.SyncRes, *response.AppError) {
+	decoded, err := fb.AuthClient.VerifyIDToken(ctx, firebaseToken)
 	if err != nil {
-		return nil, response.Internal("failed to hash password")
+		return nil, response.Unauthorized("invalid firebase token")
 	}
 
-	user := &models.User{
-		Email:    body.Email,
-		Password: string(hashedPassword),
-		Name:     body.Name,
+	email, _ := decoded.Claims["email"].(string)
+	name, _ := decoded.Claims["name"].(string)
+	picture, _ := decoded.Claims["picture"].(string)
+
+	if email == "" {
+		return nil, response.BadRequest("firebase token missing email")
 	}
 
-	if err := s.repo.Create(ctx, user); err != nil {
-		return nil, response.Internal("failed to create user")
-	}
-
-	return &authres.RegisterRes{
-		ID:    user.ID,
-		Email: user.Email,
-		Name:  user.Name,
-	}, nil
-}
-
-func (s *authService) Login(ctx context.Context, body authreq.LoginReq) (*authres.LoginRes, *response.AppError) {
-	user, err := s.repo.FindByEmail(ctx, body.Email)
+	user, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
-		if errors.Is(err, coreError.ErrNotFound) {
-			return nil, response.Unauthorized("invalid credentials")
+		if !errors.Is(err, coreError.ErrNotFound) {
+			return nil, response.Internal("failed to find user")
 		}
-		return nil, response.Internal("failed to find user")
+
+		user = &models.User{
+			Email:     email,
+			Name:      name,
+			AvatarURL: picture,
+			Password:  "",
+		}
+
+		if createErr := s.repo.Create(ctx, user); createErr != nil {
+			return nil, response.Internal("failed to create user")
+		}
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		return nil, response.Unauthorized("invalid credentials")
-	}
-
-	accessToken, _ := GenerateToken(user.ID, time.Hour)
-	refreshToken, _ := GenerateToken(user.ID, time.Hour*24*7)
-
-	return &authres.LoginRes{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		User: authres.UserInfo{
-			ID:    user.ID,
-			Email: user.Email,
-			Name:  user.Name,
-		},
+	return &authres.SyncRes{
+		ID:        user.ID,
+		Email:     user.Email,
+		Name:      user.Name,
+		AvatarURL: user.AvatarURL,
 	}, nil
-}
-
-func (s *authService) RefreshToken(ctx context.Context, body authreq.RefreshReq) (*authres.RefreshRes, *response.AppError) {
-	claims, err := ValidateToken(body.RefreshToken)
-	if err != nil {
-		return nil, response.Unauthorized("invalid refresh token")
-	}
-
-	accessToken, _ := GenerateToken(claims.UserID, time.Hour)
-	return &authres.RefreshRes{AccessToken: accessToken}, nil
 }

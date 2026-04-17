@@ -9,8 +9,8 @@ import (
 )
 
 type IAuthRepo interface {
-	Create(ctx context.Context, user *models.User) error
 	FindByEmail(ctx context.Context, email string) (*models.User, error)
+	Create(ctx context.Context, user *models.User) error
 }
 
 type authRepo struct {
@@ -21,10 +21,6 @@ func NewAuthRepo(db *gorm.DB) IAuthRepo {
 	return &authRepo{db: db}
 }
 
-func (r *authRepo) Create(ctx context.Context, user *models.User) error {
-	return r.db.WithContext(ctx).Create(user).Error
-}
-
 func (r *authRepo) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
@@ -32,4 +28,8 @@ func (r *authRepo) FindByEmail(ctx context.Context, email string) (*models.User,
 		return nil, errors.MapRepoError(err)
 	}
 	return &user, nil
+}
+
+func (r *authRepo) Create(ctx context.Context, user *models.User) error {
+	return r.db.WithContext(ctx).Create(user).Error
 }
