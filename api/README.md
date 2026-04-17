@@ -58,9 +58,10 @@ func RegisterRoutes() {
 
 ## Getting Started
 
-1. Copy environment file:
+1. Copy environment file and install dependencies:
    ```bash
    cp .env.example .env
+   go mod tidy
    ```
 
 2. Start Docker containers:
