@@ -10,13 +10,36 @@ import (
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
 	"go-cover-parroto/internal/modules/lesson"
-	"go-cover-parroto/internal/modules/progress"
 	"go-cover-parroto/internal/modules/user"
+
+	_ "go-cover-parroto/cmd/server/docs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	cfg := configs.Load()
 
@@ -30,6 +53,8 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
@@ -47,12 +72,12 @@ func main() {
 		})
 
 		v1 := api.Group("/v1")
-		auth.RegisterRoutes(v1)
-		user.RegisterRoutes(v1)
-		lesson.RegisterRoutes(v1)
-		category.RegisterRoutes(v1)
-		bookmark.RegisterRoutes(v1)
-		progress.RegisterRoutes(v1)
+		db := database.DB
+		auth.RegisterRoutes(v1, db)
+		user.RegisterRoutes(v1, db)
+		lesson.RegisterRoutes(v1, db)
+		category.RegisterRoutes(v1, db)
+		bookmark.RegisterRoutes(v1, db)
 	}
 
 	log.Printf("API server running at http://localhost:%s/api", port)

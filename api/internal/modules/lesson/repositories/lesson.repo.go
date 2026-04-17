@@ -2,10 +2,13 @@ package repositories
 
 import (
 	"context"
+	"errors"
 
 	"go-cover-parroto/internal/database/models"
 	"gorm.io/gorm"
 )
+
+var ErrNotFound = errors.New("record not found")
 
 type ILessonRepo interface {
 	FindAll(ctx context.Context) ([]models.Lesson, error)
@@ -30,6 +33,9 @@ func (r *lessonRepo) FindByID(ctx context.Context, id uint) (*models.Lesson, err
 	var lesson models.Lesson
 	err := r.db.WithContext(ctx).First(&lesson, id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 	return &lesson, nil
