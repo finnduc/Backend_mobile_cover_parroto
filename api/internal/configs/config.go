@@ -3,6 +3,8 @@ package configs
 import (
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -32,6 +34,7 @@ type JWTConfig struct {
 }
 
 func Load() Config {
+	_ = godotenv.Load()
 	return Config{
 		Server: ServerConfig{
 			Port: getEnv("PORT", "3001"),

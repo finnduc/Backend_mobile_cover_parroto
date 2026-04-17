@@ -2,14 +2,11 @@ package repositories
 
 import (
 	"context"
-	"errors"
 
-	"gorm.io/gorm"
-
+	"go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/database/models"
+	"gorm.io/gorm"
 )
-
-var ErrNotFound = errors.New("record not found")
 
 type IAuthRepo interface {
 	Create(ctx context.Context, user *models.User) error
@@ -32,10 +29,7 @@ func (r *authRepo) FindByEmail(ctx context.Context, email string) (*models.User,
 	var user models.User
 	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrNotFound
-		}
-		return nil, err
+		return nil, errors.MapRepoError(err)
 	}
 	return &user, nil
 }

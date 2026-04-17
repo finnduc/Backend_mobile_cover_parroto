@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	authreq "go-cover-parroto/internal/modules/auth/dtos/req"
@@ -30,7 +31,7 @@ func NewAuthService(repo repositories.IAuthRepo) IAuthService {
 
 func (s *authService) Register(ctx context.Context, body authreq.RegisterReq) (*authres.RegisterRes, *response.AppError) {
 	existing, err := s.repo.FindByEmail(ctx, body.Email)
-	if err != nil && !errors.Is(err, repositories.ErrNotFound) {
+	if err != nil && !errors.Is(err, coreError.ErrNotFound) {
 		return nil, response.Internal("failed to check existing user")
 	}
 	if existing != nil {
@@ -62,7 +63,7 @@ func (s *authService) Register(ctx context.Context, body authreq.RegisterReq) (*
 func (s *authService) Login(ctx context.Context, body authreq.LoginReq) (*authres.LoginRes, *response.AppError) {
 	user, err := s.repo.FindByEmail(ctx, body.Email)
 	if err != nil {
-		if errors.Is(err, repositories.ErrNotFound) {
+		if errors.Is(err, coreError.ErrNotFound) {
 			return nil, response.Unauthorized("invalid credentials")
 		}
 		return nil, response.Internal("failed to find user")

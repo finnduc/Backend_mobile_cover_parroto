@@ -81,10 +81,6 @@ definitions:
     type: object
   go-cover-parroto_internal_core_response.Meta:
     properties:
-      has_more:
-        type: boolean
-      last_key:
-        description: Cursor-style (DynamoDB, etc.)
       limit:
         type: integer
       page:
@@ -215,7 +211,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  title: Engflix API
   version: "1.0"
 paths:
   /auth/login:

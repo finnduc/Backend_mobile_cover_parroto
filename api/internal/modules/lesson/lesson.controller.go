@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
 	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
 	"go-cover-parroto/internal/modules/lesson/services"
@@ -28,7 +29,11 @@ func NewLessonController(svc services.ILessonService) *LessonController {
 // @Success 200 {object} response.BaseResponse[res.LessonRes]
 // @Router /lessons [get]
 func (ctrl *LessonController) List(c *gin.Context) {
-	results, appErr := ctrl.svc.ListLessons(c.Request.Context())
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	query := database.NewQuery().SetPage(page).SetLimit(limit)
+	results, appErr := ctrl.svc.ListLessons(c.Request.Context(), query)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

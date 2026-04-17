@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/bookmark/repositories"
@@ -23,9 +22,6 @@ func NewBookmarkService(repo repositories.IBookmarkRepo) IBookmarkService {
 
 func (s *bookmarkService) AddBookmark(ctx context.Context, userID, lessonID uint) *response.AppError {
 	if err := s.repo.Create(ctx, userID, lessonID); err != nil {
-		if errors.Is(err, repositories.ErrNotFound) {
-			return response.NotFound("bookmark not created")
-		}
 		return response.Internal("failed to add bookmark")
 	}
 	return nil

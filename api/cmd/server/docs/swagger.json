@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "This is a sample server celler server.",
-        "title": "Swagger Example API",
+        "title": "Engflix API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
@@ -549,12 +549,6 @@
         "go-cover-parroto_internal_core_response.Meta": {
             "type": "object",
             "properties": {
-                "has_more": {
-                    "type": "boolean"
-                },
-                "last_key": {
-                    "description": "Cursor-style (DynamoDB, etc.)"
-                },
                 "limit": {
                     "type": "integer"
                 },

@@ -21,7 +21,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title           Swagger Example API
+// @title           Engflix API
 // @version         1.0
 // @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
@@ -41,6 +41,7 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+
 	cfg := configs.Load()
 
 	if err := database.Init(cfg.Postgres); err != nil {
@@ -54,7 +55,13 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any", func(c *gin.Context) {
+		if c.Param("any") == "/" || c.Param("any") == "" {
+			c.Redirect(302, "/swagger/index.html")
+			return
+		}
+		ginSwagger.WrapHandler(swaggerFiles.Handler)(c)
+	})
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
@@ -80,7 +87,7 @@ func main() {
 		bookmark.RegisterRoutes(v1, db)
 	}
 
-	log.Printf("API server running at http://localhost:%s/api", port)
+	log.Printf("API server running, documentation at http://localhost:%s/swagger", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

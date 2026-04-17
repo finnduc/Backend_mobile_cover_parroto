@@ -555,12 +555,6 @@ const docTemplate = `{
         "go-cover-parroto_internal_core_response.Meta": {
             "type": "object",
             "properties": {
-                "has_more": {
-                    "type": "boolean"
-                },
-                "last_key": {
-                    "description": "Cursor-style (DynamoDB, etc.)"
-                },
                 "limit": {
                     "type": "integer"
                 },
@@ -757,7 +751,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
+	Title:            "Engflix API",
 	Description:      "This is a sample server celler server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

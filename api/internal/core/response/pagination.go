@@ -9,8 +9,8 @@ type Meta struct {
 	TotalPages int   `json:"total_pages,omitempty"`
 
 	// Cursor-style (DynamoDB, etc.)
-	LastKey any  `json:"last_key,omitempty"`
-	HasMore bool `json:"has_more,omitempty"`
+	// LastKey any  `json:"last_key,omitempty"`
+	// HasMore bool `json:"has_more,omitempty"`
 }
 
 // NewMeta creates pagination metadata safely (SQL-style)

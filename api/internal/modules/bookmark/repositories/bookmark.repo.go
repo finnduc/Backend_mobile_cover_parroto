@@ -2,13 +2,10 @@ package repositories
 
 import (
 	"context"
-	"errors"
 
 	"go-cover-parroto/internal/database/models"
 	"gorm.io/gorm"
 )
-
-var ErrNotFound = errors.New("record not found")
 
 type IBookmarkRepo interface {
 	Create(ctx context.Context, userID, lessonID uint) error
