@@ -1,0 +1,17 @@
+package user
+
+import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+
+	"go-cover-parroto/internal/modules/user/repositories"
+	"go-cover-parroto/internal/modules/user/services"
+)
+
+func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
+	repo := repositories.NewUserRepo(db)
+	svc := services.NewUserService(repo)
+	ctrl := NewUserController(svc)
+
+	r.GET("/user/profile", ctrl.GetProfile)
+}
