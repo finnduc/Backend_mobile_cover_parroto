@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/modules/bookmark/services"
-
 	_ "go-cover-parroto/internal/modules/bookmark/dtos/res"
+	"go-cover-parroto/internal/modules/bookmark/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +18,37 @@ type BookmarkController struct {
 
 func NewBookmarkController(svc services.IBookmarkService) *BookmarkController {
 	return &BookmarkController{svc: svc}
+}
+
+// List godoc
+// @Summary List user bookmarks
+// @Description Get the authenticated user's bookmarks with lesson details
+// @Tags bookmarks
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.BookmarkRes]]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /bookmarks [get]
+// @Security BearerAuth
+func (ctrl *BookmarkController) List(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	query := database.NewQuery().SetPage(page).SetLimit(limit)
+
+	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), userID.(uint), query)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
 }
 
 // Add godoc

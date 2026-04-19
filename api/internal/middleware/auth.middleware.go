@@ -6,13 +6,13 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
-	fb "go-cover-parroto/internal/firebase"
+	"go-cover-parroto/internal/firebase"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func FirebaseAuth(db *gorm.DB) gin.HandlerFunc {
+func FirebaseAuth(db *gorm.DB, fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
@@ -21,7 +21,7 @@ func FirebaseAuth(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		idToken := strings.TrimPrefix(authHeader, "Bearer ")
-		decoded, err := fb.AuthClient.VerifyIDToken(c.Request.Context(), idToken)
+		decoded, err := fbAuth.VerifyIDToken(c.Request.Context(), idToken)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response.Fail(response.Unauthorized("invalid token")))
 			return

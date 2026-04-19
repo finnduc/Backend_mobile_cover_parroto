@@ -36,7 +36,7 @@ func (s *learningHistoryService) Record(ctx context.Context, userID uint, body l
 		Completed:       body.Completed,
 	}
 
-	if err := s.repo.Create(ctx, history); err != nil {
+	if err := s.repo.Upsert(ctx, history); err != nil {
 		return nil, response.Internal("failed to record history")
 	}
 

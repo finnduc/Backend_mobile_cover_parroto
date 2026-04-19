@@ -2,20 +2,41 @@ package firebase
 
 import (
 	"context"
+	"errors"
+	"log"
 
 	firebase "firebase.google.com/go/v4"
-	"firebase.google.com/go/v4/auth"
+	firebaseauth "firebase.google.com/go/v4/auth"
 	"go-cover-parroto/internal/configs"
 	"google.golang.org/api/option"
 )
 
-var AuthClient *auth.Client
+type IFirebaseAuth interface {
+	VerifyIDToken(ctx context.Context, idToken string) (*firebaseauth.Token, error)
+}
 
-func Init(cfg configs.FirebaseConfig) error {
-	var app *firebase.App
-	var err error
+// stubFirebaseAuth is used when no Firebase credentials are configured.
+// All token verifications will fail with unauthorized.
+type stubFirebaseAuth struct{}
+
+func (s *stubFirebaseAuth) VerifyIDToken(_ context.Context, _ string) (*firebaseauth.Token, error) {
+	return nil, errors.New("firebase not configured")
+}
+
+func EmptyConfig() configs.FirebaseConfig {
+	return configs.FirebaseConfig{}
+}
+
+func Init(cfg configs.FirebaseConfig) (IFirebaseAuth, error) {
+	if cfg.CredentialsFile == "" && cfg.ProjectID == "" {
+		log.Println("WARNING: Firebase credentials not configured — protected routes will be unavailable")
+		return &stubFirebaseAuth{}, nil
+	}
 
 	ctx := context.Background()
+
+	var app *firebase.App
+	var err error
 
 	if cfg.CredentialsFile != "" {
 		app, err = firebase.NewApp(ctx, nil, option.WithCredentialsFile(cfg.CredentialsFile))
@@ -25,9 +46,8 @@ func Init(cfg configs.FirebaseConfig) error {
 	}
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	AuthClient, err = app.Auth(ctx)
-	return err
+	return app.Auth(ctx)
 }

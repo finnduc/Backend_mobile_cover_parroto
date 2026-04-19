@@ -12,11 +12,12 @@ import (
 )
 
 type AuthController struct {
-	svc services.IAuthService
+	svc    services.IAuthService
+	apiKey string
 }
 
-func NewAuthController(svc services.IAuthService) *AuthController {
-	return &AuthController{svc: svc}
+func NewAuthController(svc services.IAuthService, apiKey string) *AuthController {
+	return &AuthController{svc: svc, apiKey: apiKey}
 }
 
 // Sync godoc
@@ -25,7 +26,7 @@ func NewAuthController(svc services.IAuthService) *AuthController {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body req.SyncReq true "Firebase token"
+// @Param request body req.SyncReq true "Firebase ID token"
 // @Success 200 {object} response.BaseResponse[res.SyncRes]
 // @Failure 400 {object} response.BaseResponse[any]
 // @Failure 401 {object} response.BaseResponse[any]
@@ -38,6 +39,32 @@ func (ctrl *AuthController) Sync(c *gin.Context) {
 	}
 
 	result, appErr := ctrl.svc.SyncUser(c.Request.Context(), body.FirebaseToken)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
+// GetToken godoc
+// @Summary Get Firebase ID token
+// @Description Sign in with email & password to get a Firebase ID token for use in protected endpoints
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body req.GetTokenReq true "Email and password"
+// @Success 200 {object} response.BaseResponse[res.TokenRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /auth/token [post]
+func (ctrl *AuthController) GetToken(c *gin.Context) {
+	var body req.GetTokenReq
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+
+	result, appErr := ctrl.svc.GetToken(c.Request.Context(), ctrl.apiKey, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

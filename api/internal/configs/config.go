@@ -30,6 +30,7 @@ type PostgresConfig struct {
 type FirebaseConfig struct {
 	CredentialsFile string
 	ProjectID       string
+	WebAPIKey       string
 }
 
 func Load() Config {
@@ -50,6 +51,7 @@ func Load() Config {
 		Firebase: FirebaseConfig{
 			CredentialsFile: getEnv("FIREBASE_CREDENTIALS_FILE", ""),
 			ProjectID:       getEnv("FIREBASE_PROJECT_ID", ""),
+			WebAPIKey:       getEnv("FIREBASE_WEB_API_KEY", ""),
 		},
 	}
 }

@@ -23,11 +23,14 @@ func NewCategoryController(svc services.ICategoryService) *CategoryController {
 
 // List godoc
 // @Summary List categories
-// @Description Get all categories
+// @Description Get all categories with pagination
 // @Tags categories
 // @Accept json
 // @Produce json
-// @Success 200 {object} response.BaseResponse[res.CategoryRes]
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.CategoryRes]]
+// @Failure 500 {object} response.BaseResponse[any]
 // @Router /categories [get]
 func (ctrl *CategoryController) List(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))

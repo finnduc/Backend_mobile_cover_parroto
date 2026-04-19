@@ -52,8 +52,10 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	if err := fb.Init(cfg.Firebase); err != nil {
-		log.Fatalf("Failed to initialize Firebase: %v", err)
+	fbClient, err := fb.Init(cfg.Firebase)
+	if err != nil {
+		log.Printf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
+		fbClient, _ = fb.Init(fb.EmptyConfig())
 	}
 
 	port := cfg.Server.Port
@@ -88,13 +90,13 @@ func main() {
 
 		v1 := api.Group("/v1")
 		db := database.DB
-		auth.RegisterRoutes(v1, db)
-		user.RegisterRoutes(v1, db)
+		auth.RegisterRoutes(v1, db, fbClient, cfg.Firebase)
+		user.RegisterRoutes(v1, db, fbClient)
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
-		bookmark.RegisterRoutes(v1, db)
-		learninghistory.RegisterRoutes(v1, db)
-		transcript.RegisterRoutes(v1, db)
+		bookmark.RegisterRoutes(v1, db, fbClient)
+		learninghistory.RegisterRoutes(v1, db, fbClient)
+		transcript.RegisterRoutes(v1, db, fbClient)
 	}
 
 	log.Printf("API server running, documentation at http://localhost:%s/swagger", port)

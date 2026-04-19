@@ -24,10 +24,17 @@ profile.cov
 go.work
 go.work.sum
 
-# env file
-.env
+
 
 # Editor/IDE
 # .idea/
 # .vscode/
 tmp
+
+# env file
+.env
+
+# Firebase service account key — NEVER commit
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+firebase-credentials.json

@@ -9,50 +9,82 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LoginRes:
+  go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes:
     properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.LoginRes'
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes'
+        type: array
       error: {}
       meta:
         allOf:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LogoutRes:
-    properties:
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes
+  : properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.LogoutRes'
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes'
       error: {}
       meta:
         allOf:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RefreshRes:
-    properties:
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes
+  : properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.RefreshRes'
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes'
       error: {}
       meta:
         allOf:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RegisterRes:
-    properties:
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  : properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.RegisterRes'
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
       error: {}
       meta:
         allOf:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes:
     properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes'
+        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.SyncRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes:
+    properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.TokenRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes'
       error: {}
       meta:
         allOf:
@@ -91,28 +123,45 @@ definitions:
       total_pages:
         type: integer
     type: object
-  go-cover-parroto_internal_modules_auth_dtos_req.LoginReq:
+  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq:
     properties:
       email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_req.RefreshReq:
-    properties:
-      refresh_token:
-        type: string
-    required:
-    - refresh_token
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_req.RegisterReq:
-    properties:
-      email:
-        type: string
-      name:
         type: string
       password:
         minLength: 6
@@ -121,41 +170,57 @@ definitions:
     - email
     - password
     type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.LoginRes:
+  go-cover-parroto_internal_modules_auth_dtos_req.SyncReq:
     properties:
-      access_token:
+      firebase_token:
+        type: string
+    required:
+    - firebase_token
+    type: object
+  go-cover-parroto_internal_modules_auth_dtos_res.SyncRes:
+    properties:
+      avatar_url:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_auth_dtos_res.TokenRes:
+    properties:
+      email:
+        type: string
+      expires_in:
+        type: string
+      id_token:
         type: string
       refresh_token:
         type: string
-      user:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.UserInfo'
     type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.LogoutRes:
+  go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes:
     properties:
-      message:
+      created_at:
         type: string
+      lesson:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo'
+      lesson_id:
+        type: integer
+      user_id:
+        type: integer
     type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.RefreshRes:
+  go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo:
     properties:
-      access_token:
-        type: string
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.RegisterRes:
-    properties:
-      email:
-        type: string
+      duration:
+        type: number
       id:
         type: integer
-      name:
+      level:
         type: string
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.UserInfo:
-    properties:
-      email:
+      thumbnail_url:
         type: string
-      id:
-        type: integer
-      name:
+      title:
         type: string
     type: object
   go-cover-parroto_internal_modules_category_dtos_res.CategoryRes:
@@ -164,6 +229,34 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq:
+    properties:
+      completed:
+        type: boolean
+      duration_watched:
+        minimum: 0
+        type: number
+      lesson_id:
+        type: integer
+    required:
+    - duration_watched
+    - lesson_id
+    type: object
+  go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes:
+    properties:
+      completed:
+        type: boolean
+      created_at:
+        type: string
+      duration_watched:
+        type: number
+      id:
+        type: integer
+      lesson_id:
+        type: integer
+      user_id:
+        type: integer
     type: object
   go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes:
     properties:
@@ -186,6 +279,25 @@ definitions:
       video_url:
         type: string
     type: object
+  go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes:
+    properties:
+      content:
+        type: string
+      end_timestamp:
+        type: number
+      id:
+        type: integer
+      lesson_id:
+        type: integer
+      phonetic:
+        type: string
+      sequence:
+        type: integer
+      start_timestamp:
+        type: number
+      vietnamese:
+        type: string
+    type: object
   go-cover-parroto_internal_modules_user_dtos_res.UserRes:
     properties:
       avatar_url:
@@ -200,13 +312,13 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: localhost:3001
 info:
   contact:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: This is a sample server celler server.
+  description: Engflix - Language Learning Platform API
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -214,25 +326,25 @@ info:
   title: Engflix API
   version: "1.0"
 paths:
-  /auth/login:
+  /auth/sync:
     post:
       consumes:
       - application/json
-      description: Authenticate user and return access token
+      description: Verify Firebase ID token and create or get user in database
       parameters:
-      - description: Login request
+      - description: Firebase ID token
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.LoginReq'
+          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.SyncReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LoginRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes'
         "400":
           description: Bad Request
           schema:
@@ -241,86 +353,72 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      summary: Login user
+      summary: Sync user with Firebase
       tags:
       - auth
-  /auth/logout:
+  /auth/token:
     post:
       consumes:
       - application/json
-      description: Logout current user
+      description: Sign in with email & password to get a Firebase ID token for use
+        in protected endpoints
+      parameters:
+      - description: Email and password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LogoutRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      summary: Get Firebase ID token
+      tags:
+      - auth
+  /bookmarks:
+    get:
+      consumes:
+      - application/json
+      description: Get the authenticated user's bookmarks with lesson details
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
       security:
       - BearerAuth: []
-      summary: Logout user
+      summary: List user bookmarks
       tags:
-      - auth
-  /auth/refresh:
-    post:
-      consumes:
-      - application/json
-      description: Refresh access token using refresh token
-      parameters:
-      - description: Refresh request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.RefreshReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RefreshRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      summary: Refresh access token
-      tags:
-      - auth
-  /auth/register:
-    post:
-      consumes:
-      - application/json
-      description: Register a new user with email and password
-      parameters:
-      - description: Register request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.RegisterReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RegisterRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      summary: Register a new user
-      tags:
-      - auth
+      - bookmarks
   /bookmarks/{lessonId}:
     delete:
       consumes:
@@ -386,33 +484,167 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all categories
+      description: Get all categories with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
       summary: List categories
       tags:
       - categories
+  /learning-history:
+    get:
+      consumes:
+      - application/json
+      description: Get the authenticated user's learning history
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List learning history
+      tags:
+      - learning-history
+    post:
+      consumes:
+      - application/json
+      description: Record or update a user's learning progress for a lesson
+      parameters:
+      - description: Record request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Record learning progress
+      tags:
+      - learning-history
+  /learning-history/{lessonId}:
+    get:
+      consumes:
+      - application/json
+      description: Get the user's learning history for a specific lesson
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get history for a lesson
+      tags:
+      - learning-history
   /lessons:
     get:
       consumes:
       - application/json
-      description: Get all lessons
+      description: Get all lessons with optional filters and pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: integer
+      - description: Filter by level (beginner/intermediate/advanced)
+        in: query
+        name: level
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
       summary: List lessons
       tags:
       - lessons
-  /lessons/{id}:
+  /lessons/{lessonId}:
     get:
       consumes:
       - application/json
@@ -420,7 +652,7 @@ paths:
       parameters:
       - description: Lesson ID
         in: path
-        name: id
+        name: lessonId
         required: true
         type: integer
       produces:
@@ -441,6 +673,37 @@ paths:
       summary: Get a lesson
       tags:
       - lessons
+  /lessons/{lessonId}/transcripts:
+    get:
+      consumes:
+      - application/json
+      description: Get all transcripts for a lesson sorted by sequence
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get lesson transcripts
+      tags:
+      - transcripts
   /users/me:
     get:
       consumes:
@@ -467,6 +730,8 @@ paths:
       tags:
       - users
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

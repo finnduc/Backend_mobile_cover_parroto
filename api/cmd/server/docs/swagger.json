@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server celler server.",
+        "description": "Engflix - Language Learning Platform API",
         "title": "Engflix API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
@@ -15,12 +15,12 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "localhost:3001",
     "basePath": "/api/v1",
     "paths": {
-        "/auth/login": {
+        "/auth/sync": {
             "post": {
-                "description": "Authenticate user and return access token",
+                "description": "Verify Firebase ID token and create or get user in database",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,15 +30,15 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login user",
+                "summary": "Sync user with Firebase",
                 "parameters": [
                     {
-                        "description": "Login request",
+                        "description": "Firebase ID token",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.LoginReq"
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.SyncReq"
                         }
                     }
                 ],
@@ -46,7 +46,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LoginRes"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes"
                         }
                     },
                     "400": {
@@ -64,14 +64,60 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/auth/token": {
             "post": {
+                "description": "Sign in with email \u0026 password to get a Firebase ID token for use in protected endpoints",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get Firebase ID token",
+                "parameters": [
+                    {
+                        "description": "Email and password",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/bookmarks": {
+            "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Logout current user",
+                "description": "Get the authenticated user's bookmarks with lesson details",
                 "consumes": [
                     "application/json"
                 ],
@@ -79,104 +125,34 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "bookmarks"
                 ],
-                "summary": "Logout user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LogoutRes"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/refresh": {
-            "post": {
-                "description": "Refresh access token using refresh token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Refresh access token",
+                "summary": "List user bookmarks",
                 "parameters": [
                     {
-                        "description": "Refresh request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.RefreshReq"
-                        }
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RefreshRes"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/register": {
-            "post": {
-                "description": "Register a new user with email and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Register a new user",
-                "parameters": [
-                    {
-                        "description": "Register request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.RegisterReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RegisterRes"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -282,7 +258,7 @@
         },
         "/categories": {
             "get": {
-                "description": "Get all categories",
+                "description": "Get all categories with pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -293,11 +269,185 @@
                     "categories"
                 ],
                 "summary": "List categories",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/learning-history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the authenticated user's learning history",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "learning-history"
+                ],
+                "summary": "List learning history",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Record or update a user's learning progress for a lesson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "learning-history"
+                ],
+                "summary": "Record learning progress",
+                "parameters": [
+                    {
+                        "description": "Record request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/learning-history/{lessonId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the user's learning history for a specific lesson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "learning-history"
+                ],
+                "summary": "Get history for a lesson",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID",
+                        "name": "lessonId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
                     }
                 }
@@ -305,7 +455,7 @@
         },
         "/lessons": {
             "get": {
-                "description": "Get all lessons",
+                "description": "Get all lessons with optional filters and pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -316,17 +466,51 @@
                     "lessons"
                 ],
                 "summary": "List lessons",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by category ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by level (beginner/intermediate/advanced)",
+                        "name": "level",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
                     }
                 }
             }
         },
-        "/lessons/{id}": {
+        "/lessons/{lessonId}": {
             "get": {
                 "description": "Get a lesson by ID",
                 "consumes": [
@@ -343,7 +527,7 @@
                     {
                         "type": "integer",
                         "description": "Lesson ID",
-                        "name": "id",
+                        "name": "lessonId",
                         "in": "path",
                         "required": true
                     }
@@ -363,6 +547,55 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/lessons/{lessonId}/transcripts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all transcripts for a lesson sorted by sequence",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcripts"
+                ],
+                "summary": "Get lesson transcripts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID",
+                        "name": "lessonId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -427,11 +660,14 @@
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LoginRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.LoginRes"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes"
+                    }
                 },
                 "error": {},
                 "meta": {
@@ -444,11 +680,11 @@
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_LogoutRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.LogoutRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes"
                 },
                 "error": {},
                 "meta": {
@@ -461,11 +697,11 @@
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RefreshRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.RefreshRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes"
                 },
                 "error": {},
                 "meta": {
@@ -478,11 +714,11 @@
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_RegisterRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.RegisterRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
                 },
                 "error": {},
                 "meta": {
@@ -495,11 +731,62 @@
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.SyncRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.TokenRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes"
                 },
                 "error": {},
                 "meta": {
@@ -564,7 +851,63 @@
                 }
             }
         },
-        "go-cover-parroto_internal_modules_auth_dtos_req.LoginReq": {
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq": {
             "type": "object",
             "required": [
                 "email",
@@ -572,35 +915,6 @@
             ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_req.RefreshReq": {
-            "type": "object",
-            "required": [
-                "refresh_token"
-            ],
-            "properties": {
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_req.RegisterReq": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
                     "type": "string"
                 },
                 "password": {
@@ -609,60 +923,84 @@
                 }
             }
         },
-        "go-cover-parroto_internal_modules_auth_dtos_res.LoginRes": {
+        "go-cover-parroto_internal_modules_auth_dtos_req.SyncReq": {
+            "type": "object",
+            "required": [
+                "firebase_token"
+            ],
+            "properties": {
+                "firebase_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_auth_dtos_res.SyncRes": {
             "type": "object",
             "properties": {
-                "access_token": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_auth_dtos_res.TokenRes": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "string"
+                },
+                "id_token": {
                     "type": "string"
                 },
                 "refresh_token": {
                     "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
                 },
-                "user": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.UserInfo"
+                "lesson": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
-        "go-cover-parroto_internal_modules_auth_dtos_res.LogoutRes": {
+        "go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_res.RefreshRes": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_res.RegisterRes": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
+                "duration": {
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_res.UserInfo": {
-            "type": "object",
-            "properties": {
-                "email": {
+                "level": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
+                "thumbnail_url": {
+                    "type": "string"
                 },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }
@@ -675,6 +1013,48 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq": {
+            "type": "object",
+            "required": [
+                "duration_watched",
+                "lesson_id"
+            ],
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "duration_watched": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "lesson_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "duration_watched": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -710,6 +1090,35 @@
                 }
             }
         },
+        "go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "end_timestamp": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "phonetic": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "start_timestamp": {
+                    "type": "number"
+                },
+                "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_user_dtos_res.UserRes": {
             "type": "object",
             "properties": {
@@ -729,8 +1138,10 @@
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
     "externalDocs": {

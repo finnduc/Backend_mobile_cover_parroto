@@ -14,5 +14,5 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	ctrl := NewLessonController(svc)
 
 	r.GET("/lessons", ctrl.List)
-	r.GET("/lessons/:id", ctrl.Get)
+	r.GET("/lessons/:lessonId", ctrl.Get)
 }

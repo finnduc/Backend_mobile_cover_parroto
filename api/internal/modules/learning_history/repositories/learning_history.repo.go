@@ -11,7 +11,7 @@ import (
 )
 
 type ILearningHistoryRepo interface {
-	Create(ctx context.Context, history *models.LearningHistory) error
+	Upsert(ctx context.Context, history *models.LearningHistory) error
 	FindAllByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error)
 	FindByUserAndLesson(ctx context.Context, userID, lessonID uint) (*models.LearningHistory, error)
 }
@@ -24,8 +24,23 @@ func NewLearningHistoryRepo(db *gorm.DB) ILearningHistoryRepo {
 	return &learningHistoryRepo{db: db}
 }
 
-func (r *learningHistoryRepo) Create(ctx context.Context, history *models.LearningHistory) error {
-	return r.db.WithContext(ctx).Create(history).Error
+func (r *learningHistoryRepo) Upsert(ctx context.Context, history *models.LearningHistory) error {
+	var existing models.LearningHistory
+	err := r.db.WithContext(ctx).Where("user_id = ? AND lesson_id = ?", history.UserID, history.LessonID).First(&existing).Error
+	if err != nil {
+		if errors.MapRepoError(err) == errors.ErrNotFound {
+			return r.db.WithContext(ctx).Create(history).Error
+		}
+		return err
+	}
+
+	existing.DurationWatched = history.DurationWatched
+	existing.Completed = history.Completed
+	if err := r.db.WithContext(ctx).Save(&existing).Error; err != nil {
+		return err
+	}
+	*history = existing
+	return nil
 }
 
 func (r *learningHistoryRepo) FindAllByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error) {
