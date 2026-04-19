@@ -12,12 +12,11 @@ import (
 )
 
 type AuthController struct {
-	svc    services.IAuthService
-	apiKey string
+	svc services.IAuthService
 }
 
-func NewAuthController(svc services.IAuthService, apiKey string) *AuthController {
-	return &AuthController{svc: svc, apiKey: apiKey}
+func NewAuthController(svc services.IAuthService) *AuthController {
+	return &AuthController{svc: svc}
 }
 
 // Sync godoc
@@ -64,7 +63,7 @@ func (ctrl *AuthController) GetToken(c *gin.Context) {
 		return
 	}
 
-	result, appErr := ctrl.svc.GetToken(c.Request.Context(), ctrl.apiKey, body)
+	result, appErr := ctrl.svc.GetToken(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

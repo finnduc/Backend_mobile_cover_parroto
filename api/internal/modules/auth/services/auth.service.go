@@ -2,11 +2,7 @@ package services
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
-	"net/http"
-	"strings"
 
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
@@ -15,11 +11,12 @@ import (
 	authreq "go-cover-parroto/internal/modules/auth/dtos/req"
 	authres "go-cover-parroto/internal/modules/auth/dtos/res"
 	"go-cover-parroto/internal/modules/auth/repositories"
+	"go-cover-parroto/internal/utils"
 )
 
 type IAuthService interface {
 	SyncUser(ctx context.Context, firebaseToken string) (*authres.SyncRes, *response.AppError)
-	GetToken(ctx context.Context, apiKey string, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError)
+	GetToken(ctx context.Context, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError)
 }
 
 type authService struct {
@@ -71,39 +68,15 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string) (*auth
 	}, nil
 }
 
-func (s *authService) GetToken(ctx context.Context, apiKey string, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError) {
-	url := fmt.Sprintf("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", apiKey)
-	payload := fmt.Sprintf(`{"email":%q,"password":%q,"returnSecureToken":true}`, body.Email, body.Password)
-
-	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, url, strings.NewReader(payload))
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := http.DefaultClient.Do(req)
+func (s *authService) GetToken(ctx context.Context, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError) {
+	token, err := s.fbAuth.SignIn(ctx, body.Email, body.Password)
 	if err != nil {
-		return nil, response.Internal("failed to contact Firebase")
-	}
-	defer resp.Body.Close()
-
-	var result struct {
-		IDToken      string `json:"idToken"`
-		RefreshToken string `json:"refreshToken"`
-		ExpiresIn    string `json:"expiresIn"`
-		Email        string `json:"email"`
-		Error        *struct {
-			Message string `json:"message"`
-		} `json:"error"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, response.Internal("failed to parse Firebase response")
-	}
-	if result.Error != nil {
-		return nil, response.Unauthorized(result.Error.Message)
+		return nil, response.Unauthorized(err.Error())
 	}
 
-	return &authres.TokenRes{
-		IDToken:      result.IDToken,
-		RefreshToken: result.RefreshToken,
-		ExpiresIn:    result.ExpiresIn,
-		Email:        result.Email,
-	}, nil
+	var result authres.TokenRes
+	if err := utils.MapToDTO(token, &result); err != nil {
+		return nil, response.Internal("failed to map token")
+	}
+	return &result, nil
 }

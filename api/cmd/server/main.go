@@ -90,7 +90,7 @@ func main() {
 
 		v1 := api.Group("/v1")
 		db := database.DB
-		auth.RegisterRoutes(v1, db, fbClient, cfg.Firebase)
+		auth.RegisterRoutes(v1, db, fbClient)
 		user.RegisterRoutes(v1, db, fbClient)
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
