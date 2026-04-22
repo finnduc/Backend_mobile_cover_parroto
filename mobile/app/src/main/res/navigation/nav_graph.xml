@@ -6,6 +6,22 @@
     app:startDestination="@id/shadowingFragment">
 
     <fragment
+        android:id="@+id/SignupFragment"
+        android:name="com.example.app.feature.auth.SignupFragment"
+        android:label="Signup" >
+        <action android:id="@+id/action_signupFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.example.app.feature.auth.LoginFragment"
+        android:label="Login" >
+        <action android:id="@+id/action_LoginFragment_to_signupFragment"
+            app:destination="@id/SignupFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/shadowingFragment"
         android:name="com.example.app.feature.topic.ui.fragment_study"
         android:label="Học tập" />
@@ -27,7 +43,13 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.app.feature.topic.ui.fragment_settings"
-        android:label="Cài đặt" />
+        android:name="com.example.app.feature.setting.ui.SettingsFragment"
+        android:label="Cài đặt">
+        <action
+            android:id="@+id/action_settingsFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" >
+        </action>
+    </fragment>
+
 
 </navigation>

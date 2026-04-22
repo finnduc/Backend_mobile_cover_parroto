@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="#0D0D0D">
 
+    <!-- Background gradient (reuse) -->
     <View
         android:id="@+id/bgGradient"
         android:layout_width="0dp"
@@ -16,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Decorative circle top-right (reuse) -->
     <View
         android:id="@+id/circleTopRight"
         android:layout_width="220dp"
@@ -27,6 +29,7 @@
         android:layout_marginTop="-60dp"
         android:layout_marginEnd="-60dp" />
 
+    <!-- Decorative circle bottom-left (reuse) -->
     <View
         android:id="@+id/circleBottomLeft"
         android:layout_width="160dp"
@@ -38,6 +41,7 @@
         android:layout_marginBottom="-40dp"
         android:layout_marginStart="-40dp" />
 
+    <!-- Scrollable content -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -58,6 +62,7 @@
             android:paddingBottom="48dp"
             android:gravity="center_horizontal">
 
+            <!-- Logo -->
             <FrameLayout
                 android:layout_width="80dp"
                 android:layout_height="80dp">
@@ -76,6 +81,7 @@
                     android:contentDescription="Logo" />
             </FrameLayout>
 
+            <!-- Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,6 +102,7 @@
                 android:textSize="15sp"
                 android:fontFamily="sans-serif" />
 
+            <!-- Card form (reuse bg_card style) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,6 +117,7 @@
                     android:orientation="vertical"
                     android:padding="24dp">
 
+                    <!-- Họ và tên -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -156,6 +164,7 @@
                             android:imeOptions="actionNext" />
                     </FrameLayout>
 
+                    <!-- Tên tài khoản -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -203,6 +212,7 @@
                             android:imeOptions="actionNext" />
                     </FrameLayout>
 
+                    <!-- Mật khẩu -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -262,6 +272,7 @@
                             android:focusable="true" />
                     </FrameLayout>
 
+                    <!-- Xác nhận mật khẩu -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -321,6 +332,7 @@
                             android:focusable="true" />
                     </FrameLayout>
 
+                    <!-- Terms & Conditions -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -359,6 +371,8 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Register Button (reuse bg_btn_primary) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -383,6 +397,7 @@
                     android:background="@drawable/bg_btn_primary" />
             </androidx.cardview.widget.CardView>
 
+            <!-- Divider -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -412,6 +427,7 @@
                     android:layout_weight="1"
                     android:background="#2A2A2A" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
