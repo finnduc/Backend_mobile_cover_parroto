@@ -96,25 +96,6 @@
                     android:textSize="12sp"
                     android:textColor="#999999" />
 
-                <Space android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@drawable/ic_eye"
-                    android:contentDescription="views icon" />
-
-                <TextView
-                    android:id="@+id/tvViews"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="27.3K"
-                    android:textSize="12sp"
-                    android:textColor="#999999" />
-
             </LinearLayout>
 
             <!-- Title (tối đa 2 dòng) -->

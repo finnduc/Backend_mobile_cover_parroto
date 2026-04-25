@@ -138,30 +138,6 @@
                 </LinearLayout>
 
                 <!-- Gem counter -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_stat_pill">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💎"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvGems"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" 0"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A1A2E" />
-                </LinearLayout>
 
                 <!-- Streak counter -->
                 <LinearLayout
@@ -247,16 +223,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!--
-                        TODO: Thay các view dưới bằng Fragment/include item_lesson_card
-                        hoặc inflate dynamically từ Adapter.
-                        Hiện tại là placeholder card để xem preview.
-                    -->
-
-                    <!-- Card placeholder 1 -->
                     <include layout="@layout/item_lesson_card" />
-
-                    <!-- Card placeholder 2 -->
                     <include layout="@layout/item_lesson_card" />
 
                 </LinearLayout>
