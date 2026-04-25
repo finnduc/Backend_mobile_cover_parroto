@@ -11,7 +11,7 @@
     android:paddingTop="28dp"
     android:paddingBottom="32dp">
 
-    <!-- Tiêu đề -->
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 android:id="@+id/imgChinhTa"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:src="@drawable/img_mascot_chinh_ta"
+                android:src="@drawable/img_logo_engflix"
                 android:contentDescription="Chính tả mascot"
                 android:layout_marginBottom="16dp" />
 
@@ -104,7 +104,7 @@
                 android:id="@+id/imgLuyenNoi"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:src="@drawable/img_mascot_luyen_noi"
+                android:src="@drawable/img_logo_engflix"
                 android:contentDescription="Luyện nói mascot"
                 android:layout_marginBottom="16dp" />
 
