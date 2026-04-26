@@ -148,20 +148,20 @@
                             android:contentDescription="Name icon" />
 
                         <EditText
-                            android:id="@+id/etFullName"
+                            android:id="@+id/getFullName"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
-                            android:paddingStart="52dp"
-                            android:paddingEnd="16dp"
-                            android:hint="Nhập họ và tên"
-                            android:textColorHint="#616161"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp"
-                            android:inputType="textPersonName"
                             android:background="@android:color/transparent"
                             android:fontFamily="sans-serif"
+                            android:hint="Nhập họ và tên"
+                            android:imeOptions="actionNext"
+                            android:inputType="textPersonName"
+                            android:paddingStart="52dp"
+                            android:paddingEnd="16dp"
                             android:singleLine="true"
-                            android:imeOptions="actionNext" />
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#616161"
+                            android:textSize="15sp" />
                     </FrameLayout>
 
                     <!-- Tên tài khoản -->
@@ -196,7 +196,7 @@
                             android:contentDescription="Username icon" />
 
                         <EditText
-                            android:id="@+id/etUsername"
+                            android:id="@+id/getUsername"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:paddingStart="52dp"
@@ -244,7 +244,7 @@
                             android:contentDescription="Lock icon" />
 
                         <EditText
-                            android:id="@+id/etPassword"
+                            android:id="@+id/getPassword"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:paddingStart="52dp"
@@ -304,7 +304,7 @@
                             android:contentDescription="Confirm lock icon" />
 
                         <EditText
-                            android:id="@+id/etConfirmPassword"
+                            android:id="@+id/getConfirmPassword"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:paddingStart="52dp"

@@ -141,7 +141,7 @@
                             android:contentDescription="User icon" />
 
                         <EditText
-                            android:id="@+id/etUsername"
+                            android:id="@+id/getUsername"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:paddingStart="52dp"
@@ -188,7 +188,7 @@
                             android:contentDescription="Lock icon" />
 
                         <EditText
-                            android:id="@+id/etPassword"
+                            android:id="@+id/getPassword"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:paddingStart="52dp"
