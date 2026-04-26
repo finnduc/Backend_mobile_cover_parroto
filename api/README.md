@@ -227,3 +227,5 @@ make clean     # Xóa containers + volumes (⚠️ mất data)
 | `FIREBASE_CREDENTIALS_FILE` | Đường dẫn file service account JSON | |
 | `FIREBASE_PROJECT_ID` | Firebase Project ID | |
 | `FIREBASE_WEB_API_KEY` | Firebase Web API Key | |
+
+docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
