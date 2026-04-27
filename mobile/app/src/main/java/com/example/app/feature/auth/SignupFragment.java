@@ -60,7 +60,7 @@ public class SignupFragment extends Fragment {
             }
 
             if (isvalid){
-                Register(Fullname,Username,Password);
+
             }
 
                 }
@@ -78,7 +78,5 @@ public class SignupFragment extends Fragment {
                     .navigate(R.id.action_signupFragment_to_loginFragment);
         });
     }
-    private void Register(String Fullname, String Username, String Password) {
 
-    }
 }

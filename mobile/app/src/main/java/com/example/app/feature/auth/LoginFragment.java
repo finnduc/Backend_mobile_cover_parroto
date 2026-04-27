@@ -50,8 +50,8 @@ public class LoginFragment extends Fragment {
                  getPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
                  isvalid = false;
              }
-             if (isvalid == true){
-                 Login(Username,Password);
+             if (isvalid){
+
              }
          });
 
@@ -64,7 +64,5 @@ public class LoginFragment extends Fragment {
             Navigation.findNavController(v)
                     .navigate(R.id.action_LoginFragment_to_signupFragment);
                 });
-    }
-    private void Login(String username, String password) {
     }
 }

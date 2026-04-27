@@ -38,3 +38,4 @@ tmp
 *-firebase-adminsdk-*.json
 serviceAccountKey.json
 firebase-credentials.json
+engflix.json
