@@ -333,41 +333,6 @@
                     </FrameLayout>
 
                     <!-- Terms & Conditions -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="20dp">
-
-                        <CheckBox
-                            android:id="@+id/cbTerms"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="#6C63FF"
-                            android:text=""
-                            android:layout_marginEnd="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tôi đồng ý với "
-                            android:textColor="#9E9E9E"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif" />
-
-                        <TextView
-                            android:id="@+id/tvTerms"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Điều khoản sử dụng"
-                            android:textColor="#6C63FF"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium"
-                            android:clickable="true"
-                            android:focusable="true" />
-                    </LinearLayout>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

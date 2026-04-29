@@ -1,4 +1,4 @@
-package com.example.app.data.remote.model.request;
+package com.example.app.data.remote.model.request.auth;
 
 public class TokenRequest {
 

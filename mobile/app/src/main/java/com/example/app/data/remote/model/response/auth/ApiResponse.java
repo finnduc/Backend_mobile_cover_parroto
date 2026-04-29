@@ -1,4 +1,4 @@
-package com.example.app.data.remote.model.response;
+package com.example.app.data.remote.model.response.auth;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,17 +1,18 @@
 package com.example.app.data.repository;
 
 import android.content.Context;
-import android.media.session.MediaSession;
 
+import com.example.app.BuildConfig;
 import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.AuthApi;
-import com.example.app.data.remote.model.request.RegisterRequest;
-import com.example.app.data.remote.model.request.SyncRequest;
-import com.example.app.data.remote.model.request.TokenRequest;
-import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.SyncResponse;
-import com.example.app.data.remote.model.response.TokenResponse;
+import com.example.app.data.remote.model.request.auth.RegisterRequest;
+import com.example.app.data.remote.model.request.auth.SyncRequest;
+import com.example.app.data.remote.model.request.auth.TokenRequest;
+import com.example.app.data.remote.model.response.auth.ApiResponse;
+import com.example.app.data.remote.model.response.auth.FirebaseSignUpResponse;
+import com.example.app.data.remote.model.response.auth.SyncResponse;
+import com.example.app.data.remote.model.response.auth.TokenResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,11 +48,15 @@ public class AuthRepository {
                     TokenResponse tokenData = response.body().getData();
                     tokenManager.saveToken(tokenData.getIdToken(), tokenData.getRefreshToken());
 
-                    // Bước 2: sync user
                     syncUser(tokenData.getIdToken(),"", callback);
 
                 } else {
-                    callback.onError("Email hoặc mật khẩu không đúng");
+                    try {
+                        String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
+                        callback.onError("Lỗi từ đăng nhập: " + errorDetail);
+                    } catch (Exception e) {
+                        callback.onError("Tài khoản mật khẩu không đúng");
+                    }
                 }
             }
 
@@ -91,6 +96,35 @@ public class AuthRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<SyncResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    public void register(String email, String password, String name, AuthCallback<SyncResponse> callback) {
+        RegisterRequest request = new RegisterRequest(email, password, true);
+
+        authApi.getRegister(BuildConfig.FIREBASE_API_KEY, request).enqueue(new Callback<FirebaseSignUpResponse>() {
+            @Override
+            public void onResponse(Call<FirebaseSignUpResponse> call, Response<FirebaseSignUpResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    FirebaseSignUpResponse user = response.body();
+                    tokenManager.saveToken(user.getIdToken(), user.getRefreshToken());
+                    String idToken = user.getIdToken();
+                    syncUser(idToken, name, callback);
+
+                } else {
+                    try {
+                        String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
+                        callback.onError("Lỗi từ Firebase: " + errorDetail);
+                    } catch (Exception e) {
+                        callback.onError("Không thể đọc lỗi từ Firebase");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FirebaseSignUpResponse> call, Throwable t) {
                 callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });

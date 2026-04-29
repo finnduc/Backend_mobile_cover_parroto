@@ -1,5 +1,5 @@
-package com.example.app.data.remote.model.request;
-import com.google.gson.annotations.SerializedName;
+package com.example.app.data.remote.model.request.auth;
+
 public class RegisterRequest {
     private String email;
     private String password;

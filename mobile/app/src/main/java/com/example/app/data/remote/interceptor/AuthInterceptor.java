@@ -22,6 +22,10 @@ public class AuthInterceptor implements Interceptor {
     @NonNull
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request originalRequest = chain.request();
+        String url = originalRequest.url().toString();
+        if (url.contains("identitytoolkit.googleapis.com")) {
+            return chain.proceed(originalRequest);
+        }
         String token = tokenManager.getIdToken();
         if (token == null) {
             return chain.proceed(originalRequest);

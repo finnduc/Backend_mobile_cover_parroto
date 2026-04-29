@@ -1,5 +1,6 @@
 package com.example.app.feature.auth;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -11,8 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.app.R;
+import com.example.app.data.remote.model.response.auth.SyncResponse;
+import com.example.app.data.repository.AuthRepository;
 
 public class SignupFragment extends Fragment {
     @Override
@@ -24,7 +28,7 @@ public class SignupFragment extends Fragment {
         EditText getUsername = view.findViewById(R.id.getUsername);
         EditText getPassword = view.findViewById(R.id.getPassword);
         EditText getConfirmPassword = view.findViewById(R.id.getConfirmPassword);
-
+        AuthRepository authRepository = new AuthRepository(requireContext());
         Signup.setOnClickListener(v -> {
             String Fullname , Username, Password, Confirmpassword;
             Fullname = getFullname.getText().toString().trim();
@@ -58,16 +62,31 @@ public class SignupFragment extends Fragment {
                 getConfirmPassword.setError("Mật khẩu không khớp");
                 isvalid = false;
             }
-
             if (isvalid){
+                Signup.setEnabled(false);
+                Signup.setText("Đang đăng ký...");
+                authRepository.register(Username,Password,Fullname,
+                        new AuthRepository.AuthCallback<SyncResponse>(){
+                    @Override
+                    public void onSuccess(SyncResponse data) {
+                        Signup.setEnabled(true);
+                        Signup.setText("Đăng ký");
+                        Toast.makeText(requireContext(), "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(v).navigate(R.id.action_signupFragment_to_loginFragment);
 
+                    }
+                    @Override
+                    public void onError(String message) {
+                        Signup.setEnabled(true);
+                        Signup.setText("ĐĂNG KÝ");
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
                 }
             )
         ;
-
-
         Login(view);
         return view;
     }

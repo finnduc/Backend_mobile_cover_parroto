@@ -1,17 +1,18 @@
 package com.example.app.data.remote.api;
 
 
-import com.example.app.BuildConfig;
-import com.example.app.data.remote.model.request.RegisterRequest;
-import com.example.app.data.remote.model.request.SyncRequest;
-import com.example.app.data.remote.model.request.TokenRequest;
-import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.SyncResponse;
-import com.example.app.data.remote.model.response.TokenResponse;
+import com.example.app.data.remote.model.request.auth.RegisterRequest;
+import com.example.app.data.remote.model.request.auth.SyncRequest;
+import com.example.app.data.remote.model.request.auth.TokenRequest;
+import com.example.app.data.remote.model.response.auth.ApiResponse;
+import com.example.app.data.remote.model.response.auth.FirebaseSignUpResponse;
+import com.example.app.data.remote.model.response.auth.SyncResponse;
+import com.example.app.data.remote.model.response.auth.TokenResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface AuthApi {
 
@@ -21,6 +22,6 @@ public interface AuthApi {
     @POST("auth/sync")
     Call<ApiResponse<SyncResponse>> synUser(@Body SyncRequest request);
 
-    @POST(BuildConfig.FIREBASE_SIGNUP_URL)
-    Call<ApiResponse<SyncResponse>> register(@Body RegisterRequest request);
+    @POST("https://identitytoolkit.googleapis.com/v1/accounts:signUp")
+    Call<FirebaseSignUpResponse> getRegister(@Query("key") String apiKey, @Body RegisterRequest request);
 }
