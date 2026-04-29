@@ -937,6 +937,9 @@ const docTemplate = `{
             "properties": {
                 "firebase_token": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

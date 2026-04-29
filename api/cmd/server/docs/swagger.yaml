@@ -174,6 +174,8 @@ definitions:
     properties:
       firebase_token:
         type: string
+      name:
+        type: string
     required:
     - firebase_token
     type: object

@@ -15,7 +15,8 @@ import (
 )
 
 type IAuthService interface {
-	SyncUser(ctx context.Context, firebaseToken string) (*authres.SyncRes, *response.AppError)
+	// Đã thêm tham số reqName để nhận tên từ request body
+	SyncUser(ctx context.Context, firebaseToken string, reqName string) (*authres.SyncRes, *response.AppError)
 	GetToken(ctx context.Context, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError)
 }
 
@@ -28,7 +29,7 @@ func NewAuthService(repo repositories.IAuthRepo, fbAuth firebase.IFirebaseAuth) 
 	return &authService{repo: repo, fbAuth: fbAuth}
 }
 
-func (s *authService) SyncUser(ctx context.Context, firebaseToken string) (*authres.SyncRes, *response.AppError) {
+func (s *authService) SyncUser(ctx context.Context, firebaseToken string, reqName string) (*authres.SyncRes, *response.AppError) {
 	decoded, err := s.fbAuth.VerifyIDToken(ctx, firebaseToken)
 	if err != nil {
 		return nil, response.Unauthorized("invalid firebase token")
@@ -37,6 +38,11 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string) (*auth
 	email, _ := decoded.Claims["email"].(string)
 	name, _ := decoded.Claims["name"].(string)
 	picture, _ := decoded.Claims["picture"].(string)
+
+	// LOGIC MỚI: Nếu name từ token rỗng (do đăng ký bằng email/password) thì lấy reqName từ frontend gửi lên
+	if name == "" && reqName != "" {
+		name = reqName
+	}
 
 	if email == "" {
 		return nil, response.BadRequest("firebase token missing email")

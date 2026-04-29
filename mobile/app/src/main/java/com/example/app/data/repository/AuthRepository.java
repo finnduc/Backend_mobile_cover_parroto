@@ -48,7 +48,7 @@ public class AuthRepository {
                     tokenManager.saveToken(tokenData.getIdToken(), tokenData.getRefreshToken());
 
                     // Bước 2: sync user
-                    syncUser(tokenData.getIdToken(), callback);
+                    syncUser(tokenData.getIdToken(),"", callback);
 
                 } else {
                     callback.onError("Email hoặc mật khẩu không đúng");
@@ -63,8 +63,8 @@ public class AuthRepository {
     }
 
 
-    public void syncUser(String idToken, AuthCallback<SyncResponse> callback) {
-        SyncRequest request = new SyncRequest(idToken);
+    public void syncUser(String idToken,String name, AuthCallback<SyncResponse> callback) {
+        SyncRequest request = new SyncRequest(idToken,name);
 
         authApi.synUser(request).enqueue(new Callback<ApiResponse<SyncResponse>>() {
             @Override

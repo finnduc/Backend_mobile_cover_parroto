@@ -37,7 +37,7 @@ func (ctrl *AuthController) Sync(c *gin.Context) {
 		return
 	}
 
-	result, appErr := ctrl.svc.SyncUser(c.Request.Context(), body.FirebaseToken)
+	result, appErr := ctrl.svc.SyncUser(c.Request.Context(), body.FirebaseToken, body.Name)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
