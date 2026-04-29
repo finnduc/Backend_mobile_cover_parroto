@@ -1,5 +1,8 @@
 package com.example.app.data.remote.api;
 
+
+import com.example.app.BuildConfig;
+import com.example.app.data.remote.model.request.RegisterRequest;
 import com.example.app.data.remote.model.request.SyncRequest;
 import com.example.app.data.remote.model.request.TokenRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
@@ -16,5 +19,8 @@ public interface AuthApi {
     Call<ApiResponse<TokenResponse>> getToken(@Body TokenRequest request);
 
     @POST("auth/sync")
-    Call<ApiResponse<SyncResponse>> syncUser(@Body SyncRequest request);
+    Call<ApiResponse<SyncResponse>> synUser(@Body SyncRequest request);
+
+    @POST(BuildConfig.FIREBASE_SIGNUP_URL)
+    Call<ApiResponse<SyncResponse>> register(@Body RegisterRequest request);
 }

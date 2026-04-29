@@ -1,10 +1,12 @@
 package com.example.app.data.repository;
 
 import android.content.Context;
+import android.media.session.MediaSession;
 
 import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.AuthApi;
+import com.example.app.data.remote.model.request.RegisterRequest;
 import com.example.app.data.remote.model.request.SyncRequest;
 import com.example.app.data.remote.model.request.TokenRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
@@ -25,14 +27,11 @@ public class AuthRepository {
         this.tokenManager = TokenManager.getInstance(context);
     }
 
-    // ====== CALLBACK INTERFACE ======
 
     public interface AuthCallback<T> {
         void onSuccess(T data);
         void onError(String message);
     }
-
-    // ====== LOGIN ======
 
     public void login(String email, String password, AuthCallback<SyncResponse> callback) {
         TokenRequest request = new TokenRequest(email, password);
@@ -63,12 +62,11 @@ public class AuthRepository {
         });
     }
 
-    // ====== SYNC USER ======
 
     public void syncUser(String idToken, AuthCallback<SyncResponse> callback) {
         SyncRequest request = new SyncRequest(idToken);
 
-        authApi.syncUser(request).enqueue(new Callback<ApiResponse<SyncResponse>>() {
+        authApi.synUser(request).enqueue(new Callback<ApiResponse<SyncResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<SyncResponse>> call,
                                    Response<ApiResponse<SyncResponse>> response) {
@@ -98,20 +96,10 @@ public class AuthRepository {
         });
     }
 
-    // ====== REGISTER ======
-
-    public void register(String email, String password, AuthCallback<SyncResponse> callback) {
-        // TODO: Gọi Firebase REST API để tạo tài khoản
-        // Sau đó gọi syncUser() giống login
-    }
-
-    // ====== LOGOUT ======
 
     public void logout() {
         tokenManager.clear();
     }
-
-    // ====== CHECK LOGIN ======
 
     public boolean isLoggedIn() {
         return tokenManager.hasToken();

@@ -5,9 +5,9 @@ public class RegisterRequest {
     private String password;
     private Boolean returnSecureToken;
 
-    public RegisterRequest(String email, String password, String returnSecureToken) {
+    public RegisterRequest(String email, String password, Boolean returnSecureToken) {
         this.email = email;
         this.password = password;
-        this.returnSecureToken = true;
+        this.returnSecureToken = returnSecureToken;
     }
 }

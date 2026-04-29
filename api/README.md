@@ -229,3 +229,4 @@ make clean     # Xóa containers + volumes (⚠️ mất data)
 | `FIREBASE_WEB_API_KEY` | Firebase Web API Key | |
 
 docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
+goose -dir internal/database/migrations postgres "postgres://postgres:postgres@localhost:5432/parroto?sslmode=disable" up

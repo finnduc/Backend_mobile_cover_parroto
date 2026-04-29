@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class TokenManager {
-
     private static final String PREF_NAME = "EngFlix_prefs";
     private static final String KEY_ID_TOKEN = "id_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";

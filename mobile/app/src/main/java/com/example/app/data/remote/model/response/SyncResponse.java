@@ -16,15 +16,12 @@ public class SyncResponse {
     public int getId() {
         return id;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getName() {
         return name;
     }
-
     public String getAvatarURL() {
         return avatarURL;
     }
