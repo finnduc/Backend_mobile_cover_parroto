@@ -26,12 +26,12 @@
 
     <fragment
         android:id="@+id/shadowingFragment"
-        android:name="com.example.app.feature.topic.ui.fragment_study"
+        android:name="com.example.app.feature.shadowing.ShadowingFragment"
         android:label="Học tập" />
 
     <fragment
         android:id="@+id/vocabularyFragment"
-        android:name="com.example.app.feature.topic.ui.VocabularyFragment"
+        android:name="com.example.app.feature.vocubulary.VocubularyFragment"
         android:label="Từ vựng" />
 
     <fragment
@@ -41,12 +41,12 @@
 
     <fragment
         android:id="@+id/progressFragment"
-        android:name="com.example.app.feature.topic.ui.fragment_progress"
+        android:name="com.example.app.feature.progess.ProgressFragment"
         android:label="Tiến độ" />
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.app.feature.setting.ui.SettingsFragment"
+        android:name="com.example.app.feature.setting.SettingsFragment"
         android:label="Cài đặt">
         <action
             android:id="@+id/action_settingsFragment_to_loginFragment"
