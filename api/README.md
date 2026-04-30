@@ -1,3 +1,5 @@
+go run ./cmd/server/main.go
+
 # Engflix API
 
 Backend REST API cho nền tảng học tiếng Anh qua video — xây dựng bằng Go, Gin, GORM, Firebase Auth.
