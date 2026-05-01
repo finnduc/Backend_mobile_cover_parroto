@@ -3,13 +3,15 @@ export interface ApiError {
   message: string;
 }
 
+export interface PaginatedMeta {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface BaseResponse<T> {
   data: T | null;
   error: ApiError | null;
-  meta?: {
-    limit: number,
-    page: number,
-    total: number,
-    totalPages: number,
-  };
+  meta?: PaginatedMeta;
 }

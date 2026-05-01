@@ -1,0 +1,117 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { DataTable } from "@/components/common/DataTable"
+import { Plus, Trash2 } from "lucide-react"
+import type { Transcript } from "@/types/lessons.models"
+import type { Column } from "@/components/common/DataTable"
+
+export function TranscriptContent({
+  lessonId,
+  transcripts: initialTranscripts,
+}: {
+  lessonId: number
+  transcripts: Transcript[]
+}) {
+  const [transcripts, setTranscripts] = useState(initialTranscripts)
+
+  const addNew = () => {
+    const newId = Math.max(0, ...transcripts.map((t) => t.id)) + 1
+    const maxSeq = Math.max(0, ...transcripts.map((t) => t.sequence))
+    setTranscripts([
+      ...transcripts,
+      {
+        id: newId,
+        lessonId,
+        sequence: maxSeq + 1,
+        content: "",
+        phonetic: "",
+        vietnamese: "",
+        startTimestamp: 0,
+        endTimestamp: 0,
+      },
+    ])
+  }
+
+  const remove = (id: number) => {
+    setTranscripts((prev) => prev.filter((t) => t.id !== id))
+  }
+
+  const update = (id: number, field: keyof Transcript, value: string | number) => {
+    setTranscripts((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, [field]: value } : t))
+    )
+  }
+
+  const columns: Column<Transcript>[] = [
+    { key: "sequence", header: "Seq" },
+    {
+      key: "content",
+      header: "Content",
+      render: (t) => (
+        <Input
+          value={t.content}
+          onChange={(e) => update(t.id, "content", e.target.value)}
+          className="h-8 text-sm"
+        />
+      ),
+    },
+    {
+      key: "startTimestamp",
+      header: "Start",
+      render: (t) => (
+        <Input
+          type="number"
+          value={t.startTimestamp}
+          onChange={(e) => update(t.id, "startTimestamp", Number(e.target.value))}
+          className="h-8 w-full text-sm"
+        />
+      ),
+    },
+    {
+      key: "endTimestamp",
+      header: "End",
+      render: (t) => (
+        <Input
+          type="number"
+          value={t.endTimestamp}
+          onChange={(e) => update(t.id, "endTimestamp", Number(e.target.value))}
+          className="h-8 w-full text-sm"
+        />
+      ),
+    },
+    {
+      key: "actions",
+      header: "",
+      render: (t) => (
+        <Button size="icon" variant="ghost" onClick={() => remove(t.id)}>
+          <Trash2 className="size-4 text-destructive" />
+        </Button>
+      ),
+    },
+  ]
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Transcripts for Lesson #{lessonId}</h3>
+        <Button size="sm" onClick={addNew}>
+          <Plus className="mr-1 size-4" />
+          Add Segment
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Transcripts for Lesson #{lessonId}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable columns={columns} data={transcripts} emptyMessage={"No transcripts yet. Click \"Add Segment\" to add one."} />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
