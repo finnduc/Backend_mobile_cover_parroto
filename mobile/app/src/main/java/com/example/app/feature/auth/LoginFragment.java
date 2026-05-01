@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.app.R;
 import com.example.app.data.remote.model.response.auth.SyncResponse;
 import com.example.app.data.repository.AuthRepository;
@@ -28,7 +26,6 @@ public class LoginFragment extends Fragment {
          EditText getUsername = view.findViewById(R.id.getUsername);
          EditText getPassword = view.findViewById(R.id.getPassword);
         AuthRepository authRepository = new AuthRepository(requireContext());
-
 
         Login.setOnClickListener(v ->
          {
@@ -73,12 +70,10 @@ public class LoginFragment extends Fragment {
                                 Toast.makeText(requireContext(),message,Toast.LENGTH_LONG).show();
                              }
                          }
-
                      );
 
              }
          });
-
          register(view);
          return view;
     }

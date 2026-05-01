@@ -1,3 +1,5 @@
+go run ./cmd/server/main.go
+
 # Engflix API
 
 Backend REST API cho nền tảng học tiếng Anh qua video — xây dựng bằng Go, Gin, GORM, Firebase Auth.
@@ -230,3 +232,4 @@ make clean     # Xóa containers + volumes (⚠️ mất data)
 
 docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 goose -dir internal/database/migrations postgres "postgres://postgres:postgres@localhost:5432/parroto?sslmode=disable" up
+go run ./cmd/seed 
