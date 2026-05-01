@@ -1,4 +1,4 @@
 package com.example.app.data.repository;
 
-public class LessionsRepository {
+public class LessonsRepository {
 }
