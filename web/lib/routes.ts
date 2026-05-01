@@ -7,8 +7,8 @@ export const ROUTES = {
     LEARNING_HISTORY: "/learning-history",
     LESSONS: {
       LIST: "/lessons",
-      DETAIL: (id: string) => `/lessons/${id}`,
-      SHADOWING: (slug: string) => `/lessons/shadowing/${slug}`,
+      DICTATION: (id: number) => `/lessons/dictation/${id}`,
+      SHADOWING: (id: number) => `/lessons/shadowing/${id}`,
     },
     CATEGORIES: "/categories",
   },

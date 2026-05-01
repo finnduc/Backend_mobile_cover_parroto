@@ -1,3 +1,5 @@
+import { SignInScreen } from "@/features/auth/components/SignInScreen";
+
 export default function Page() {
-  return <div>Login Page</div>
+  return <SignInScreen />;
 }
