@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/user/repositories"
@@ -21,7 +22,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 		protected.GET("/user/profile", ctrl.GetProfile)
 	}
 
-	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth))
+	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("/users", adminCtrl.List)
 		admin.GET("/users/:id", adminCtrl.GetByID)

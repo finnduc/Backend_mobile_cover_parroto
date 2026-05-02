@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/firebase"
@@ -27,6 +29,7 @@ func FirebaseAuth(db *gorm.DB, fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 			return
 		}
 
+		ctx := c.Request.Context()
 		email, _ := decoded.Claims["email"].(string)
 
 		var user models.User
@@ -35,7 +38,8 @@ func FirebaseAuth(db *gorm.DB, fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", user.ID)
+		ctx = context.WithValue(ctx, enums.ContextKeyUserID, user.ID)
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }

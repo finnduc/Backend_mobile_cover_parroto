@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/main"
-  pre_cmd = ["make swag-init"]
+  # pre_cmd = ["make swag-init"]
   cmd = "go build -o ./tmp/main ./cmd/server"
   delay = 1000
   exclude_dir = ["server", "tmp", "vendor", "testdata"]

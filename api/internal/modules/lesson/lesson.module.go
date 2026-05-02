@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/lesson/repositories"
@@ -19,10 +20,12 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	r.GET("/lessons", ctrl.List)
 	r.GET("/lessons/:lessonId", ctrl.Get)
 
-	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth))
-	admin.GET("/lessons", adminCtrl.List)
-	admin.GET("/lessons/:id", adminCtrl.Get)
-	admin.POST("/lessons", adminCtrl.Create)
-	admin.PUT("/lessons/:id", adminCtrl.Update)
-	admin.DELETE("/lessons/:id", adminCtrl.Delete)
+	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
+	{
+		admin.GET("/lessons", adminCtrl.List)
+		admin.GET("/lessons/:id", adminCtrl.Get)
+		admin.POST("/lessons", adminCtrl.Create)
+		admin.PUT("/lessons/:id", adminCtrl.Update)
+		admin.DELETE("/lessons/:id", adminCtrl.Delete)
+	}
 }

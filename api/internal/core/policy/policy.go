@@ -7,20 +7,13 @@ import (
 	"go-cover-parroto/internal/core/response"
 )
 
-type contextKey string
-
-const (
-	ContextKeyUserID   contextKey = "userID"
-	ContextKeyUserRole contextKey = "userRole"
-)
-
 func Allow(ctx context.Context, resourceOwnerID uint) *response.AppError {
-	userID, ok := ctx.Value(ContextKeyUserID).(uint)
+	userID, ok := ctx.Value(enums.ContextKeyUserID).(uint)
 	if !ok {
 		return response.Unauthorized("user not authenticated")
 	}
 
-	role, ok := ctx.Value(ContextKeyUserRole).(enums.UserRole)
+	role, ok := ctx.Value(enums.ContextKeyUserRole).(enums.UserRole)
 	if ok && role == enums.UserRoleAdmin {
 		return nil
 	}
@@ -33,7 +26,7 @@ func Allow(ctx context.Context, resourceOwnerID uint) *response.AppError {
 }
 
 func GetUserID(ctx context.Context) (uint, *response.AppError) {
-	userID, ok := ctx.Value(ContextKeyUserID).(uint)
+	userID, ok := ctx.Value(enums.ContextKeyUserID).(uint)
 	if !ok {
 		return 0, response.Unauthorized("user not authenticated")
 	}
