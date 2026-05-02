@@ -2,19 +2,14 @@ package lesson
 
 import (
 	"net/http"
-	"strconv"
 
-	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
-	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
+	"go-cover-parroto/internal/modules/lesson/dtos/req"
 	"go-cover-parroto/internal/modules/lesson/services"
-
 	"github.com/gin-gonic/gin"
 )
 
-type LessonController struct {
-	svc services.ILessonService
-}
+type LessonController struct{ svc services.ILessonService }
 
 func NewLessonController(svc services.ILessonService) *LessonController {
 	return &LessonController{svc: svc}
@@ -34,21 +29,12 @@ func NewLessonController(svc services.ILessonService) *LessonController {
 // @Failure 500 {object} response.BaseResponse[any]
 // @Router /lessons [get]
 func (ctrl *LessonController) List(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-
-	query := database.NewQuery().SetPage(page).SetLimit(limit)
-
-	if categoryID := c.Query("category_id"); categoryID != "" {
-		if id, err := strconv.ParseUint(categoryID, 10, 32); err == nil {
-			query.SetFilter("category_id", uint(id))
-		}
+	var q req.ListLessonQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
 	}
-	if level := c.Query("level"); level != "" {
-		query.SetFilter("level", level)
-	}
-
-	results, appErr := ctrl.svc.ListLessons(c.Request.Context(), query)
+	results, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -68,13 +54,12 @@ func (ctrl *LessonController) List(c *gin.Context) {
 // @Failure 404 {object} response.BaseResponse[any]
 // @Router /lessons/{lessonId} [get]
 func (ctrl *LessonController) Get(c *gin.Context) {
-	idParam := c.Param("lessonId")
-	id, err := strconv.ParseUint(idParam, 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Fail("Invalid lesson ID"))
+	var body req.GetLessonReq
+	if err := c.ShouldBindUri(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	lesson, appErr := ctrl.svc.GetLesson(c.Request.Context(), uint(id))
+	lesson, appErr := ctrl.svc.Get(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

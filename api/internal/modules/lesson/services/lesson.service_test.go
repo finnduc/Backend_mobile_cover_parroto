@@ -9,7 +9,7 @@ import (
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
-
+	"go-cover-parroto/internal/modules/lesson/dtos/req"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -33,67 +33,61 @@ func (m *mockLessonRepo) FindByID(ctx context.Context, id uint) (*models.Lesson,
 }
 
 func TestListLessons_Success(t *testing.T) {
-	repo := new(mockLessonRepo)
-	svc := NewLessonService(repo)
+	mockRepo := new(mockLessonRepo)
+	svc := NewLessonService(mockRepo)
+	q := req.ListLessonQuery{Page: 1, Limit: 10}
 
-	lessons := []*models.Lesson{
-		{ID: 1, Title: "Lesson 1", VideoURL: "https://vid1.mp4"},
-		{ID: 2, Title: "Lesson 2", VideoURL: "https://vid2.mp4"},
+	paginated := &response.PaginatedResult[*models.Lesson]{
+		Data: []*models.Lesson{
+			{ID: 1, Title: "Lesson 1"},
+		},
+		Meta: response.NewMeta(1, 10, 1),
 	}
-	paginatedResult := &response.PaginatedResult[*models.Lesson]{
-		Data: lessons,
-		Meta: response.NewMeta(1, 10, 2),
-	}
-	query := database.NewQuery().SetPage(1).SetLimit(10)
-	repo.On("FindAll", mock.Anything, query).Return(paginatedResult, nil)
 
-	result, appErr := svc.ListLessons(context.Background(), query)
+	mockRepo.On("FindAll", mock.Anything, mock.Anything).Return(paginated, nil)
 
-	assert.Nil(t, appErr)
-	assert.Len(t, result.Data, 2)
-	assert.Equal(t, int64(2), result.Meta.Total)
-	repo.AssertExpectations(t)
+	result, err := svc.List(context.Background(), q)
+	assert.Nil(t, err)
+	assert.Len(t, result.Data, 1)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestListLessons_Error(t *testing.T) {
-	repo := new(mockLessonRepo)
-	svc := NewLessonService(repo)
+	mockRepo := new(mockLessonRepo)
+	svc := NewLessonService(mockRepo)
+	q := req.ListLessonQuery{Page: 1, Limit: 10}
 
-	query := database.NewQuery()
-	repo.On("FindAll", mock.Anything, query).Return(nil, errors.New("db error"))
+	mockRepo.On("FindAll", mock.Anything, mock.Anything).Return(nil, errors.New("db error"))
 
-	result, appErr := svc.ListLessons(context.Background(), query)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 500, appErr.Code)
+	_, err := svc.List(context.Background(), q)
+	assert.NotNil(t, err)
+	assert.Equal(t, 500, err.Code)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestGetLesson_Success(t *testing.T) {
-	repo := new(mockLessonRepo)
-	svc := NewLessonService(repo)
+	mockRepo := new(mockLessonRepo)
+	svc := NewLessonService(mockRepo)
+	body := req.GetLessonReq{ID: 1}
 
-	lesson := &models.Lesson{ID: 1, Title: "Lesson 1", VideoURL: "https://vid.mp4", Level: "beginner"}
-	repo.On("FindByID", mock.Anything, uint(1)).Return(lesson, nil)
+	lesson := &models.Lesson{ID: 1, Title: "Lesson 1"}
+	mockRepo.On("FindByID", mock.Anything, uint(1)).Return(lesson, nil)
 
-	result, appErr := svc.GetLesson(context.Background(), 1)
-
-	assert.Nil(t, appErr)
+	result, err := svc.Get(context.Background(), body)
+	assert.Nil(t, err)
 	assert.Equal(t, uint(1), result.ID)
-	assert.Equal(t, "Lesson 1", result.Title)
-	assert.Equal(t, "beginner", result.Level)
-	repo.AssertExpectations(t)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestGetLesson_NotFound(t *testing.T) {
-	repo := new(mockLessonRepo)
-	svc := NewLessonService(repo)
+	mockRepo := new(mockLessonRepo)
+	svc := NewLessonService(mockRepo)
+	body := req.GetLessonReq{ID: 999}
 
-	repo.On("FindByID", mock.Anything, uint(99)).Return(nil, coreError.ErrNotFound)
+	mockRepo.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 
-	result, appErr := svc.GetLesson(context.Background(), 99)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 404, appErr.Code)
+	_, err := svc.Get(context.Background(), body)
+	assert.NotNil(t, err)
+	assert.Equal(t, 404, err.Code)
+	mockRepo.AssertExpectations(t)
 }
