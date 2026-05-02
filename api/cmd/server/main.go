@@ -92,7 +92,7 @@ func main() {
 		db := database.DB
 		auth.RegisterRoutes(v1, db, fbClient)
 		user.RegisterRoutes(v1, db, fbClient)
-		lesson.RegisterRoutes(v1, db)
+		lesson.RegisterRoutes(v1, db, fbClient)
 		category.RegisterRoutes(v1, db, fbClient)
 		bookmark.RegisterRoutes(v1, db, fbClient)
 		learninghistory.RegisterRoutes(v1, db, fbClient)

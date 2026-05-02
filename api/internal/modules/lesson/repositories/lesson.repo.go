@@ -13,6 +13,9 @@ import (
 type ILessonRepo interface {
 	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Lesson], error)
 	FindByID(ctx context.Context, id uint) (*models.Lesson, error)
+	Create(ctx context.Context, lesson *models.Lesson) error
+	Update(ctx context.Context, lesson *models.Lesson) error
+	Delete(ctx context.Context, id uint) error
 }
 
 type lessonRepo struct {
@@ -50,4 +53,16 @@ func (r *lessonRepo) FindByID(ctx context.Context, id uint) (*models.Lesson, err
 		return nil, errors.MapRepoError(err)
 	}
 	return &lesson, nil
+}
+
+func (r *lessonRepo) Create(ctx context.Context, lesson *models.Lesson) error {
+	return r.db.WithContext(ctx).Create(lesson).Error
+}
+
+func (r *lessonRepo) Update(ctx context.Context, lesson *models.Lesson) error {
+	return r.db.WithContext(ctx).Save(lesson).Error
+}
+
+func (r *lessonRepo) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Lesson{}, id).Error
 }

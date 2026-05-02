@@ -38,6 +38,16 @@ func (q ListLessonQuery) ToQuery() *database.Query {
 	return query
 }
 
+type UpdateLessonReq struct {
+	CategoryID   *uint   `json:"category_id"`
+	Title        string  `json:"title"`
+	Description  string  `json:"description"`
+	VideoURL     string  `json:"video_url"`
+	ThumbnailURL string  `json:"thumbnail_url"`
+	Level        string  `json:"level"`
+	Duration     float64 `json:"duration"`
+}
+
 type GetLessonReq struct {
 	ID uint `uri:"lessonId"`
 }
