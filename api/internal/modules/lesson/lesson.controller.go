@@ -5,7 +5,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
+	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
 	"go-cover-parroto/internal/modules/lesson/services"
+
 	"github.com/gin-gonic/gin"
 )
 
