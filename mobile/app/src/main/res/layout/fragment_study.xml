@@ -181,13 +181,6 @@
 
             </LinearLayout>
 
-            <!-- ===== LESSON SECTIONS LIST ===== -->
-            <!--
-                RecyclerView này hiển thị các section theo chiều dọc.
-                Mỗi row = 1 LessonCategory (item_lesson_section.xml).
-                nestedScrollingEnabled="false" để NestedScrollView
-                kiểm soát scroll, tránh conflict chiều cao.
-            -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLessonSections"
                 android:layout_width="match_parent"

@@ -1,4 +1,56 @@
 package com.example.app.data.repository;
 
+import android.content.Context;
+
+import com.example.app.data.remote.RetrofitClient;
+import com.example.app.data.remote.api.CategoryApi;
+import com.example.app.data.remote.model.response.ApiResponse;
+import com.example.app.data.remote.model.response.categories.CategoryResponse;
+import com.example.app.data.remote.model.response.categories.ListCategoryResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CategoriesRepository {
+    private final CategoryApi categoryApi;
+
+    public CategoriesRepository(Context context) {
+        this.categoryApi = RetrofitClient.getInstance(context).getCategoryApi();
+    }
+
+    public interface categoryCallback<T> {
+        void onSuccess(T data);
+        void onError(String message);
+    }
+
+    public void getCategory(int limit, int page, categoryCallback<ListCategoryResponse<CategoryResponse>> callback){
+        categoryApi.getCategories(limit, page).enqueue(new Callback<ApiResponse<ListCategoryResponse<CategoryResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<ListCategoryResponse<CategoryResponse>>> call, Response<ApiResponse<ListCategoryResponse<CategoryResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().issuccess()){
+                    ListCategoryResponse<CategoryResponse> categoryData = response.body().getData();
+                    callback.onSuccess(categoryData);
+                }
+                else {
+                    try {
+                        String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
+                        callback.onError(errorDetail);
+                    }
+
+                    catch (Exception e) {
+                        callback.onError("error");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<ListCategoryResponse<CategoryResponse>>> call, Throwable t) {
+                callback.onError("Lỗi:" + t.getMessage());
+            }
+        });
+    }
+
+
+
 }

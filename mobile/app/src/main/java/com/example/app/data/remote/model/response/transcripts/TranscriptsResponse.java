@@ -1,4 +1,4 @@
-package com.example.app.data.remote.model.response.lessons;
+package com.example.app.data.remote.model.response.transcripts;
 
 import com.google.gson.annotations.SerializedName;
 
