@@ -6,6 +6,7 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
+	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
 	"go-cover-parroto/internal/modules/lesson/services"
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,18 @@ func NewLessonAdminController(svc services.ILessonService) *LessonAdminControlle
 	return &LessonAdminController{svc: svc}
 }
 
+// Create godoc
+// @Summary Create lesson
+// @Description Create a new lesson (admin only)
+// @Tags admin-lessons
+// @Accept json
+// @Produce json
+// @Param body body req.CreateLessonReq true "Lesson data"
+// @Success 200 {object} response.BaseResponse[res.LessonRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons [post]
+// @Security BearerAuth
 func (ctrl *LessonAdminController) Create(c *gin.Context) {
 	var body req.CreateLessonReq
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -32,6 +45,19 @@ func (ctrl *LessonAdminController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
+// Update godoc
+// @Summary Update lesson
+// @Description Update a lesson by ID (admin only)
+// @Tags admin-lessons
+// @Accept json
+// @Produce json
+// @Param id path int true "Lesson ID"
+// @Param body body req.UpdateLessonReq true "Lesson data"
+// @Success 200 {object} response.BaseResponse[res.LessonRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons/{id} [put]
+// @Security BearerAuth
 func (ctrl *LessonAdminController) Update(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -51,6 +77,18 @@ func (ctrl *LessonAdminController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
+// Delete godoc
+// @Summary Delete lesson
+// @Description Delete a lesson by ID (admin only)
+// @Tags admin-lessons
+// @Accept json
+// @Produce json
+// @Param id path int true "Lesson ID"
+// @Success 200 {object} response.BaseResponse[any]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons/{id} [delete]
+// @Security BearerAuth
 func (ctrl *LessonAdminController) Delete(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
