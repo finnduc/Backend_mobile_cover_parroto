@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"go-cover-parroto/internal/core/response"
+	_ "go-cover-parroto/internal/modules/user/dtos/res"
 	"go-cover-parroto/internal/modules/user/services"
+
 	"github.com/gin-gonic/gin"
 )
 

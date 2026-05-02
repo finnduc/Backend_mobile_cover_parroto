@@ -24,6 +24,676 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/categories": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new category (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-categories"
+                ],
+                "summary": "Create category",
+                "parameters": [
+                    {
+                        "description": "Category data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_req.CreateCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/categories/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a category by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-categories"
+                ],
+                "summary": "Update category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_req.UpdateCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a category by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-categories"
+                ],
+                "summary": "Delete category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/lessons": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new lesson (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-lessons"
+                ],
+                "summary": "Create lesson",
+                "parameters": [
+                    {
+                        "description": "Lesson data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/lessons/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a lesson by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-lessons"
+                ],
+                "summary": "Update lesson",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Lesson data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_req.UpdateLessonReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a lesson by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-lessons"
+                ],
+                "summary": "Delete lesson",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/transcripts": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new transcript entry (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-transcripts"
+                ],
+                "summary": "Create transcript",
+                "parameters": [
+                    {
+                        "description": "Transcript data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.CreateTranscriptReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/transcripts/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a transcript entry by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-transcripts"
+                ],
+                "summary": "Update transcript",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transcript ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Transcript data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.UpdateTranscriptReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a transcript entry by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-transcripts"
+                ],
+                "summary": "Delete transcript",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transcript ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all users with pagination (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-users"
+                ],
+                "summary": "List users",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a user by their ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a user by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-users"
+                ],
+                "summary": "Update user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a user by ID (admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-users"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/sync": {
             "post": {
                 "description": "Verify Firebase ID token and create or get user in database",
@@ -135,6 +805,18 @@ const docTemplate = `{
                 ],
                 "summary": "List user bookmarks",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filter by user ID",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by lesson ID",
+                        "name": "lesson_id",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "default": 1,
@@ -754,6 +1436,23 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes": {
             "type": "object",
             "properties": {
@@ -788,6 +1487,23 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
             "type": "object",
             "properties": {
@@ -810,6 +1526,23 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes"
                 },
                 "error": {},
                 "meta": {
@@ -906,6 +1639,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_user_dtos_res.UserRes"
                     }
                 },
                 "meta": {
@@ -1014,6 +1761,28 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_modules_category_dtos_req.CreateCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_category_dtos_req.UpdateCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_category_dtos_res.CategoryRes": {
             "type": "object",
             "properties": {
@@ -1067,6 +1836,62 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq": {
+            "type": "object",
+            "required": [
+                "title",
+                "video_url"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "number"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "video_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_lesson_dtos_req.UpdateLessonReq": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "number"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "video_url": {
+                    "type": "string"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes": {
             "type": "object",
             "properties": {
@@ -1099,6 +1924,60 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_modules_transcript_dtos_req.CreateTranscriptReq": {
+            "type": "object",
+            "required": [
+                "content",
+                "lesson_id",
+                "sequence"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "end_timestamp": {
+                    "type": "number"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "phonetic": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "start_timestamp": {
+                    "type": "number"
+                },
+                "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_dtos_req.UpdateTranscriptReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "end_timestamp": {
+                    "type": "number"
+                },
+                "phonetic": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "start_timestamp": {
+                    "type": "number"
+                },
+                "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes": {
             "type": "object",
             "properties": {
@@ -1124,6 +2003,17 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

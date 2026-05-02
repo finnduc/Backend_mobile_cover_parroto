@@ -61,6 +61,16 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes:
     properties:
       data:
@@ -81,6 +91,16 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
+    properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
   : properties:
       data:
@@ -95,6 +115,16 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes:
+    properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes'
       error: {}
       meta:
         allOf:
@@ -155,6 +185,15 @@ definitions:
       data:
         items:
           $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_user_dtos_res.UserRes'
         type: array
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
@@ -225,6 +264,20 @@ definitions:
       title:
         type: string
     type: object
+  go-cover-parroto_internal_modules_category_dtos_req.CreateCategoryReq:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  go-cover-parroto_internal_modules_category_dtos_req.UpdateCategoryReq:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   go-cover-parroto_internal_modules_category_dtos_res.CategoryRes:
     properties:
       id:
@@ -260,6 +313,43 @@ definitions:
       user_id:
         type: integer
     type: object
+  go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      duration:
+        type: number
+      level:
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      video_url:
+        type: string
+    required:
+    - title
+    - video_url
+    type: object
+  go-cover-parroto_internal_modules_lesson_dtos_req.UpdateLessonReq:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      duration:
+        type: number
+      level:
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      video_url:
+        type: string
+    type: object
   go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes:
     properties:
       category_id:
@@ -281,6 +371,42 @@ definitions:
       video_url:
         type: string
     type: object
+  go-cover-parroto_internal_modules_transcript_dtos_req.CreateTranscriptReq:
+    properties:
+      content:
+        type: string
+      end_timestamp:
+        type: number
+      lesson_id:
+        type: integer
+      phonetic:
+        type: string
+      sequence:
+        type: integer
+      start_timestamp:
+        type: number
+      vietnamese:
+        type: string
+    required:
+    - content
+    - lesson_id
+    - sequence
+    type: object
+  go-cover-parroto_internal_modules_transcript_dtos_req.UpdateTranscriptReq:
+    properties:
+      content:
+        type: string
+      end_timestamp:
+        type: number
+      phonetic:
+        type: string
+      sequence:
+        type: integer
+      start_timestamp:
+        type: number
+      vietnamese:
+        type: string
+    type: object
   go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes:
     properties:
       content:
@@ -298,6 +424,13 @@ definitions:
       start_timestamp:
         type: number
       vietnamese:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq:
+    properties:
+      avatar_url:
+        type: string
+      name:
         type: string
     type: object
   go-cover-parroto_internal_modules_user_dtos_res.UserRes:
@@ -328,6 +461,432 @@ info:
   title: Engflix API
   version: "1.0"
 paths:
+  /admin/categories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new category (admin only)
+      parameters:
+      - description: Category data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_req.CreateCategoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create category
+      tags:
+      - admin-categories
+  /admin/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category by ID (admin only)
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete category
+      tags:
+      - admin-categories
+    put:
+      consumes:
+      - application/json
+      description: Update a category by ID (admin only)
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_req.UpdateCategoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update category
+      tags:
+      - admin-categories
+  /admin/lessons:
+    post:
+      consumes:
+      - application/json
+      description: Create a new lesson (admin only)
+      parameters:
+      - description: Lesson data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create lesson
+      tags:
+      - admin-lessons
+  /admin/lessons/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a lesson by ID (admin only)
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete lesson
+      tags:
+      - admin-lessons
+    put:
+      consumes:
+      - application/json
+      description: Update a lesson by ID (admin only)
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lesson data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_req.UpdateLessonReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_lesson_dtos_res_LessonRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update lesson
+      tags:
+      - admin-lessons
+  /admin/transcripts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new transcript entry (admin only)
+      parameters:
+      - description: Transcript data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.CreateTranscriptReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create transcript
+      tags:
+      - admin-transcripts
+  /admin/transcripts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a transcript entry by ID (admin only)
+      parameters:
+      - description: Transcript ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete transcript
+      tags:
+      - admin-transcripts
+    put:
+      consumes:
+      - application/json
+      description: Update a transcript entry by ID (admin only)
+      parameters:
+      - description: Transcript ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transcript data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.UpdateTranscriptReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update transcript
+      tags:
+      - admin-transcripts
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: List all users with pagination (admin only)
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List users
+      tags:
+      - admin-users
+  /admin/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by ID (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - admin-users
+    get:
+      consumes:
+      - application/json
+      description: Get a user by their ID (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - admin-users
+    put:
+      consumes:
+      - application/json
+      description: Update a user by ID (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - admin-users
   /auth/sync:
     post:
       consumes:
@@ -395,6 +954,14 @@ paths:
       - application/json
       description: Get the authenticated user's bookmarks with lesson details
       parameters:
+      - description: Filter by user ID
+        in: query
+        name: user_id
+        type: integer
+      - description: Filter by lesson ID
+        in: query
+        name: lesson_id
+        type: integer
       - default: 1
         description: Page number
         in: query
