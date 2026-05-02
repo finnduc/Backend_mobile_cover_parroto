@@ -2,13 +2,10 @@ package bookmark
 
 import (
 	"net/http"
-	"strconv"
 
-	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
-	_ "go-cover-parroto/internal/modules/bookmark/dtos/res"
+	"go-cover-parroto/internal/modules/bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/bookmark/services"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +23,8 @@ func NewBookmarkController(svc services.IBookmarkService) *BookmarkController {
 // @Tags bookmarks
 // @Accept json
 // @Produce json
+// @Param user_id query int false "Filter by user ID"
+// @Param lesson_id query int false "Filter by lesson ID"
 // @Param page query int false "Page number" default(1)
 // @Param limit query int false "Items per page" default(10)
 // @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.BookmarkRes]]
@@ -33,17 +32,12 @@ func NewBookmarkController(svc services.IBookmarkService) *BookmarkController {
 // @Router /bookmarks [get]
 // @Security BearerAuth
 func (ctrl *BookmarkController) List(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+	var q req.ListBookmarkQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	query := database.NewQuery().SetPage(page).SetLimit(limit)
-
-	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), userID.(uint), query)
+	result, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -64,19 +58,12 @@ func (ctrl *BookmarkController) List(c *gin.Context) {
 // @Router /bookmarks/{lessonId} [post]
 // @Security BearerAuth
 func (ctrl *BookmarkController) Add(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+	var body req.AddBookmarkReq
+	if err := c.ShouldBindUri(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	lessonIdParam := c.Param("lessonId")
-	lessonId, err := strconv.ParseUint(lessonIdParam, 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Fail("Invalid lesson ID"))
-		return
-	}
-
-	appErr := ctrl.svc.AddBookmark(c.Request.Context(), userID.(uint), uint(lessonId))
+	appErr := ctrl.svc.AddBookmark(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -97,19 +84,12 @@ func (ctrl *BookmarkController) Add(c *gin.Context) {
 // @Router /bookmarks/{lessonId} [delete]
 // @Security BearerAuth
 func (ctrl *BookmarkController) Remove(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+	var body req.RemoveBookmarkReq
+	if err := c.ShouldBindUri(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	lessonIdParam := c.Param("lessonId")
-	lessonId, err := strconv.ParseUint(lessonIdParam, 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Fail("Invalid lesson ID"))
-		return
-	}
-
-	appErr := ctrl.svc.RemoveBookmark(c.Request.Context(), userID.(uint), uint(lessonId))
+	appErr := ctrl.svc.RemoveBookmark(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
