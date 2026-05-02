@@ -4,17 +4,19 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	"go-cover-parroto/internal/core/database"
+	"go-cover-parroto/internal/core/enums"
+	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
-
-	"github.com/stretchr/testify/assert"
+	"go-cover-parroto/internal/modules/bookmark/dtos/req"
 	"github.com/stretchr/testify/mock"
 )
 
-type mockBookmarkRepo struct{ mock.Mock }
+type mockBookmarkRepo struct {
+	mock.Mock
+}
 
 func (m *mockBookmarkRepo) Create(ctx context.Context, userID, lessonID uint) error {
 	args := m.Called(ctx, userID, lessonID)
@@ -26,97 +28,127 @@ func (m *mockBookmarkRepo) Delete(ctx context.Context, userID, lessonID uint) er
 	return args.Error(0)
 }
 
-func (m *mockBookmarkRepo) ListByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error) {
-	args := m.Called(ctx, userID, query)
+func (m *mockBookmarkRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error) {
+	args := m.Called(ctx, query)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*response.PaginatedResult[*models.Bookmark]), args.Error(1)
 }
 
+func testCtx(userID uint, role enums.UserRole) context.Context {
+	ctx := context.WithValue(context.Background(), policy.ContextKeyUserID, userID)
+	ctx = context.WithValue(ctx, policy.ContextKeyUserRole, role)
+	return ctx
+}
+
 func TestAddBookmark_Success(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	body := req.AddBookmarkReq{LessonID: 10}
 
-	repo.On("Create", mock.Anything, uint(1), uint(10)).Return(nil)
+	mockRepo.On("Create", mock.Anything, uint(1), uint(10)).Return(nil)
 
-	appErr := svc.AddBookmark(context.Background(), 1, 10)
-
-	assert.Nil(t, appErr)
-	repo.AssertExpectations(t)
+	err := svc.AddBookmark(ctx, body)
+	if err != nil {
+		t.Errorf("expected no error, got %v", err)
+	}
+	mockRepo.AssertExpectations(t)
 }
 
 func TestAddBookmark_Error(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	body := req.AddBookmarkReq{LessonID: 10}
 
-	repo.On("Create", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
+	mockRepo.On("Create", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
 
-	appErr := svc.AddBookmark(context.Background(), 1, 10)
+	err := svc.AddBookmark(ctx, body)
+	if err == nil {
+		t.Error("expected error, got nil")
+	}
+	mockRepo.AssertExpectations(t)
+}
 
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 500, appErr.Code)
+func TestAddBookmark_Unauthenticated(t *testing.T) {
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := context.Background() // no userID set
+
+	err := svc.AddBookmark(ctx, req.AddBookmarkReq{LessonID: 10})
+	if err == nil || err.Code != 401 {
+		t.Errorf("expected 401 unauthorized, got %v", err)
+	}
 }
 
 func TestRemoveBookmark_Success(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	body := req.RemoveBookmarkReq{LessonID: 10}
 
-	repo.On("Delete", mock.Anything, uint(1), uint(10)).Return(nil)
+	mockRepo.On("Delete", mock.Anything, uint(1), uint(10)).Return(nil)
 
-	appErr := svc.RemoveBookmark(context.Background(), 1, 10)
-
-	assert.Nil(t, appErr)
-	repo.AssertExpectations(t)
+	err := svc.RemoveBookmark(ctx, body)
+	if err != nil {
+		t.Errorf("expected no error, got %v", err)
+	}
+	mockRepo.AssertExpectations(t)
 }
 
 func TestRemoveBookmark_Error(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	body := req.RemoveBookmarkReq{LessonID: 10}
 
-	repo.On("Delete", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
+	mockRepo.On("Delete", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
 
-	appErr := svc.RemoveBookmark(context.Background(), 1, 10)
-
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 500, appErr.Code)
+	err := svc.RemoveBookmark(ctx, body)
+	if err == nil {
+		t.Error("expected error, got nil")
+	}
+	mockRepo.AssertExpectations(t)
 }
 
-func TestListByUser_Success(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+func TestList_Success(t *testing.T) {
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	q := req.ListBookmarkQuery{Page: 1, Limit: 10}
 
-	lesson := &models.Lesson{ID: 5, Title: "Go Basics", ThumbnailURL: "https://thumb.jpg", Level: "beginner", Duration: 30.5}
-	bookmarks := []*models.Bookmark{
-		{UserID: 1, LessonID: 5, CreatedAt: time.Now(), Lesson: lesson},
-	}
-	query := database.NewQuery().SetPage(1).SetLimit(10)
-	paginatedResult := &response.PaginatedResult[*models.Bookmark]{
-		Data: bookmarks,
+	paginated := &response.PaginatedResult[*models.Bookmark]{
+		Data: []*models.Bookmark{
+			{UserID: 1, LessonID: 10, Lesson: &models.Lesson{ID: 10, Title: "Test", ThumbnailURL: "u", Level: "A1", Duration: 5.0}},
+		},
 		Meta: response.NewMeta(1, 10, 1),
 	}
-	repo.On("ListByUser", mock.Anything, uint(1), query).Return(paginatedResult, nil)
 
-	result, appErr := svc.ListByUser(context.Background(), 1, query)
+	mockRepo.On("FindAll", mock.Anything, mock.Anything).Return(paginated, nil)
 
-	assert.Nil(t, appErr)
-	assert.Len(t, result.Data, 1)
-	assert.Equal(t, uint(5), result.Data[0].LessonID)
-	assert.NotNil(t, result.Data[0].Lesson)
-	assert.Equal(t, "Go Basics", result.Data[0].Lesson.Title)
-	repo.AssertExpectations(t)
+	result, err := svc.List(ctx, q)
+	if err != nil {
+		t.Errorf("expected no error, got %v", err)
+	}
+	if len(result.Data) != 1 {
+		t.Errorf("expected 1 bookmark, got %d", len(result.Data))
+	}
+	mockRepo.AssertExpectations(t)
 }
 
-func TestListByUser_Error(t *testing.T) {
-	repo := new(mockBookmarkRepo)
-	svc := NewBookmarkService(repo)
+func TestList_Error(t *testing.T) {
+	mockRepo := new(mockBookmarkRepo)
+	svc := NewBookmarkService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
+	q := req.ListBookmarkQuery{Page: 1, Limit: 10}
 
-	query := database.NewQuery()
-	repo.On("ListByUser", mock.Anything, uint(1), query).Return(nil, errors.New("db error"))
+	mockRepo.On("FindAll", mock.Anything, mock.Anything).Return(nil, errors.New("db error"))
 
-	result, appErr := svc.ListByUser(context.Background(), 1, query)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 500, appErr.Code)
+	_, err := svc.List(ctx, q)
+	if err == nil {
+		t.Error("expected error, got nil")
+	}
+	mockRepo.AssertExpectations(t)
 }
