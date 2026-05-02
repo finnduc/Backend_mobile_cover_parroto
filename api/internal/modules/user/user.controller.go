@@ -4,15 +4,11 @@ import (
 	"net/http"
 
 	"go-cover-parroto/internal/core/response"
-	_ "go-cover-parroto/internal/modules/user/dtos/res"
 	"go-cover-parroto/internal/modules/user/services"
-
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct {
-	svc services.IUserService
-}
+type UserController struct{ svc services.IUserService }
 
 func NewUserController(svc services.IUserService) *UserController {
 	return &UserController{svc: svc}
@@ -30,13 +26,7 @@ func NewUserController(svc services.IUserService) *UserController {
 // @Router /users/me [get]
 // @Security BearerAuth
 func (ctrl *UserController) GetProfile(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
-		return
-	}
-
-	result, appErr := ctrl.svc.GetProfile(c.Request.Context(), userID.(uint))
+	result, appErr := ctrl.svc.GetProfile(c.Request.Context())
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

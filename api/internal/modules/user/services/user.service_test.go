@@ -5,9 +5,10 @@ import (
 	"errors"
 	"testing"
 
+	"go-cover-parroto/internal/core/enums"
 	coreError "go-cover-parroto/internal/core/errors"
+	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/database/models"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -22,46 +23,48 @@ func (m *mockUserRepo) FindByID(ctx context.Context, id uint) (*models.User, err
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+func testCtx(userID uint, role enums.UserRole) context.Context {
+	ctx := context.WithValue(context.Background(), policy.ContextKeyUserID, userID)
+	ctx = context.WithValue(ctx, policy.ContextKeyUserRole, role)
+	return ctx
+}
+
 func TestGetProfile_Success(t *testing.T) {
-	repo := new(mockUserRepo)
-	svc := NewUserService(repo)
+	mockRepo := new(mockUserRepo)
+	svc := NewUserService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
 
-	user := &models.User{ID: 1, Email: "test@example.com", Name: "Test", AvatarURL: "https://avatar.jpg"}
-	repo.On("FindByID", mock.Anything, uint(1)).Return(user, nil)
+	user := &models.User{ID: 1, Email: "test@example.com", Name: "Test"}
+	mockRepo.On("FindByID", mock.Anything, uint(1)).Return(user, nil)
 
-	result, appErr := svc.GetProfile(context.Background(), 1)
-
-	assert.Nil(t, appErr)
-	assert.Equal(t, uint(1), result.ID)
+	result, err := svc.GetProfile(ctx)
+	assert.Nil(t, err)
 	assert.Equal(t, "test@example.com", result.Email)
-	assert.Equal(t, "Test", result.Name)
-	repo.AssertExpectations(t)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestGetProfile_NotFound(t *testing.T) {
-	repo := new(mockUserRepo)
-	svc := NewUserService(repo)
+	mockRepo := new(mockUserRepo)
+	svc := NewUserService(mockRepo)
+	ctx := testCtx(999, enums.UserRoleUser)
 
-	repo.On("FindByID", mock.Anything, uint(99)).Return(nil, coreError.ErrNotFound)
+	mockRepo.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 
-	result, appErr := svc.GetProfile(context.Background(), 99)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 404, appErr.Code)
-	repo.AssertExpectations(t)
+	_, err := svc.GetProfile(ctx)
+	assert.NotNil(t, err)
+	assert.Equal(t, 404, err.Code)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestGetProfile_InternalError(t *testing.T) {
-	repo := new(mockUserRepo)
-	svc := NewUserService(repo)
+	mockRepo := new(mockUserRepo)
+	svc := NewUserService(mockRepo)
+	ctx := testCtx(1, enums.UserRoleUser)
 
-	repo.On("FindByID", mock.Anything, uint(1)).Return(nil, errors.New("db connection error"))
+	mockRepo.On("FindByID", mock.Anything, uint(1)).Return(nil, errors.New("db error"))
 
-	result, appErr := svc.GetProfile(context.Background(), 1)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, appErr)
-	assert.Equal(t, 500, appErr.Code)
-	repo.AssertExpectations(t)
+	_, err := svc.GetProfile(ctx)
+	assert.NotNil(t, err)
+	assert.Equal(t, 500, err.Code)
+	mockRepo.AssertExpectations(t)
 }

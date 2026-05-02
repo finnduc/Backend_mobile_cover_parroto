@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	coreError "go-cover-parroto/internal/core/errors"
+	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/user/dtos/res"
 	"go-cover-parroto/internal/modules/user/repositories"
@@ -12,7 +13,7 @@ import (
 )
 
 type IUserService interface {
-	GetProfile(ctx context.Context, userID uint) (*res.UserRes, *response.AppError)
+	GetProfile(ctx context.Context) (*res.UserRes, *response.AppError)
 }
 
 type userService struct {
@@ -23,10 +24,15 @@ func NewUserService(repo repositories.IUserRepo) IUserService {
 	return &userService{repo: repo}
 }
 
-func (s *userService) GetProfile(ctx context.Context, userID uint) (*res.UserRes, *response.AppError) {
-	user, err := s.repo.FindByID(ctx, userID)
+func (s *userService) GetProfile(ctx context.Context) (*res.UserRes, *response.AppError) {
+	userID, err := policy.GetUserID(ctx)
 	if err != nil {
-		if errors.Is(err, coreError.ErrNotFound) {
+		return nil, err
+	}
+
+	user, findErr := s.repo.FindByID(ctx, userID)
+	if findErr != nil {
+		if errors.Is(findErr, coreError.ErrNotFound) {
 			return nil, response.NotFound("user not found")
 		}
 		return nil, response.Internal("failed to get profile")
