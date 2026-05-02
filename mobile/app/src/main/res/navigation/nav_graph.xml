@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.app.feature.setting.SettingsFragment"
-        android:label="Cài đặt">
+        android:label="Cài đặt" >
         <action
             android:id="@+id/action_settingsFragment_to_loginFragment"
             app:destination="@id/LoginFragment" >

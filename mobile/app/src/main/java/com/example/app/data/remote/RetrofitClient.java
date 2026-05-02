@@ -7,6 +7,7 @@ import androidx.navigation.internal.SynchronizedObject;
 
 import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.api.AuthApi;
+import com.example.app.data.remote.api.LessonsApi;
 import com.example.app.data.remote.interceptor.AuthInterceptor;
 import com.example.app.utils.Constants;
 
@@ -51,5 +52,8 @@ public class RetrofitClient {
 
     public AuthApi getAuthApi() {
         return retrofit.create(AuthApi.class);
+    }
+    public LessonsApi getLessonsApi() {
+        return retrofit.create(LessonsApi.class);
     }
 }

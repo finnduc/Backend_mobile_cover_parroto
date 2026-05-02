@@ -4,7 +4,7 @@ package com.example.app.data.remote.api;
 import com.example.app.data.remote.model.request.auth.RegisterRequest;
 import com.example.app.data.remote.model.request.auth.SyncRequest;
 import com.example.app.data.remote.model.request.auth.TokenRequest;
-import com.example.app.data.remote.model.response.auth.ApiResponse;
+import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.auth.FirebaseSignUpResponse;
 import com.example.app.data.remote.model.response.auth.SyncResponse;
 import com.example.app.data.remote.model.response.auth.TokenResponse;
