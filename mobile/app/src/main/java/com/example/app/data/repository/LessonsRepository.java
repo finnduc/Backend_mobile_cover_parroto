@@ -38,7 +38,7 @@ public class LessonsRepository {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError(errorDetail);
                      } catch (Exception e){
-                        callback.onError("error");
+                        callback.onError(e.getMessage());
                     }
                 }
             }
@@ -63,7 +63,7 @@ public class LessonsRepository {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError(errorDetail);
                     } catch (Exception e){
-                        callback.onError("error");
+                        callback.onError(e.getMessage());
                     }
 
                 }

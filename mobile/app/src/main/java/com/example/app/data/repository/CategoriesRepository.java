@@ -39,7 +39,7 @@ public class CategoriesRepository {
                     }
 
                     catch (Exception e) {
-                        callback.onError("error");
+                        callback.onError(e.getMessage());
                     }
                 }
             }

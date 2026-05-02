@@ -9,6 +9,7 @@ import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.api.AuthApi;
 import com.example.app.data.remote.api.CategoryApi;
 import com.example.app.data.remote.api.LessonsApi;
+import com.example.app.data.remote.api.TranscriptsApi;
 import com.example.app.data.remote.api.UserApi;
 import com.example.app.data.remote.interceptor.AuthInterceptor;
 import com.example.app.utils.Constants;
@@ -61,6 +62,8 @@ public class RetrofitClient {
         return retrofit.create(CategoryApi.class);
     }
     public UserApi getUserApi(){return retrofit.create(UserApi.class);}
+    public TranscriptsApi getTranscriptsApi(){return retrofit.create(TranscriptsApi.class);}
+
 
 
 }
