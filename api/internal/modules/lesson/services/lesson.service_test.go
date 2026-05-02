@@ -32,6 +32,21 @@ func (m *mockLessonRepo) FindByID(ctx context.Context, id uint) (*models.Lesson,
 	return args.Get(0).(*models.Lesson), args.Error(1)
 }
 
+func (m *mockLessonRepo) Create(ctx context.Context, lesson *models.Lesson) error {
+	args := m.Called(ctx, lesson)
+	return args.Error(0)
+}
+
+func (m *mockLessonRepo) Update(ctx context.Context, lesson *models.Lesson) error {
+	args := m.Called(ctx, lesson)
+	return args.Error(0)
+}
+
+func (m *mockLessonRepo) Delete(ctx context.Context, id uint) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
 func TestListLessons_Success(t *testing.T) {
 	mockRepo := new(mockLessonRepo)
 	svc := NewLessonService(mockRepo)

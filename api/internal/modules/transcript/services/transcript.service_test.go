@@ -21,6 +21,29 @@ func (m *mockTranscriptRepo) FindByLesson(ctx context.Context, lessonID uint) ([
 	return args.Get(0).([]*models.Transcript), args.Error(1)
 }
 
+func (m *mockTranscriptRepo) FindByID(ctx context.Context, id uint) (*models.Transcript, error) {
+	args := m.Called(ctx, id)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.Transcript), args.Error(1)
+}
+
+func (m *mockTranscriptRepo) Create(ctx context.Context, transcript *models.Transcript) error {
+	args := m.Called(ctx, transcript)
+	return args.Error(0)
+}
+
+func (m *mockTranscriptRepo) Update(ctx context.Context, transcript *models.Transcript) error {
+	args := m.Called(ctx, transcript)
+	return args.Error(0)
+}
+
+func (m *mockTranscriptRepo) Delete(ctx context.Context, id uint) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
 func TestGetByLesson_Success(t *testing.T) {
 	repo := new(mockTranscriptRepo)
 	svc := NewTranscriptService(repo)

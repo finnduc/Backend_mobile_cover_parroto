@@ -32,6 +32,21 @@ func (m *mockCategoryRepo) FindByID(ctx context.Context, id uint) (*models.Categ
 	return args.Get(0).(*models.Category), args.Error(1)
 }
 
+func (m *mockCategoryRepo) Create(ctx context.Context, category *models.Category) error {
+	args := m.Called(ctx, category)
+	return args.Error(0)
+}
+
+func (m *mockCategoryRepo) Update(ctx context.Context, category *models.Category) error {
+	args := m.Called(ctx, category)
+	return args.Error(0)
+}
+
+func (m *mockCategoryRepo) Delete(ctx context.Context, id uint) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
 func TestListCategories_Success(t *testing.T) {
 	repo := new(mockCategoryRepo)
 	svc := NewCategoryService(repo)

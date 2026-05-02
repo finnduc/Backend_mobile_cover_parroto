@@ -8,6 +8,8 @@ import (
 	"go-cover-parroto/internal/core/enums"
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/policy"
+	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/database/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -21,6 +23,24 @@ func (m *mockUserRepo) FindByID(ctx context.Context, id uint) (*models.User, err
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*models.User), args.Error(1)
+}
+
+func (m *mockUserRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.User], error) {
+	args := m.Called(ctx, query)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*response.PaginatedResult[*models.User]), args.Error(1)
+}
+
+func (m *mockUserRepo) Update(ctx context.Context, user *models.User) error {
+	args := m.Called(ctx, user)
+	return args.Error(0)
+}
+
+func (m *mockUserRepo) Delete(ctx context.Context, id uint) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
 }
 
 func testCtx(userID uint, role enums.UserRole) context.Context {
