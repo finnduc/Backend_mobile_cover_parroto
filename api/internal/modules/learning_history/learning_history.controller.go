@@ -5,11 +5,15 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
+	_ "go-cover-parroto/internal/modules/learning_history/dtos/res"
 	"go-cover-parroto/internal/modules/learning_history/services"
+
 	"github.com/gin-gonic/gin"
 )
 
-type LearningHistoryController struct{ svc services.ILearningHistoryService }
+type LearningHistoryController struct {
+	svc services.ILearningHistoryService
+}
 
 func NewLearningHistoryController(svc services.ILearningHistoryService) *LearningHistoryController {
 	return &LearningHistoryController{svc: svc}
