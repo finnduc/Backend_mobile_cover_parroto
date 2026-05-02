@@ -14,9 +14,17 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	repo := repositories.NewTranscriptRepo(db)
 	svc := services.NewTranscriptService(repo)
 	ctrl := NewTranscriptController(svc)
+	adminCtrl := NewTranscriptAdminController(svc)
 
 	protected := r.Group("", middleware.FirebaseAuth(db, fbAuth))
 	{
 		protected.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
+	}
+
+	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth))
+	{
+		admin.POST("/transcripts", adminCtrl.Create)
+		admin.PUT("/transcripts/:id", adminCtrl.Update)
+		admin.DELETE("/transcripts/:id", adminCtrl.Delete)
 	}
 }
