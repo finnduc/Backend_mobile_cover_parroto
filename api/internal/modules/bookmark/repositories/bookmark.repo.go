@@ -13,7 +13,7 @@ import (
 type IBookmarkRepo interface {
 	Create(ctx context.Context, userID, lessonID uint) error
 	Delete(ctx context.Context, userID, lessonID uint) error
-	ListByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error)
+	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error)
 }
 
 type bookmarkRepo struct {
@@ -36,13 +36,14 @@ func (r *bookmarkRepo) Delete(ctx context.Context, userID, lessonID uint) error 
 	return r.db.WithContext(ctx).Where("user_id = ? AND lesson_id = ?", userID, lessonID).Delete(&models.Bookmark{}).Error
 }
 
-func (r *bookmarkRepo) ListByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error) {
+func (r *bookmarkRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error) {
 	var bookmarks []*models.Bookmark
 
-	var total int64
-	r.db.WithContext(ctx).Model(&models.Bookmark{}).Where("user_id = ?", userID).Count(&total)
+	base := r.db.WithContext(ctx).Model(&models.Bookmark{}).Preload("Lesson")
 
-	base := r.db.WithContext(ctx).Where("user_id = ?", userID).Preload("Lesson")
+	var total int64
+	query.Count(base).Count(&total)
+
 	err := query.Apply(base).Find(&bookmarks).Error
 	if err != nil {
 		return nil, errors.MapRepoError(err)

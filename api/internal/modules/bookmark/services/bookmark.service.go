@@ -3,17 +3,18 @@ package services
 import (
 	"context"
 
-	"go-cover-parroto/internal/core/database"
+	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
+	"go-cover-parroto/internal/modules/bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/bookmark/dtos/res"
 	"go-cover-parroto/internal/modules/bookmark/repositories"
 )
 
 type IBookmarkService interface {
-	AddBookmark(ctx context.Context, userID, lessonID uint) *response.AppError
-	RemoveBookmark(ctx context.Context, userID, lessonID uint) *response.AppError
-	ListByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError)
+	AddBookmark(ctx context.Context, body req.AddBookmarkReq) *response.AppError
+	RemoveBookmark(ctx context.Context, body req.RemoveBookmarkReq) *response.AppError
+	List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError)
 }
 
 type bookmarkService struct {
@@ -24,22 +25,32 @@ func NewBookmarkService(repo repositories.IBookmarkRepo) IBookmarkService {
 	return &bookmarkService{repo: repo}
 }
 
-func (s *bookmarkService) AddBookmark(ctx context.Context, userID, lessonID uint) *response.AppError {
-	if err := s.repo.Create(ctx, userID, lessonID); err != nil {
+func (s *bookmarkService) AddBookmark(ctx context.Context, body req.AddBookmarkReq) *response.AppError {
+	userID, err := policy.GetUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	if createErr := s.repo.Create(ctx, userID, body.LessonID); createErr != nil {
 		return response.Internal("failed to add bookmark")
 	}
 	return nil
 }
 
-func (s *bookmarkService) RemoveBookmark(ctx context.Context, userID, lessonID uint) *response.AppError {
-	if err := s.repo.Delete(ctx, userID, lessonID); err != nil {
+func (s *bookmarkService) RemoveBookmark(ctx context.Context, body req.RemoveBookmarkReq) *response.AppError {
+	userID, err := policy.GetUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	if delErr := s.repo.Delete(ctx, userID, body.LessonID); delErr != nil {
 		return response.Internal("failed to remove bookmark")
 	}
 	return nil
 }
 
-func (s *bookmarkService) ListByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError) {
-	result, err := s.repo.ListByUser(ctx, userID, query)
+func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError) {
+	result, err := s.repo.FindAll(ctx, query.ToQuery())
 	if err != nil {
 		return nil, response.Internal("failed to list bookmarks")
 	}
