@@ -2,20 +2,14 @@ package category
 
 import (
 	"net/http"
-	"strconv"
 
-	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/modules/category/dtos/req"
 	"go-cover-parroto/internal/modules/category/services"
-
-	_ "go-cover-parroto/internal/modules/category/dtos/res"
-
 	"github.com/gin-gonic/gin"
 )
 
-type CategoryController struct {
-	svc services.ICategoryService
-}
+type CategoryController struct{ svc services.ICategoryService }
 
 func NewCategoryController(svc services.ICategoryService) *CategoryController {
 	return &CategoryController{svc: svc}
@@ -33,11 +27,12 @@ func NewCategoryController(svc services.ICategoryService) *CategoryController {
 // @Failure 500 {object} response.BaseResponse[any]
 // @Router /categories [get]
 func (ctrl *CategoryController) List(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-
-	query := database.NewQuery().SetPage(page).SetLimit(limit)
-	results, appErr := ctrl.svc.ListCategories(c.Request.Context(), query)
+	var q req.ListCategoryQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	results, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

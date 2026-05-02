@@ -8,6 +8,7 @@ import (
 	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
+	"go-cover-parroto/internal/modules/category/dtos/req"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -43,10 +44,11 @@ func TestListCategories_Success(t *testing.T) {
 		Data: categories,
 		Meta: response.NewMeta(1, 10, 2),
 	}
-	query := database.NewQuery().SetPage(1).SetLimit(10)
-	repo.On("FindAll", mock.Anything, query).Return(paginatedResult, nil)
+	query := req.ListCategoryQuery{Page: 1, Limit: 10}
+	dbQuery := query.ToQuery()
+	repo.On("FindAll", mock.Anything, dbQuery).Return(paginatedResult, nil)
 
-	result, appErr := svc.ListCategories(context.Background(), query)
+	result, appErr := svc.List(context.Background(), query)
 
 	assert.Nil(t, appErr)
 	assert.Len(t, result.Data, 2)
@@ -58,10 +60,11 @@ func TestListCategories_Error(t *testing.T) {
 	repo := new(mockCategoryRepo)
 	svc := NewCategoryService(repo)
 
-	query := database.NewQuery()
-	repo.On("FindAll", mock.Anything, query).Return(nil, errors.New("db error"))
+	query := req.ListCategoryQuery{Page: 1, Limit: 10}
+	dbQuery := query.ToQuery()
+	repo.On("FindAll", mock.Anything, dbQuery).Return(nil, errors.New("db error"))
 
-	result, appErr := svc.ListCategories(context.Background(), query)
+	result, appErr := svc.List(context.Background(), query)
 
 	assert.Nil(t, result)
 	assert.NotNil(t, appErr)
