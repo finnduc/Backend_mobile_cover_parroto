@@ -10,3 +10,11 @@ type ListCategoryQuery struct {
 func (q ListCategoryQuery) ToQuery() *database.Query {
 	return database.NewQuery().SetPage(q.Page).SetLimit(q.Limit)
 }
+
+type CreateCategoryReq struct {
+	Name string `json:"name" binding:"required"`
+}
+
+type UpdateCategoryReq struct {
+	Name string `json:"name" binding:"required"`
+}

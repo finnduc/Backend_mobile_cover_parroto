@@ -13,6 +13,9 @@ import (
 type ICategoryRepo interface {
 	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Category], error)
 	FindByID(ctx context.Context, id uint) (*models.Category, error)
+	Create(ctx context.Context, category *models.Category) error
+	Update(ctx context.Context, category *models.Category) error
+	Delete(ctx context.Context, id uint) error
 }
 
 type categoryRepo struct {
@@ -41,6 +44,18 @@ func (r *categoryRepo) FindAll(ctx context.Context, query *database.Query) (*res
 		Data: categories,
 		Meta: meta,
 	}, nil
+}
+
+func (r *categoryRepo) Create(ctx context.Context, category *models.Category) error {
+	return r.db.WithContext(ctx).Create(category).Error
+}
+
+func (r *categoryRepo) Update(ctx context.Context, category *models.Category) error {
+	return r.db.WithContext(ctx).Save(category).Error
+}
+
+func (r *categoryRepo) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Category{}, id).Error
 }
 
 func (r *categoryRepo) FindByID(ctx context.Context, id uint) (*models.Category, error) {
