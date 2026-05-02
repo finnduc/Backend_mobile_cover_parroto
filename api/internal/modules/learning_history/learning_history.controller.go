@@ -2,20 +2,14 @@ package learning_history
 
 import (
 	"net/http"
-	"strconv"
 
-	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/response"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
-	_ "go-cover-parroto/internal/modules/learning_history/dtos/res"
 	"go-cover-parroto/internal/modules/learning_history/services"
-
 	"github.com/gin-gonic/gin"
 )
 
-type LearningHistoryController struct {
-	svc services.ILearningHistoryService
-}
+type LearningHistoryController struct{ svc services.ILearningHistoryService }
 
 func NewLearningHistoryController(svc services.ILearningHistoryService) *LearningHistoryController {
 	return &LearningHistoryController{svc: svc}
@@ -34,19 +28,12 @@ func NewLearningHistoryController(svc services.ILearningHistoryService) *Learnin
 // @Router /learning-history [post]
 // @Security BearerAuth
 func (ctrl *LearningHistoryController) Record(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
-		return
-	}
-
 	var body lhreq.RecordHistoryReq
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-
-	result, appErr := ctrl.svc.Record(c.Request.Context(), userID.(uint), body)
+	result, appErr := ctrl.svc.Record(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -67,17 +54,12 @@ func (ctrl *LearningHistoryController) Record(c *gin.Context) {
 // @Router /learning-history [get]
 // @Security BearerAuth
 func (ctrl *LearningHistoryController) List(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+	var q lhreq.ListHistoryQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	query := database.NewQuery().SetPage(page).SetLimit(limit)
-
-	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), userID.(uint), query)
+	result, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -99,19 +81,12 @@ func (ctrl *LearningHistoryController) List(c *gin.Context) {
 // @Router /learning-history/{lessonId} [get]
 // @Security BearerAuth
 func (ctrl *LearningHistoryController) GetByLesson(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, response.Fail(response.Unauthorized()))
+	var body lhreq.GetHistoryReq
+	if err := c.ShouldBindUri(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-
-	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
-		return
-	}
-
-	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), userID.(uint), uint(lessonID))
+	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

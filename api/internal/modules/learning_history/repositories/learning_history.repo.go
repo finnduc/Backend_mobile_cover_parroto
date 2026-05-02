@@ -12,7 +12,7 @@ import (
 
 type ILearningHistoryRepo interface {
 	Upsert(ctx context.Context, history *models.LearningHistory) error
-	FindAllByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error)
+	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error)
 	FindByUserAndLesson(ctx context.Context, userID, lessonID uint) (*models.LearningHistory, error)
 }
 
@@ -43,13 +43,13 @@ func (r *learningHistoryRepo) Upsert(ctx context.Context, history *models.Learni
 	return nil
 }
 
-func (r *learningHistoryRepo) FindAllByUser(ctx context.Context, userID uint, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error) {
+func (r *learningHistoryRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error) {
 	var histories []*models.LearningHistory
 
-	base := r.db.WithContext(ctx).Model(&models.LearningHistory{}).Where("user_id = ?", userID)
+	base := r.db.WithContext(ctx).Model(&models.LearningHistory{})
 
 	var total int64
-	base.Count(&total)
+	query.Count(base).Count(&total)
 
 	err := query.Apply(base).Find(&histories).Error
 	if err != nil {
