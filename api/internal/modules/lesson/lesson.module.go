@@ -20,6 +20,8 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	r.GET("/lessons/:lessonId", ctrl.Get)
 
 	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth))
+	admin.GET("/lessons", adminCtrl.List)
+	admin.GET("/lessons/:id", adminCtrl.Get)
 	admin.POST("/lessons", adminCtrl.Create)
 	admin.PUT("/lessons/:id", adminCtrl.Update)
 	admin.DELETE("/lessons/:id", adminCtrl.Delete)

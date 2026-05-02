@@ -20,6 +20,32 @@ func NewTranscriptAdminController(svc services.ITranscriptService) *TranscriptAd
 	return &TranscriptAdminController{svc: svc}
 }
 
+// GetByID godoc
+// @Summary Get transcript by ID
+// @Description Get a transcript entry by ID (admin only)
+// @Tags admin-transcripts
+// @Accept json
+// @Produce json
+// @Param id path int true "Transcript ID"
+// @Success 200 {object} response.BaseResponse[res.TranscriptRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/transcripts/{id} [get]
+// @Security BearerAuth
+func (ctrl *TranscriptAdminController) GetByID(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
+		return
+	}
+	result, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
 // Create godoc
 // @Summary Create transcript
 // @Description Create a new transcript entry (admin only)

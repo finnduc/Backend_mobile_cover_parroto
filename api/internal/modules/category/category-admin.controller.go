@@ -19,6 +19,58 @@ func NewCategoryAdminController(svc services.ICategoryService) *CategoryAdminCon
 	return &CategoryAdminController{svc: svc}
 }
 
+// List godoc
+// @Summary List categories
+// @Description List all categories with pagination (admin only)
+// @Tags admin-categories
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.CategoryRes]]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/categories [get]
+// @Security BearerAuth
+func (ctrl *CategoryAdminController) List(c *gin.Context) {
+	var q req.ListCategoryQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	result, appErr := ctrl.svc.List(c.Request.Context(), q)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
+// GetByID godoc
+// @Summary Get category by ID
+// @Description Get a category by ID (admin only)
+// @Tags admin-categories
+// @Accept json
+// @Produce json
+// @Param id path int true "Category ID"
+// @Success 200 {object} response.BaseResponse[res.CategoryRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/categories/{id} [get]
+// @Security BearerAuth
+func (ctrl *CategoryAdminController) GetByID(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
+		return
+	}
+	result, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
 // Create godoc
 // @Summary Create category
 // @Description Create a new category (admin only)

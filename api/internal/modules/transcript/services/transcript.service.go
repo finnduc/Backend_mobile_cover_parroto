@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+	"errors"
 
+	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	req "go-cover-parroto/internal/modules/transcript/dtos/req"
@@ -13,6 +15,7 @@ import (
 
 type ITranscriptService interface {
 	GetByLesson(ctx context.Context, lessonID uint) ([]transcriptres.TranscriptRes, *response.AppError)
+	GetByID(ctx context.Context, id uint) (*transcriptres.TranscriptRes, *response.AppError)
 	Create(ctx context.Context, body req.CreateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError)
 	Update(ctx context.Context, id uint, body req.UpdateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
@@ -24,6 +27,21 @@ type transcriptService struct {
 
 func NewTranscriptService(repo repositories.ITranscriptRepo) ITranscriptService {
 	return &transcriptService{repo: repo}
+}
+
+func (s *transcriptService) GetByID(ctx context.Context, id uint) (*transcriptres.TranscriptRes, *response.AppError) {
+	transcript, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, coreError.ErrNotFound) {
+			return nil, response.NotFound("transcript not found")
+		}
+		return nil, response.Internal("failed to get transcript")
+	}
+	var result transcriptres.TranscriptRes
+	if err := utils.MapToDTO(transcript, &result); err != nil {
+		return nil, response.Internal("failed to map transcript")
+	}
+	return &result, nil
 }
 
 func (s *transcriptService) GetByLesson(ctx context.Context, lessonID uint) ([]transcriptres.TranscriptRes, *response.AppError) {
