@@ -50,6 +50,12 @@ func (s *bookmarkService) RemoveBookmark(ctx context.Context, body req.RemoveBoo
 }
 
 func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError) {
+	if query.UserID != nil {
+		if err := policy.Allow(ctx, *query.UserID); err != nil {
+			return nil, err
+		}
+	}
+
 	result, err := s.repo.FindAll(ctx, query.ToQuery())
 	if err != nil {
 		return nil, response.Internal("failed to list bookmarks")

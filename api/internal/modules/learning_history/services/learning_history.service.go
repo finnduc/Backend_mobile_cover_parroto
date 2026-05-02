@@ -51,6 +51,12 @@ func (s *learningHistoryService) Record(ctx context.Context, body lhreq.RecordHi
 }
 
 func (s *learningHistoryService) List(ctx context.Context, query lhreq.ListHistoryQuery) (*response.PaginatedResponse[lhres.LearningHistoryRes], *response.AppError) {
+	if query.UserID != nil {
+		if err := policy.Allow(ctx, *query.UserID); err != nil {
+			return nil, err
+		}
+	}
+
 	result, err := s.repo.FindAll(ctx, query.ToQuery())
 	if err != nil {
 		return nil, response.Internal("failed to list history")
