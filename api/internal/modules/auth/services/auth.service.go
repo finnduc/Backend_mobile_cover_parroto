@@ -5,15 +5,20 @@ import (
 	"errors"
 
 	coreError "go-cover-parroto/internal/core/errors"
+	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/firebase"
 	authres "go-cover-parroto/internal/modules/auth/dtos/res"
 	"go-cover-parroto/internal/modules/auth/repositories"
+	"go.uber.org/zap"
 )
 
+func sLog() *zap.SugaredLogger {
+	return logger.S().With("service", "auth")
+}
+
 type IAuthService interface {
-	// Đã thêm tham số reqName để nhận tên từ request body
 	SyncUser(ctx context.Context, firebaseToken string, reqName string) (*authres.SyncRes, *response.AppError)
 }
 
@@ -36,7 +41,6 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string, reqNam
 	name, _ := decoded.Claims["name"].(string)
 	picture, _ := decoded.Claims["picture"].(string)
 
-	// LOGIC MỚI: Nếu name từ token rỗng (do đăng ký bằng email/password) thì lấy reqName từ frontend gửi lên
 	if name == "" && reqName != "" {
 		name = reqName
 	}
@@ -45,9 +49,12 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string, reqNam
 		return nil, response.BadRequest("firebase token missing email")
 	}
 
+	log := sLog().With("email", email)
+
 	user, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
 		if !errors.Is(err, coreError.ErrNotFound) {
+			log.Errorw("failed to find user by email", "error", err)
 			return nil, response.Internal("failed to find user")
 		}
 
@@ -59,10 +66,13 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string, reqNam
 		}
 
 		if createErr := s.repo.Create(ctx, user); createErr != nil {
+			log.Errorw("failed to create user", "error", createErr)
 			return nil, response.Internal("failed to create user")
 		}
+		log.Infow("new user created via sync", "userId", user.ID)
 	}
 
+	log.Infow("user sync completed", "userId", user.ID)
 	return &authres.SyncRes{
 		ID:        user.ID,
 		Email:     user.Email,

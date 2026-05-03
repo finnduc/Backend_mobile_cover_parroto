@@ -22,7 +22,7 @@ func Init(cfg configs.FirebaseConfig) (IFirebaseAuth, error) {
 	var err error
 
 	if cfg.CredentialsFile != "" {
-		app, err = firebase.NewApp(ctx, nil, option.WithCredentialsFile(cfg.CredentialsFile))
+		app, err = firebase.NewApp(ctx, nil, option.WithAuthCredentialsFile(option.ServiceAccount, cfg.CredentialsFile))
 	} else {
 		conf := &firebase.Config{ProjectID: cfg.ProjectID}
 		app, err = firebase.NewApp(ctx, conf)

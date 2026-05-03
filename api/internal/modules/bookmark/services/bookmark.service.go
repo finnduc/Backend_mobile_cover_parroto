@@ -3,13 +3,19 @@ package services
 import (
 	"context"
 
+	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/bookmark/dtos/res"
 	"go-cover-parroto/internal/modules/bookmark/repositories"
+	"go-cover-parroto/internal/utils"
+	"go.uber.org/zap"
 )
+
+func sLog() *zap.SugaredLogger {
+	return logger.S().With("service", "bookmark")
+}
 
 type IBookmarkService interface {
 	AddBookmark(ctx context.Context, body req.AddBookmarkReq) *response.AppError
@@ -31,9 +37,13 @@ func (s *bookmarkService) AddBookmark(ctx context.Context, body req.AddBookmarkR
 		return err
 	}
 
+	log := sLog().With("userId", userID, "lessonId", body.LessonID)
+	log.Infow("adding bookmark")
 	if createErr := s.repo.Create(ctx, userID, body.LessonID); createErr != nil {
+		log.Errorw("failed to add bookmark", "error", createErr)
 		return response.Internal("failed to add bookmark")
 	}
+	log.Infow("bookmark added")
 	return nil
 }
 
@@ -43,13 +53,19 @@ func (s *bookmarkService) RemoveBookmark(ctx context.Context, body req.RemoveBoo
 		return err
 	}
 
+	log := sLog().With("userId", userID, "lessonId", body.LessonID)
+	log.Infow("removing bookmark")
 	if delErr := s.repo.Delete(ctx, userID, body.LessonID); delErr != nil {
+		log.Errorw("failed to remove bookmark", "error", delErr)
 		return response.Internal("failed to remove bookmark")
 	}
+	log.Infow("bookmark removed")
 	return nil
 }
 
 func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError) {
+	log := sLog()
+	log.Infow("listing bookmarks")
 	if query.UserID != nil {
 		if err := policy.Allow(ctx, *query.UserID); err != nil {
 			return nil, err
@@ -58,34 +74,18 @@ func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery)
 
 	result, err := s.repo.FindAll(ctx, query.ToQuery())
 	if err != nil {
+		log.Errorw("failed to list bookmarks", "error", err)
 		return nil, response.Internal("failed to list bookmarks")
 	}
 
-	bookmarks := make([]res.BookmarkRes, len(result.Data))
-	for i, b := range result.Data {
-		bookmarks[i] = mapToBookmarkRes(b)
+	var bookmarks []res.BookmarkRes
+	if err := utils.MapToDTOs(result.Data, &bookmarks); err != nil {
+		log.Errorw("failed to map bookmarks", "error", err)
+		return nil, response.Internal("failed to map bookmarks")
 	}
 
 	return &response.PaginatedResponse[res.BookmarkRes]{
 		Data: bookmarks,
 		Meta: result.Meta,
 	}, nil
-}
-
-func mapToBookmarkRes(b *models.Bookmark) res.BookmarkRes {
-	r := res.BookmarkRes{
-		UserID:    b.UserID,
-		LessonID:  b.LessonID,
-		CreatedAt: b.CreatedAt,
-	}
-	if b.Lesson != nil {
-		r.Lesson = &res.LessonInfo{
-			ID:           b.Lesson.ID,
-			Title:        b.Lesson.Title,
-			ThumbnailURL: b.Lesson.ThumbnailURL,
-			Level:        b.Lesson.Level,
-			Duration:     b.Lesson.Duration,
-		}
-	}
-	return r
 }

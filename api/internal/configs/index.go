@@ -6,6 +6,7 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Firebase FirebaseConfig
+	Logger   LoggerConfig
 }
 
 func Load() Config {
@@ -15,5 +16,6 @@ func Load() Config {
 		Server:   loadServerConfig(),
 		Postgres: loadPostgresConfig(),
 		Firebase: loadFirebaseConfig(),
+		Logger:   loadLoggerConfig(),
 	}
 }

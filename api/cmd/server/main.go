@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go-cover-parroto/internal/configs"
+	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/database"
 	fb "go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/modules/auth"
@@ -48,20 +49,23 @@ import (
 func main() {
 	cfg := configs.Load()
 
+	err := logger.Init(cfg.Logger)
+	if err != nil {
+		log.Fatalf("Failed to initialize logger: %v", err)
+	}
+	defer logger.S().Sync()
+
 	if err := database.Init(cfg.Postgres); err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		logger.S().Fatalf("Failed to connect to database: %v", err)
 	}
 
 	fbClient, err := fb.Init(cfg.Firebase)
 
 	if err != nil {
-		log.Fatalf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
+		logger.S().Fatalf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
 	}
 
 	port := cfg.Server.Port
-	if port == "" {
-		port = "3001"
-	}
 
 	r := gin.Default()
 
@@ -99,8 +103,8 @@ func main() {
 		transcript.RegisterRoutes(v1, db, fbClient)
 	}
 
-	log.Printf("API server running, documentation at http://localhost:%s/swagger", port)
+	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)
 	if err := r.Run(":" + port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		logger.S().Fatalf("Failed to start server: %v", err)
 	}
 }
