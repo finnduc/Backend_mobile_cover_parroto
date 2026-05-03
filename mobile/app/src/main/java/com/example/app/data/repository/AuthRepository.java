@@ -55,7 +55,7 @@ public class AuthRepository {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError("Lỗi từ đăng nhập: " + errorDetail);
                     } catch (Exception e) {
-                        callback.onError("Tài khoản mật khẩu không đúng");
+                        callback.onError(e.getMessage());
                     }
                 }
             }
@@ -118,7 +118,7 @@ public class AuthRepository {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError("Lỗi từ Firebase: " + errorDetail);
                     } catch (Exception e) {
-                        callback.onError("Không thể đọc lỗi từ Firebase");
+                        callback.onError(e.getMessage());
                     }
                 }
             }
