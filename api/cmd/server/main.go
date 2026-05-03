@@ -10,8 +10,8 @@ import (
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
-	"go-cover-parroto/internal/modules/lesson"
 	learninghistory "go-cover-parroto/internal/modules/learning_history"
+	"go-cover-parroto/internal/modules/lesson"
 	"go-cover-parroto/internal/modules/transcript"
 	"go-cover-parroto/internal/modules/user"
 
@@ -53,9 +53,9 @@ func main() {
 	}
 
 	fbClient, err := fb.Init(cfg.Firebase)
+
 	if err != nil {
-		log.Printf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
-		fbClient, _ = fb.Init(fb.EmptyConfig())
+		log.Fatalf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
 	}
 
 	port := cfg.Server.Port

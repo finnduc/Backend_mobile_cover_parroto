@@ -14,6 +14,5 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	svc := services.NewAuthService(repo, fbAuth)
 	ctrl := NewAuthController(svc)
 
-	r.POST("/auth/token", ctrl.GetToken)
 	r.POST("/auth/sync", ctrl.Sync)
 }

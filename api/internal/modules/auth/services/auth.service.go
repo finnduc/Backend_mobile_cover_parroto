@@ -8,16 +8,13 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/firebase"
-	authreq "go-cover-parroto/internal/modules/auth/dtos/req"
 	authres "go-cover-parroto/internal/modules/auth/dtos/res"
 	"go-cover-parroto/internal/modules/auth/repositories"
-	"go-cover-parroto/internal/utils"
 )
 
 type IAuthService interface {
 	// Đã thêm tham số reqName để nhận tên từ request body
 	SyncUser(ctx context.Context, firebaseToken string, reqName string) (*authres.SyncRes, *response.AppError)
-	GetToken(ctx context.Context, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError)
 }
 
 type authService struct {
@@ -72,17 +69,4 @@ func (s *authService) SyncUser(ctx context.Context, firebaseToken string, reqNam
 		Name:      user.Name,
 		AvatarURL: user.AvatarURL,
 	}, nil
-}
-
-func (s *authService) GetToken(ctx context.Context, body authreq.GetTokenReq) (*authres.TokenRes, *response.AppError) {
-	token, err := s.fbAuth.SignIn(ctx, body.Email, body.Password)
-	if err != nil {
-		return nil, response.Unauthorized(err.Error())
-	}
-
-	var result authres.TokenRes
-	if err := utils.MapToDTO(token, &result); err != nil {
-		return nil, response.Internal("failed to map token")
-	}
-	return &result, nil
 }
