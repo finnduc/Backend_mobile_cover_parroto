@@ -5,8 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.view.MotionEvent;
+import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -41,7 +43,32 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsV
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_error)
                 .into(holder.imgThumbnail);
+        holder.cardRoot.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.animate()
+                            .scaleX(1.04f)
+                            .scaleY(1.04f)
+                            .setDuration(120)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .start();
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.animate()
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .setDuration(120)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .start();
+                    break;
+            }
+            return false;
+        });
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -52,6 +79,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsV
     }
 
     public class LessonsViewHolder extends RecyclerView.ViewHolder {
+        CardView cardRoot;
         private ImageView imgThumbnail;
         private TextView tvTitle;
         private TextView tvDuration;
@@ -59,14 +87,12 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsV
 
         public LessonsViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardRoot = (CardView) itemView;
             imgThumbnail = itemView.findViewById(R.id.imgThumbnail);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvLevel = itemView.findViewById(R.id.tvLevel);
-
         }
-
-
     }
 }
 

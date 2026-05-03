@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -23,12 +24,13 @@ public class LessonsListFragment extends Fragment {
     private List<LessonsResponse> lessonsResponseList = new ArrayList<>();
     private LessonsAdapter adapter;
     private LessonsRepository repository;
-
+    private TextView CountNotStarted;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.rvLessons);
+        CountNotStarted = view.findViewById(R.id.tvCountNotStarted);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new LessonsAdapter(lessonsResponseList);
@@ -48,6 +50,10 @@ public class LessonsListFragment extends Fragment {
                             lessonsResponseList.addAll(data.getData());
                         }
                         adapter.notifyDataSetChanged();
+                        int totallessons = data.getMeta().getTotal();
+                        int done = 0;
+                        int learning = 0;
+                        CountNotStarted.setText(String.valueOf(totallessons - done - learning));
                     }
                     @Override
                     public void onError(String message) {
@@ -55,4 +61,5 @@ public class LessonsListFragment extends Fragment {
                     }
                 });
     }
+
 }
