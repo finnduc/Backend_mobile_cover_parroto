@@ -11,7 +11,7 @@ import (
 )
 
 func Init(cfg configs.FirebaseConfig) (IFirebaseAuth, error) {
-	if cfg.CredentialsFile == "" && cfg.ProjectID == "" {
+	if cfg.CredentialsFile == "" {
 		log.Println("WARNING: Firebase credentials not configured — protected routes will be unavailable")
 		return nil, errors.New("Firebase not configured")
 	}
@@ -21,12 +21,7 @@ func Init(cfg configs.FirebaseConfig) (IFirebaseAuth, error) {
 	var app *firebase.App
 	var err error
 
-	if cfg.CredentialsFile != "" {
-		app, err = firebase.NewApp(ctx, nil, option.WithAuthCredentialsFile(option.ServiceAccount, cfg.CredentialsFile))
-	} else {
-		conf := &firebase.Config{ProjectID: cfg.ProjectID}
-		app, err = firebase.NewApp(ctx, conf)
-	}
+	app, err = firebase.NewApp(ctx, nil, option.WithAuthCredentialsFile(option.ServiceAccount, cfg.CredentialsFile))
 	if err != nil {
 		return nil, err
 	}

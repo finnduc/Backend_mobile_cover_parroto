@@ -943,9 +943,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/sync": {
+        "/auth/complete-signup": {
             "post": {
-                "description": "Verify Firebase ID token and create or get user in database",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sets initial user claims and roles after the first Firebase authentication",
                 "consumes": [
                     "application/json"
                 ],
@@ -955,79 +960,22 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Sync user with Firebase",
-                "parameters": [
-                    {
-                        "description": "Firebase ID token",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.SyncReq"
-                        }
-                    }
-                ],
+                "summary": "Finalize user registration",
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                        "description": "Successfully finalized profile",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/token": {
-            "post": {
-                "description": "Sign in with email \u0026 password to get a Firebase ID token for use in protected endpoints",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Get Firebase ID token",
-                "parameters": [
-                    {
-                        "description": "Email and password",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                        "description": "Unauthorized - Valid session required",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -1702,40 +1650,6 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.SyncRes"
-                },
-                "error": {},
-                "meta": {
-                    "description": "optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
-                        }
-                    ]
-                }
-            }
-        },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.TokenRes"
-                },
-                "error": {},
-                "meta": {
-                    "description": "optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
-                        }
-                    ]
-                }
-            }
-        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
             "type": "object",
             "properties": {
@@ -1909,70 +1823,6 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 6
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_req.SyncReq": {
-            "type": "object",
-            "required": [
-                "firebase_token"
-            ],
-            "properties": {
-                "firebase_token": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_res.SyncRes": {
-            "type": "object",
-            "properties": {
-                "avatar_url": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_auth_dtos_res.TokenRes": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "type": "string"
-                },
-                "id_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
         "go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes": {
             "type": "object",
             "properties": {
@@ -1986,7 +1836,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -2081,7 +1931,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -2277,7 +2127,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"

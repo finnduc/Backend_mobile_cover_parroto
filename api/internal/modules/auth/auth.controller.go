@@ -26,7 +26,8 @@ func NewAuthController(svc services.IAuthService) *AuthController {
 // @Success 200 {object} response.BaseResponse[any] "Successfully finalized profile"
 // @Failure 401 {object} response.BaseResponse[any] "Unauthorized - Valid session required"
 // @Failure 500 {object} response.BaseResponse[any] "Internal Server Error"
-// @Router /auth/complete [post]
+// @Router /auth/complete-signup [post]
+// @Security BearerAuth
 func (ctrl *AuthController) Complete(c *gin.Context) {
 	appErr := ctrl.svc.CompleteSignUp(c.Request.Context())
 

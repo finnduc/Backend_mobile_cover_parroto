@@ -71,26 +71,6 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes:
-    properties:
-      data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.SyncRes'
-      error: {}
-      meta:
-        allOf:
-        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-        description: optional
-    type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes:
-    properties:
-      data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.TokenRes'
-      error: {}
-      meta:
-        allOf:
-        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-        description: optional
-    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
     properties:
       data:
@@ -198,48 +178,6 @@ definitions:
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
     type: object
-  go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq:
-    properties:
-      email:
-        type: string
-      password:
-        minLength: 6
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_req.SyncReq:
-    properties:
-      firebase_token:
-        type: string
-      name:
-        type: string
-    required:
-    - firebase_token
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.SyncRes:
-    properties:
-      avatar_url:
-        type: string
-      email:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  go-cover-parroto_internal_modules_auth_dtos_res.TokenRes:
-    properties:
-      email:
-        type: string
-      expires_in:
-        type: string
-      id_token:
-        type: string
-      refresh_token:
-        type: string
-    type: object
   go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes:
     properties:
       created_at:
@@ -249,7 +187,7 @@ definitions:
       lesson_id:
         type: integer
       user_id:
-        type: integer
+        type: string
     type: object
   go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo:
     properties:
@@ -311,7 +249,7 @@ definitions:
       lesson_id:
         type: integer
       user_id:
-        type: integer
+        type: string
     type: object
   go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq:
     properties:
@@ -440,7 +378,7 @@ definitions:
       email:
         type: string
       id:
-        type: integer
+        type: string
       name:
         type: string
     type: object
@@ -1047,65 +985,29 @@ paths:
       summary: Update user
       tags:
       - admin-users
-  /auth/sync:
+  /auth/complete-signup:
     post:
       consumes:
       - application/json
-      description: Verify Firebase ID token and create or get user in database
-      parameters:
-      - description: Firebase ID token
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.SyncReq'
+      description: Sets initial user claims and roles after the first Firebase authentication
       produces:
       - application/json
       responses:
         "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_SyncRes'
-        "400":
-          description: Bad Request
+          description: Successfully finalized profile
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
         "401":
-          description: Unauthorized
+          description: Unauthorized - Valid session required
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      summary: Sync user with Firebase
-      tags:
-      - auth
-  /auth/token:
-    post:
-      consumes:
-      - application/json
-      description: Sign in with email & password to get a Firebase ID token for use
-        in protected endpoints
-      parameters:
-      - description: Email and password
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_req.GetTokenReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_TokenRes'
-        "400":
-          description: Bad Request
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      summary: Get Firebase ID token
+      security:
+      - BearerAuth: []
+      summary: Finalize user registration
       tags:
       - auth
   /bookmarks:
