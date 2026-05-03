@@ -15,10 +15,10 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	svc := services.NewLearningHistoryService(repo)
 	ctrl := NewLearningHistoryController(svc)
 
-	protected := r.Group("", middleware.FirebaseAuth(db, fbAuth))
+	protected := r.Group("/learning-history", middleware.FirebaseAuth(fbAuth))
 	{
-		protected.POST("/learning-history", ctrl.Record)
-		protected.GET("/learning-history", ctrl.List)
-		protected.GET("/learning-history/:lessonId", ctrl.GetByLesson)
+		protected.POST("", ctrl.Record)
+		protected.GET("", ctrl.List)
+		protected.GET("/:lessonId", ctrl.GetByLesson)
 	}
 }

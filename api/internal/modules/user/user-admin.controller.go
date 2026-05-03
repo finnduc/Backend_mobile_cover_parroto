@@ -2,7 +2,6 @@ package user
 
 import (
 	"net/http"
-	"strconv"
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/user/dtos/req"
@@ -58,12 +57,12 @@ func (ctrl *UserAdminController) List(c *gin.Context) {
 // @Router /admin/users/{id} [get]
 // @Security BearerAuth
 func (ctrl *UserAdminController) GetByID(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
+	id := c.Param("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
 	}
-	result, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
+	result, appErr := ctrl.svc.GetByID(c.Request.Context(), id)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -85,8 +84,8 @@ func (ctrl *UserAdminController) GetByID(c *gin.Context) {
 // @Router /admin/users/{id} [put]
 // @Security BearerAuth
 func (ctrl *UserAdminController) Update(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
+	id := c.Param("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
 	}
@@ -95,7 +94,7 @@ func (ctrl *UserAdminController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Update(c.Request.Context(), uint(id), body)
+	result, appErr := ctrl.svc.Update(c.Request.Context(), id, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -116,12 +115,12 @@ func (ctrl *UserAdminController) Update(c *gin.Context) {
 // @Router /admin/users/{id} [delete]
 // @Security BearerAuth
 func (ctrl *UserAdminController) Delete(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
+	id := c.Param("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
 	}
-	appErr := ctrl.svc.Delete(c.Request.Context(), uint(id))
+	appErr := ctrl.svc.Delete(c.Request.Context(), id)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

@@ -3,10 +3,10 @@ package req
 import "go-cover-parroto/internal/core/database"
 
 type ListHistoryQuery struct {
-	UserID   *uint `form:"user_id"`
-	LessonID *uint `form:"lesson_id"`
-	Page     int   `form:"page"`
-	Limit    int   `form:"limit"`
+	UserID   *string `form:"user_id"`
+	LessonID *uint   `form:"lesson_id"`
+	Page     int     `form:"page"`
+	Limit    int     `form:"limit"`
 }
 
 func (q ListHistoryQuery) ToQuery() *database.Query {

@@ -8,7 +8,6 @@ import (
 	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/enums"
 	coreError "go-cover-parroto/internal/core/errors"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
@@ -31,7 +30,7 @@ func (m *mockLHRepo) FindAll(ctx context.Context, query *database.Query) (*respo
 	return args.Get(0).(*response.PaginatedResult[*models.LearningHistory]), args.Error(1)
 }
 
-func (m *mockLHRepo) FindByUserAndLesson(ctx context.Context, userID, lessonID uint) (*models.LearningHistory, error) {
+func (m *mockLHRepo) FindByUserAndLesson(ctx context.Context, userID string, lessonID uint) (*models.LearningHistory, error) {
 	args := m.Called(ctx, userID, lessonID)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -39,20 +38,20 @@ func (m *mockLHRepo) FindByUserAndLesson(ctx context.Context, userID, lessonID u
 	return args.Get(0).(*models.LearningHistory), args.Error(1)
 }
 
-func testCtx(userID uint, role enums.UserRole) context.Context {
-	ctx := context.WithValue(context.Background(), policy.ContextKeyUserID, userID)
-	ctx = context.WithValue(ctx, policy.ContextKeyUserRole, role)
+func testCtx(userID string, role enums.UserRole) context.Context {
+	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
+	ctx = context.WithValue(ctx, enums.ContextKeyUserRole, role)
 	return ctx
 }
 
 func TestRecord_Success(t *testing.T) {
 	mockRepo := new(mockLHRepo)
 	svc := NewLearningHistoryService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.RecordHistoryReq{LessonID: 3, DurationWatched: 120.5, Completed: true}
 
 	mockRepo.On("Upsert", mock.Anything, mock.MatchedBy(func(h *models.LearningHistory) bool {
-		return h.UserID == 1 && h.LessonID == 3
+		return h.UserID == "1" && h.LessonID == 3
 	})).Return(nil)
 
 	result, err := svc.Record(ctx, body)
@@ -64,7 +63,7 @@ func TestRecord_Success(t *testing.T) {
 func TestRecord_UpsertError(t *testing.T) {
 	mockRepo := new(mockLHRepo)
 	svc := NewLearningHistoryService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.RecordHistoryReq{LessonID: 3, DurationWatched: 10.0}
 
 	mockRepo.On("Upsert", mock.Anything, mock.Anything).Return(errors.New("db error"))
@@ -82,8 +81,8 @@ func TestList_Success(t *testing.T) {
 
 	paginated := &response.PaginatedResult[*models.LearningHistory]{
 		Data: []*models.LearningHistory{
-			{ID: 1, UserID: 1, LessonID: 2, DurationWatched: 60.0, Completed: false},
-			{ID: 2, UserID: 1, LessonID: 3, DurationWatched: 90.0, Completed: true},
+			{ID: 1, UserID: "1", LessonID: 2, DurationWatched: 60.0, Completed: false},
+			{ID: 2, UserID: "1", LessonID: 3, DurationWatched: 90.0, Completed: true},
 		},
 		Meta: response.NewMeta(1, 10, 2),
 	}
@@ -98,11 +97,11 @@ func TestList_Success(t *testing.T) {
 func TestGetByLesson_Success(t *testing.T) {
 	mockRepo := new(mockLHRepo)
 	svc := NewLearningHistoryService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.GetHistoryReq{LessonID: 5}
 
-	history := &models.LearningHistory{ID: 1, UserID: 1, LessonID: 5, DurationWatched: 45.0, Completed: false}
-	mockRepo.On("FindByUserAndLesson", mock.Anything, uint(1), uint(5)).Return(history, nil)
+	history := &models.LearningHistory{ID: 1, UserID: "1", LessonID: 5, DurationWatched: 45.0, Completed: false}
+	mockRepo.On("FindByUserAndLesson", mock.Anything, "1", uint(5)).Return(history, nil)
 
 	result, err := svc.GetByLesson(ctx, body)
 	assert.Nil(t, err)
@@ -113,10 +112,10 @@ func TestGetByLesson_Success(t *testing.T) {
 func TestGetByLesson_NotFound(t *testing.T) {
 	mockRepo := new(mockLHRepo)
 	svc := NewLearningHistoryService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.GetHistoryReq{LessonID: 99}
 
-	mockRepo.On("FindByUserAndLesson", mock.Anything, uint(1), uint(99)).Return(nil, coreError.ErrNotFound)
+	mockRepo.On("FindByUserAndLesson", mock.Anything, "1", uint(99)).Return(nil, coreError.ErrNotFound)
 
 	_, err := svc.GetByLesson(ctx, body)
 	assert.NotNil(t, err)

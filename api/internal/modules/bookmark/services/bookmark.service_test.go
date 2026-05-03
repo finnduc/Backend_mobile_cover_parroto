@@ -7,7 +7,6 @@ import (
 
 	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/enums"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
@@ -18,12 +17,12 @@ type mockBookmarkRepo struct {
 	mock.Mock
 }
 
-func (m *mockBookmarkRepo) Create(ctx context.Context, userID, lessonID uint) error {
+func (m *mockBookmarkRepo) Create(ctx context.Context, userID string, lessonID uint) error {
 	args := m.Called(ctx, userID, lessonID)
 	return args.Error(0)
 }
 
-func (m *mockBookmarkRepo) Delete(ctx context.Context, userID, lessonID uint) error {
+func (m *mockBookmarkRepo) Delete(ctx context.Context, userID string, lessonID uint) error {
 	args := m.Called(ctx, userID, lessonID)
 	return args.Error(0)
 }
@@ -36,19 +35,19 @@ func (m *mockBookmarkRepo) FindAll(ctx context.Context, query *database.Query) (
 	return args.Get(0).(*response.PaginatedResult[*models.Bookmark]), args.Error(1)
 }
 
-func testCtx(userID uint, role enums.UserRole) context.Context {
-	ctx := context.WithValue(context.Background(), policy.ContextKeyUserID, userID)
-	ctx = context.WithValue(ctx, policy.ContextKeyUserRole, role)
+func testCtx(userID string, role enums.UserRole) context.Context {
+	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
+	ctx = context.WithValue(ctx, enums.ContextKeyUserRole, role)
 	return ctx
 }
 
 func TestAddBookmark_Success(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.AddBookmarkReq{LessonID: 10}
 
-	mockRepo.On("Create", mock.Anything, uint(1), uint(10)).Return(nil)
+	mockRepo.On("Create", mock.Anything, "1", uint(10)).Return(nil)
 
 	err := svc.AddBookmark(ctx, body)
 	if err != nil {
@@ -60,10 +59,10 @@ func TestAddBookmark_Success(t *testing.T) {
 func TestAddBookmark_Error(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.AddBookmarkReq{LessonID: 10}
 
-	mockRepo.On("Create", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
+	mockRepo.On("Create", mock.Anything, "1", uint(10)).Return(errors.New("db error"))
 
 	err := svc.AddBookmark(ctx, body)
 	if err == nil {
@@ -75,7 +74,7 @@ func TestAddBookmark_Error(t *testing.T) {
 func TestAddBookmark_Unauthenticated(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := context.Background() // no userID set
+	ctx := context.Background()
 
 	err := svc.AddBookmark(ctx, req.AddBookmarkReq{LessonID: 10})
 	if err == nil || err.Code != 401 {
@@ -86,10 +85,10 @@ func TestAddBookmark_Unauthenticated(t *testing.T) {
 func TestRemoveBookmark_Success(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.RemoveBookmarkReq{LessonID: 10}
 
-	mockRepo.On("Delete", mock.Anything, uint(1), uint(10)).Return(nil)
+	mockRepo.On("Delete", mock.Anything, "1", uint(10)).Return(nil)
 
 	err := svc.RemoveBookmark(ctx, body)
 	if err != nil {
@@ -101,10 +100,10 @@ func TestRemoveBookmark_Success(t *testing.T) {
 func TestRemoveBookmark_Error(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.RemoveBookmarkReq{LessonID: 10}
 
-	mockRepo.On("Delete", mock.Anything, uint(1), uint(10)).Return(errors.New("db error"))
+	mockRepo.On("Delete", mock.Anything, "1", uint(10)).Return(errors.New("db error"))
 
 	err := svc.RemoveBookmark(ctx, body)
 	if err == nil {
@@ -116,12 +115,12 @@ func TestRemoveBookmark_Error(t *testing.T) {
 func TestList_Success(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	q := req.ListBookmarkQuery{Page: 1, Limit: 10}
 
 	paginated := &response.PaginatedResult[*models.Bookmark]{
 		Data: []*models.Bookmark{
-			{UserID: 1, LessonID: 10, Lesson: &models.Lesson{ID: 10, Title: "Test", ThumbnailURL: "u", Level: "A1", Duration: 5.0}},
+			{UserID: "1", LessonID: 10, Lesson: &models.Lesson{ID: 10, Title: "Test", ThumbnailURL: "u", Level: "A1", Duration: 5.0}},
 		},
 		Meta: response.NewMeta(1, 10, 1),
 	}
@@ -141,7 +140,7 @@ func TestList_Success(t *testing.T) {
 func TestList_Error(t *testing.T) {
 	mockRepo := new(mockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 	q := req.ListBookmarkQuery{Page: 1, Limit: 10}
 
 	mockRepo.On("FindAll", mock.Anything, mock.Anything).Return(nil, errors.New("db error"))

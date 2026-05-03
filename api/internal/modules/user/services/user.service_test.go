@@ -7,7 +7,6 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	coreError "go-cover-parroto/internal/core/errors"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/database/models"
@@ -17,7 +16,7 @@ import (
 
 type mockUserRepo struct{ mock.Mock }
 
-func (m *mockUserRepo) FindByID(ctx context.Context, id uint) (*models.User, error) {
+func (m *mockUserRepo) FindByID(ctx context.Context, id string) (*models.User, error) {
 	args := m.Called(ctx, id)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -38,24 +37,24 @@ func (m *mockUserRepo) Update(ctx context.Context, user *models.User) error {
 	return args.Error(0)
 }
 
-func (m *mockUserRepo) Delete(ctx context.Context, id uint) error {
+func (m *mockUserRepo) Delete(ctx context.Context, id string) error {
 	args := m.Called(ctx, id)
 	return args.Error(0)
 }
 
-func testCtx(userID uint, role enums.UserRole) context.Context {
-	ctx := context.WithValue(context.Background(), policy.ContextKeyUserID, userID)
-	ctx = context.WithValue(ctx, policy.ContextKeyUserRole, role)
+func testCtx(userID string, role enums.UserRole) context.Context {
+	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
+	ctx = context.WithValue(ctx, enums.ContextKeyUserRole, role)
 	return ctx
 }
 
 func TestGetProfile_Success(t *testing.T) {
 	mockRepo := new(mockUserRepo)
 	svc := NewUserService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 
-	user := &models.User{ID: 1, Email: "test@example.com", Name: "Test"}
-	mockRepo.On("FindByID", mock.Anything, uint(1)).Return(user, nil)
+	user := &models.User{ID: "1", Email: "test@example.com", Name: "Test"}
+	mockRepo.On("FindByID", mock.Anything, "1").Return(user, nil)
 
 	result, err := svc.GetProfile(ctx)
 	assert.Nil(t, err)
@@ -66,9 +65,9 @@ func TestGetProfile_Success(t *testing.T) {
 func TestGetProfile_NotFound(t *testing.T) {
 	mockRepo := new(mockUserRepo)
 	svc := NewUserService(mockRepo)
-	ctx := testCtx(999, enums.UserRoleUser)
+	ctx := testCtx("999", enums.UserRoleUser)
 
-	mockRepo.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
+	mockRepo.On("FindByID", mock.Anything, "999").Return(nil, coreError.ErrNotFound)
 
 	_, err := svc.GetProfile(ctx)
 	assert.NotNil(t, err)
@@ -79,9 +78,9 @@ func TestGetProfile_NotFound(t *testing.T) {
 func TestGetProfile_InternalError(t *testing.T) {
 	mockRepo := new(mockUserRepo)
 	svc := NewUserService(mockRepo)
-	ctx := testCtx(1, enums.UserRoleUser)
+	ctx := testCtx("1", enums.UserRoleUser)
 
-	mockRepo.On("FindByID", mock.Anything, uint(1)).Return(nil, errors.New("db error"))
+	mockRepo.On("FindByID", mock.Anything, "1").Return(nil, errors.New("db error"))
 
 	_, err := svc.GetProfile(ctx)
 	assert.NotNil(t, err)

@@ -36,5 +36,5 @@ func Init(cfg configs.FirebaseConfig) (IFirebaseAuth, error) {
 		return nil, err
 	}
 
-	return &firebaseClient{auth: client, webAPIKey: cfg.WebAPIKey}, nil
+	return &firebaseClient{auth: client}, nil
 }

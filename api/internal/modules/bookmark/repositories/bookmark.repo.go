@@ -11,8 +11,8 @@ import (
 )
 
 type IBookmarkRepo interface {
-	Create(ctx context.Context, userID, lessonID uint) error
-	Delete(ctx context.Context, userID, lessonID uint) error
+	Create(ctx context.Context, userID string, lessonID uint) error
+	Delete(ctx context.Context, userID string, lessonID uint) error
 	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error)
 }
 
@@ -24,7 +24,7 @@ func NewBookmarkRepo(db *gorm.DB) IBookmarkRepo {
 	return &bookmarkRepo{db: db}
 }
 
-func (r *bookmarkRepo) Create(ctx context.Context, userID, lessonID uint) error {
+func (r *bookmarkRepo) Create(ctx context.Context, userID string, lessonID uint) error {
 	bookmark := &models.Bookmark{
 		UserID:   userID,
 		LessonID: lessonID,
@@ -32,7 +32,7 @@ func (r *bookmarkRepo) Create(ctx context.Context, userID, lessonID uint) error 
 	return r.db.WithContext(ctx).Create(bookmark).Error
 }
 
-func (r *bookmarkRepo) Delete(ctx context.Context, userID, lessonID uint) error {
+func (r *bookmarkRepo) Delete(ctx context.Context, userID string, lessonID uint) error {
 	return r.db.WithContext(ctx).Where("user_id = ? AND lesson_id = ?", userID, lessonID).Delete(&models.Bookmark{}).Error
 }
 

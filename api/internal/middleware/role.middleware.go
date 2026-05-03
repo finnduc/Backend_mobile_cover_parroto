@@ -10,6 +10,7 @@ import (
 
 func RequireRole(requiredRole enums.UserRole) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		userRole, ok := c.Request.Context().
 			Value(enums.ContextKeyUserRole).(enums.UserRole)
 

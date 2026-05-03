@@ -7,8 +7,8 @@ import (
 	"go-cover-parroto/internal/core/response"
 )
 
-func Allow(ctx context.Context, resourceOwnerID uint) *response.AppError {
-	userID, ok := ctx.Value(enums.ContextKeyUserID).(uint)
+func Allow(ctx context.Context, resourceOwnerID string) *response.AppError {
+	userID, ok := ctx.Value(enums.ContextKeyUserID).(string)
 	if !ok {
 		return response.Unauthorized("user not authenticated")
 	}
@@ -25,10 +25,10 @@ func Allow(ctx context.Context, resourceOwnerID uint) *response.AppError {
 	return response.Forbidden("access denied")
 }
 
-func GetUserID(ctx context.Context) (uint, *response.AppError) {
-	userID, ok := ctx.Value(enums.ContextKeyUserID).(uint)
+func GetUserID(ctx context.Context) (string, *response.AppError) {
+	userID, ok := ctx.Value(enums.ContextKeyUserID).(string)
 	if !ok {
-		return 0, response.Unauthorized("user not authenticated")
+		return userID, response.Unauthorized("user not authenticated")
 	}
 	return userID, nil
 }

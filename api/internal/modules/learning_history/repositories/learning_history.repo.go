@@ -13,7 +13,7 @@ import (
 type ILearningHistoryRepo interface {
 	Upsert(ctx context.Context, history *models.LearningHistory) error
 	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error)
-	FindByUserAndLesson(ctx context.Context, userID, lessonID uint) (*models.LearningHistory, error)
+	FindByUserAndLesson(ctx context.Context, userID string, lessonID uint) (*models.LearningHistory, error)
 }
 
 type learningHistoryRepo struct {
@@ -63,7 +63,7 @@ func (r *learningHistoryRepo) FindAll(ctx context.Context, query *database.Query
 	}, nil
 }
 
-func (r *learningHistoryRepo) FindByUserAndLesson(ctx context.Context, userID, lessonID uint) (*models.LearningHistory, error) {
+func (r *learningHistoryRepo) FindByUserAndLesson(ctx context.Context, userID string, lessonID uint) (*models.LearningHistory, error) {
 	var history models.LearningHistory
 	err := r.db.WithContext(ctx).Where("user_id = ? AND lesson_id = ?", userID, lessonID).First(&history).Error
 	if err != nil {

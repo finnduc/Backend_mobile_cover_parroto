@@ -77,14 +77,14 @@ func seedUsers(db *gorm.DB) {
 
 	users := []models.User{
 		{
-			ID:       1,
+			ID:       "1",
 			Email:    "admin@parroto.com",
 			Name:     "Admin",
 			UserRole: enums.UserRole("admin"),
 			Password: hash,
 		},
 		{
-			ID:        2,
+			ID:        "2",
 			Email:     "alice@example.com",
 			Name:      "Alice Nguyen",
 			UserRole:  enums.UserRole("user"),
@@ -93,7 +93,7 @@ func seedUsers(db *gorm.DB) {
 			CreatedAt: time.Now(),
 		},
 		{
-			ID:        3,
+			ID:        "3",
 			Email:     "bob@example.com",
 			Name:      "Bob Tran",
 			UserRole:  enums.UserRole("user"),
@@ -102,7 +102,7 @@ func seedUsers(db *gorm.DB) {
 			CreatedAt: time.Now(),
 		},
 		{
-			ID:        4,
+			ID:        "4",
 			Email:     "carol@example.com",
 			Name:      "Carol Le",
 			UserRole:  enums.UserRole("user"),
@@ -111,7 +111,7 @@ func seedUsers(db *gorm.DB) {
 			CreatedAt: time.Now(),
 		},
 		{
-			ID:        5,
+			ID:        "5",
 			Email:     "david@example.com",
 			Name:      "David Pham",
 			UserRole:  enums.UserRole("user"),
@@ -219,12 +219,12 @@ func seedTranscripts(db *gorm.DB) {
 
 func seedBookmarks(db *gorm.DB) {
 	bookmarks := []models.Bookmark{
-		{UserID: 2, LessonID: 1, CreatedAt: time.Now()},
-		{UserID: 2, LessonID: 3, CreatedAt: time.Now()},
-		{UserID: 3, LessonID: 2, CreatedAt: time.Now()},
-		{UserID: 4, LessonID: 1, CreatedAt: time.Now()},
-		{UserID: 4, LessonID: 5, CreatedAt: time.Now()},
-		{UserID: 5, LessonID: 3, CreatedAt: time.Now()},
+		{UserID: "2", LessonID: 1, CreatedAt: time.Now()},
+		{UserID: "2", LessonID: 3, CreatedAt: time.Now()},
+		{UserID: "3", LessonID: 2, CreatedAt: time.Now()},
+		{UserID: "4", LessonID: 1, CreatedAt: time.Now()},
+		{UserID: "4", LessonID: 5, CreatedAt: time.Now()},
+		{UserID: "5", LessonID: 3, CreatedAt: time.Now()},
 	}
 
 	result := db.CreateInBatches(&bookmarks, len(bookmarks))
@@ -240,14 +240,14 @@ func seedBookmarks(db *gorm.DB) {
 func seedLearningHistory(db *gorm.DB) {
 	now := time.Now()
 	history := []models.LearningHistory{
-		{ID: 1, UserID: 2, LessonID: 1, DurationWatched: 180.0, Completed: true, CreatedAt: now},
-		{ID: 2, UserID: 2, LessonID: 2, DurationWatched: 120.0, Completed: false, CreatedAt: now},
-		{ID: 3, UserID: 2, LessonID: 3, DurationWatched: 360.0, Completed: true, CreatedAt: now},
-		{ID: 4, UserID: 3, LessonID: 1, DurationWatched: 90.0, Completed: false, CreatedAt: now},
-		{ID: 5, UserID: 3, LessonID: 2, DurationWatched: 240.0, Completed: true, CreatedAt: now},
-		{ID: 6, UserID: 4, LessonID: 4, DurationWatched: 200.0, Completed: true, CreatedAt: now},
-		{ID: 7, UserID: 5, LessonID: 3, DurationWatched: 180.0, Completed: false, CreatedAt: now},
-		{ID: 8, UserID: 5, LessonID: 5, DurationWatched: 420.0, Completed: true, CreatedAt: now},
+		{ID: 1, UserID: "2", LessonID: 1, DurationWatched: 180.0, Completed: true, CreatedAt: now},
+		{ID: 2, UserID: "2", LessonID: 2, DurationWatched: 120.0, Completed: false, CreatedAt: now},
+		{ID: 3, UserID: "2", LessonID: 3, DurationWatched: 360.0, Completed: true, CreatedAt: now},
+		{ID: 4, UserID: "3", LessonID: 1, DurationWatched: 90.0, Completed: false, CreatedAt: now},
+		{ID: 5, UserID: "3", LessonID: 2, DurationWatched: 240.0, Completed: true, CreatedAt: now},
+		{ID: 6, UserID: "4", LessonID: 4, DurationWatched: 200.0, Completed: true, CreatedAt: now},
+		{ID: 7, UserID: "5", LessonID: 3, DurationWatched: 180.0, Completed: false, CreatedAt: now},
+		{ID: 8, UserID: "5", LessonID: 5, DurationWatched: 420.0, Completed: true, CreatedAt: now},
 	}
 
 	result := db.CreateInBatches(&history, len(history))

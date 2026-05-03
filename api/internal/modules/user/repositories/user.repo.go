@@ -11,10 +11,10 @@ import (
 )
 
 type IUserRepo interface {
-	FindByID(ctx context.Context, id uint) (*models.User, error)
+	FindByID(ctx context.Context, id string) (*models.User, error)
 	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.User], error)
 	Update(ctx context.Context, user *models.User) error
-	Delete(ctx context.Context, id uint) error
+	Delete(ctx context.Context, id string) error
 }
 
 type userRepo struct {
@@ -25,7 +25,7 @@ func NewUserRepo(db *gorm.DB) IUserRepo {
 	return &userRepo{db: db}
 }
 
-func (r *userRepo) FindByID(ctx context.Context, id uint) (*models.User, error) {
+func (r *userRepo) FindByID(ctx context.Context, id string) (*models.User, error) {
 	var user models.User
 	err := r.db.WithContext(ctx).First(&user, id).Error
 	if err != nil {
@@ -57,6 +57,6 @@ func (r *userRepo) Update(ctx context.Context, user *models.User) error {
 	return r.db.WithContext(ctx).Save(user).Error
 }
 
-func (r *userRepo) Delete(ctx context.Context, id uint) error {
+func (r *userRepo) Delete(ctx context.Context, id string) error {
 	return r.db.WithContext(ctx).Delete(&models.User{}, id).Error
 }

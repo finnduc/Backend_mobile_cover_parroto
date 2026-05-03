@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 
 	"go-cover-parroto/internal/firebase"
+	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/auth/repositories"
 	"go-cover-parroto/internal/modules/auth/services"
 )
@@ -14,5 +15,8 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	svc := services.NewAuthService(repo, fbAuth)
 	ctrl := NewAuthController(svc)
 
-	r.POST("/auth/sync", ctrl.Sync)
+	protected := r.Group("/auth", middleware.FirebaseAuth(fbAuth))
+	{
+		protected.POST("/complete-signup", ctrl.Complete)
+	}
 }

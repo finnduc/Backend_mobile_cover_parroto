@@ -15,10 +15,10 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	svc := services.NewBookmarkService(repo)
 	ctrl := NewBookmarkController(svc)
 
-	protected := r.Group("", middleware.FirebaseAuth(db, fbAuth))
+	protected := r.Group("/bookmarks", middleware.FirebaseAuth(fbAuth))
 	{
-		protected.GET("/bookmarks", ctrl.List)
-		protected.POST("/bookmarks/:lessonId", ctrl.Add)
-		protected.DELETE("/bookmarks/:lessonId", ctrl.Remove)
+		protected.GET("", ctrl.List)
+		protected.POST("/:lessonId", ctrl.Add)
+		protected.DELETE("/:lessonId", ctrl.Remove)
 	}
 }

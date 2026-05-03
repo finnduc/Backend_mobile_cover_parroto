@@ -22,9 +22,9 @@ func sLog() *zap.SugaredLogger {
 type IUserService interface {
 	GetProfile(ctx context.Context) (*res.UserRes, *response.AppError)
 	List(ctx context.Context, query req.ListUserQuery) (*response.PaginatedResponse[res.UserRes], *response.AppError)
-	GetByID(ctx context.Context, id uint) (*res.UserRes, *response.AppError)
-	Update(ctx context.Context, id uint, body req.UpdateUserReq) (*res.UserRes, *response.AppError)
-	Delete(ctx context.Context, id uint) *response.AppError
+	GetByID(ctx context.Context, id string) (*res.UserRes, *response.AppError)
+	Update(ctx context.Context, id string, body req.UpdateUserReq) (*res.UserRes, *response.AppError)
+	Delete(ctx context.Context, id string) *response.AppError
 }
 
 type userService struct {
@@ -73,7 +73,7 @@ func (s *userService) List(ctx context.Context, query req.ListUserQuery) (*respo
 	return &response.PaginatedResponse[res.UserRes]{Data: users, Meta: result.Meta}, nil
 }
 
-func (s *userService) GetByID(ctx context.Context, id uint) (*res.UserRes, *response.AppError) {
+func (s *userService) GetByID(ctx context.Context, id string) (*res.UserRes, *response.AppError) {
 	log := sLog().With("userId", id)
 	log.Infow("getting user by id")
 	user, err := s.repo.FindByID(ctx, id)
@@ -91,7 +91,7 @@ func (s *userService) GetByID(ctx context.Context, id uint) (*res.UserRes, *resp
 	return &result, nil
 }
 
-func (s *userService) Update(ctx context.Context, id uint, body req.UpdateUserReq) (*res.UserRes, *response.AppError) {
+func (s *userService) Update(ctx context.Context, id string, body req.UpdateUserReq) (*res.UserRes, *response.AppError) {
 	log := sLog().With("userId", id)
 	log.Infow("updating user")
 	user, err := s.repo.FindByID(ctx, id)
@@ -120,7 +120,7 @@ func (s *userService) Update(ctx context.Context, id uint, body req.UpdateUserRe
 	return &result, nil
 }
 
-func (s *userService) Delete(ctx context.Context, id uint) *response.AppError {
+func (s *userService) Delete(ctx context.Context, id string) *response.AppError {
 	log := sLog().With("userId", id)
 	log.Infow("deleting user")
 	if err := s.repo.Delete(ctx, id); err != nil {

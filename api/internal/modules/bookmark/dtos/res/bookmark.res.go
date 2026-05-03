@@ -11,7 +11,7 @@ type LessonInfo struct {
 }
 
 type BookmarkRes struct {
-	UserID    uint        `json:"user_id"`
+	UserID    string      `json:"user_id"`
 	LessonID  uint        `json:"lesson_id"`
 	CreatedAt time.Time   `json:"created_at"`
 	Lesson    *LessonInfo `json:"lesson,omitempty"`

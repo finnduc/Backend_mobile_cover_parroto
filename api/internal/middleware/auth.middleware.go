@@ -7,14 +7,12 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/firebase"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func FirebaseAuth(db *gorm.DB, fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
+func FirebaseAuth(fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
@@ -30,15 +28,14 @@ func FirebaseAuth(db *gorm.DB, fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		email, _ := decoded.Claims["email"].(string)
-
-		var user models.User
-		if err := db.Where("email = ?", email).First(&user).Error; err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response.Fail(response.Unauthorized("user not found")))
-			return
+		userID := decoded.UID
+		role, ok := decoded.Claims["role"].(enums.UserRole)
+		if !ok {
+			role = enums.UserRoleGuest
 		}
 
-		ctx = context.WithValue(ctx, enums.ContextKeyUserID, user.ID)
+		ctx = context.WithValue(ctx, enums.ContextKeyUserID, userID)
+		ctx = context.WithValue(ctx, enums.ContextKeyUserRole, role)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

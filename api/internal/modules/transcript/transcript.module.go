@@ -17,16 +17,16 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	ctrl := NewTranscriptController(svc)
 	adminCtrl := NewTranscriptAdminController(svc)
 
-	protected := r.Group("", middleware.FirebaseAuth(db, fbAuth))
+	protected := r.Group("", middleware.FirebaseAuth(fbAuth))
 	{
 		protected.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
 	}
 
-	admin := r.Group("/admin", middleware.FirebaseAuth(db, fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
+	admin := r.Group("/admin/transcripts", middleware.FirebaseAuth(fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
 	{
-		admin.GET("/transcripts/:id", adminCtrl.GetByID)
-		admin.POST("/transcripts", adminCtrl.Create)
-		admin.PUT("/transcripts/:id", adminCtrl.Update)
-		admin.DELETE("/transcripts/:id", adminCtrl.Delete)
+		admin.GET("/:id", adminCtrl.GetByID)
+		admin.POST("", adminCtrl.Create)
+		admin.PUT("/:id", adminCtrl.Update)
+		admin.DELETE("/:id", adminCtrl.Delete)
 	}
 }
