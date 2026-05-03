@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing.adapters;
+package com.example.app.feature.study.adapters;
 
 public class SubtitleHighlightAdapter {
 }

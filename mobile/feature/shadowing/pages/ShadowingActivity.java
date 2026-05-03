@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing.pages;
+package com.example.app.feature.study.pages;
 
 public class ShadowingActivity {
 }

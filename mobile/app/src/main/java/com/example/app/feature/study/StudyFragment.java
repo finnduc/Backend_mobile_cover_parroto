@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing;
+package com.example.app.feature.study;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.app.R;
 
-public class ShadowingFragment extends Fragment {
+public class StudyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

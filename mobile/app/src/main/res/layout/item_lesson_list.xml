@@ -67,20 +67,21 @@
             android:paddingEnd="4dp">
 
             <!-- Title -->
+
+            <!-- Duration + Views -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="KIKI'S DELIVERY SERVICE | Official English Trailer"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A1A"
-                android:maxLines="2"
+                android:layout_marginBottom="6dp"
                 android:ellipsize="end"
                 android:lineSpacingMultiplier="1.2"
-                android:layout_marginBottom="6dp" />
+                android:maxLines="2"
+                android:text="KIKI'S DELIVERY SERVICE | Official English Trailer"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-            <!-- Duration + Views -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
