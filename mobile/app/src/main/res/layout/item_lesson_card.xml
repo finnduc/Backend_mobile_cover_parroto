@@ -106,6 +106,7 @@
                 android:layout_marginBottom="10dp"
                 android:ellipsize="end"
                 android:maxLines="2"
+                android:lines="2"
                 android:text="PRINCESS MONONOKE | Official English Trailer"
                 android:textColor="#1A1A1A"
                 android:textSize="13sp"

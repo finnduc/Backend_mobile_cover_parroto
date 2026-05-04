@@ -5,6 +5,7 @@ import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import java.util.List;
 
 public class LessonSection {
+
     private String categoryName;
     private int totalLessons;
     List<LessonsResponse> lesssons;

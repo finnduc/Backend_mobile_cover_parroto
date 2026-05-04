@@ -1,4 +1,4 @@
-package com.example.app.adapter;
+package com.example.app.adapter.study;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.data.remote.model.response.categories.CategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.feature.study.LessonSection;
 

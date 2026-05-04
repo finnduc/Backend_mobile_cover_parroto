@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.adapter.LessonSectionAdapter;
+import com.example.app.adapter.study.LessonSectionAdapter;
 import com.example.app.data.remote.model.response.categories.CategoryResponse;
 import com.example.app.data.remote.model.response.categories.ListCategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
@@ -46,7 +46,8 @@ public class StudyFragment extends Fragment {
         CategoriesRepository categoryRepo = new CategoriesRepository(requireContext());
         LessonsRepository lessonsRepo = new LessonsRepository(requireContext());
 
-        categoryRepo.getCategory(10, 1, new CategoriesRepository.categoryCallback<ListCategoryResponse<CategoryResponse>>() {
+        categoryRepo.getCategory(10, 1,
+                new CategoriesRepository.categoryCallback<ListCategoryResponse<CategoryResponse>>() {
             @Override
             public void onSuccess(ListCategoryResponse<CategoryResponse> data) {
                 if (data != null && data.getData() != null) {
@@ -60,7 +61,8 @@ public class StudyFragment extends Fragment {
                         } catch (NumberFormatException e) {
                             continue;
                         }
-                        lessonsRepo.getLessons(5, 1, categoryId, null, new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>() {
+                        lessonsRepo.getLessons(5, 1, categoryId, null,
+                                new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>() {
                             @Override
                             public void onSuccess(ListLessonsResponse<LessonsResponse> lessonData) {
                                 if (lessonData != null && lessonData.getData() != null) {
