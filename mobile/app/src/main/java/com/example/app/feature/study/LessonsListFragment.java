@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.adapter.LessonsAdapter;
+import com.example.app.adapter.ListLessonsAdapter;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.example.app.data.repository.LessonsRepository;
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class LessonsListFragment extends Fragment {
     private List<LessonsResponse> lessonsResponseList = new ArrayList<>();
-    private LessonsAdapter adapter;
+    private ListLessonsAdapter adapter;
     private LessonsRepository repository;
     private TextView CountNotStarted;
 
@@ -33,7 +33,7 @@ public class LessonsListFragment extends Fragment {
         CountNotStarted = view.findViewById(R.id.tvCountNotStarted);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new LessonsAdapter(lessonsResponseList);
+        adapter = new ListLessonsAdapter(lessonsResponseList);
         repository = new LessonsRepository(requireContext());
         recyclerView.setAdapter(adapter);
         fetchLessons();

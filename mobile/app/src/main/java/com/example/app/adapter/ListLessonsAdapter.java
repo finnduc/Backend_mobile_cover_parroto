@@ -17,11 +17,11 @@ import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 
 import java.util.List;
 
-public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsViewHolder> {
+public class ListLessonsAdapter extends RecyclerView.Adapter<ListLessonsAdapter.LessonsViewHolder> {
 
     private List<LessonsResponse> lessonsResponseList;
 
-    public LessonsAdapter(List<LessonsResponse> lessonsResponseList) {
+    public ListLessonsAdapter(List<LessonsResponse> lessonsResponseList) {
         this.lessonsResponseList = lessonsResponseList;
     }
 
@@ -46,9 +46,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsV
         holder.cardRoot.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    v.animate()
-                            .scaleX(1.04f)
-                            .scaleY(1.04f)
+                    v.animate().scaleX(1.04f).scaleY(1.04f)
                             .setDuration(120)
                             .setInterpolator(new DecelerateInterpolator())
                             .start();
@@ -62,6 +60,9 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonsV
                             .setDuration(120)
                             .setInterpolator(new DecelerateInterpolator())
                             .start();
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        v.performClick();
+                    }
                     break;
             }
             return false;
