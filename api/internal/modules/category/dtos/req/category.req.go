@@ -1,6 +1,6 @@
 package req
 
-import "go-cover-parroto/internal/core/database"
+import "go-cover-parroto/internal/database"
 
 type ListCategoryQuery struct {
 	Page  int `form:"page"`

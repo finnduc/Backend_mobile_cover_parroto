@@ -41,7 +41,7 @@ func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
 
 	log.With("userId", userID)
 
-	err := s.fbAuth.SetCustomUserClaims(ctx, userID, map[string]interface{}{"role": enums.UserRoleUser})
+	err := s.fbAuth.SetCustomUserClaims(ctx, userID, map[string]interface{}{string(enums.CustomClaimKeyUserRole): enums.UserRoleUser})
 	if err != nil {
 		log.Errorw("failed to set custom user claims", "error", err)
 		return response.Internal("failed to set custom user claims")

@@ -5,11 +5,12 @@ import (
 	"errors"
 	"testing"
 
-	"go-cover-parroto/internal/core/database"
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
+
 	"github.com/stretchr/testify/mock"
 )
 

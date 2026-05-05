@@ -8,8 +8,9 @@ import (
 	"go-cover-parroto/internal/core/enums"
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/core/database"
+	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

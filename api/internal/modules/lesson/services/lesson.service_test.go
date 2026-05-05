@@ -5,11 +5,12 @@ import (
 	"errors"
 	"testing"
 
-	"go-cover-parroto/internal/core/database"
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
