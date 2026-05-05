@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/shadowingFragment"
-        android:name="com.example.app.feature.shadowing.ShadowingFragment"
+        android:name="com.example.app.feature.study.StudyFragment"
         android:label="Học tập" />
 
     <fragment
@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/progressFragment"
-        android:name="com.example.app.feature.progess.ProgressFragment"
+        android:name="com.example.app.feature.study.LessonsListFragment"
         android:label="Tiến độ" />
 
     <fragment

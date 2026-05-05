@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    item_lesson_section.xml
-    ========================
-    Dùng làm item cho RecyclerView ngoài (vertical).
-    Mỗi item = 1 category: header (tên + số bài + "Xem tất cả") + danh sách card ngang.
 
-    Adapter ngoài (LessonSectionAdapter) bind:
-        - tvCategoryTitle   → category.name
-        - tvLessonCount     → "(${category.count} bài học)"
-        - tvSeeAll          → click → navigate
-        - rvCards           → set LessonCardAdapter (horizontal) với category.lessons
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

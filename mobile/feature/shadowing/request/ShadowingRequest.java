@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing.request;
+package com.example.app.feature.study.request;
 
 public class ShadowingRequest {
 }

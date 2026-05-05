@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing.dtos;
+package com.example.app.feature.study.dtos;
 
 public class ShadowingDTO {
 }

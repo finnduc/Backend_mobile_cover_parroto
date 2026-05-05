@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_study.xml (refactored)
-    ================================
-    Thay toàn bộ các section hardcode (include + HorizontalScrollView)
-    bằng 1 RecyclerView vertical duy nhất (rvLessonSections).
 
-    Mỗi item trong rvLessonSections = item_lesson_section.xml
-    (header category + RecyclerView horizontal cards)
-
-    Adapter: LessonSectionAdapter
-    Data:    List<LessonCategory> từ API
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F4F7"
     android:orientation="vertical">
 
-    <!-- ===== TOP BAR ===== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,8 +13,7 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="12dp"
-        android:gravity="center_vertical"
-        android:background="#F2F4F7">
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="0dp"
@@ -38,7 +24,6 @@
             android:textStyle="bold"
             android:textColor="#1A1A2E" />
 
-        <!-- Filter button with badge -->
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,7 +50,6 @@
                 android:background="@drawable/bg_badge_blue" />
         </FrameLayout>
 
-        <!-- Upgrade button -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="36dp"
@@ -92,12 +76,6 @@
 
     </LinearLayout>
 
-    <!-- ===== MAIN CONTENT RecyclerView ===== -->
-    <!--
-        NestedScrollView bọc ngoài để TopBar không scroll cùng,
-        RecyclerView bên trong dùng nestedScrollingEnabled="false"
-        để scroll mượt không bị conflict.
-    -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -108,7 +86,6 @@
             android:orientation="vertical"
             android:paddingBottom="24dp">
 
-            <!-- ===== USER CARD ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,7 +131,6 @@
                         android:textColor="#8E8E93" />
                 </LinearLayout>
 
-                <!-- Streak counter -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"

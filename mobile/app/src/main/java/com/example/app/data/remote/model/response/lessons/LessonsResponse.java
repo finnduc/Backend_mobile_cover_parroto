@@ -2,7 +2,7 @@ package com.example.app.data.remote.model.response.lessons;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Lessons {
+public class LessonsResponse {
 
     @SerializedName("category_id")
     private int categoryId ;

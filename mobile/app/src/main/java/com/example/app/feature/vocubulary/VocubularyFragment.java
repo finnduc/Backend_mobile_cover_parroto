@@ -1,7 +1,5 @@
 package com.example.app.feature.vocubulary;
 
-import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +15,7 @@ import com.example.app.R;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.LessonsApi;
 import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.lessons.Lessons;
+import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.google.gson.Gson;
 
@@ -40,9 +38,9 @@ public class VocubularyFragment extends Fragment {
 
     private void fetchLessonsTest() {
         LessonsApi lessonsApi = RetrofitClient.getInstance(requireContext()).getLessonsApi();
-        lessonsApi.getLessons(10, 1, null,null).enqueue(new Callback<ApiResponse<ListLessonsResponse<Lessons>>>() {
+        lessonsApi.getLessons(10, 1, null,null).enqueue(new Callback<ApiResponse<ListLessonsResponse<LessonsResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<ListLessonsResponse<Lessons>>> call, Response<ApiResponse<ListLessonsResponse<Lessons>>> response) {
+            public void onResponse(Call<ApiResponse<ListLessonsResponse<LessonsResponse>>> call, Response<ApiResponse<ListLessonsResponse<LessonsResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String jsonResponse = new Gson().toJson(response.body());
                     Log.d(TAG, "API Success: " + jsonResponse);
@@ -55,7 +53,7 @@ public class VocubularyFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<ListLessonsResponse<Lessons>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<ListLessonsResponse<LessonsResponse>>> call, Throwable t) {
                 String errorMsg = "THẤT BẠI (Lỗi mạng/Parse): " + t.getMessage();
                 Log.e(TAG, errorMsg, t);
                 textView.setText(errorMsg);
@@ -67,18 +65,19 @@ public class VocubularyFragment extends Fragment {
         LessonsApi lessonsApi = RetrofitClient.getInstance(requireContext()).getLessonsApi();
 
         // Gọi hàm lấy bài học số idToFetch
-        lessonsApi.getLessonsDetail(idToFetch).enqueue(new Callback<ApiResponse<Lessons>>() {
+        lessonsApi.getLessonsDetail(idToFetch).enqueue(new Callback<ApiResponse<LessonsResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<Lessons>> call, Response<ApiResponse<Lessons>> response) {
+            public void onResponse(Call<ApiResponse<LessonsResponse>> call, Response<ApiResponse<LessonsResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().issuccess()) {
 
                     // Lấy đối tượng bài học ra
-                    Lessons lesson = response.body().getData();
+                    LessonsResponse lesson = response.body().getData();
 
                     String resultText = "THÀNH CÔNG!\n\n" +
                             "ID: " + lesson.getId() + "\n" +
                             "Tiêu đề: " + lesson.getTitle() + "\n" +
-                            "Độ khó: " + lesson.getLevel();
+                            "Độ khó: " + lesson.getLevel() + "\n"+
+                            "Desciption:" + lesson.getDescription();
 
                     textView.setText(resultText);
 
@@ -88,7 +87,7 @@ public class VocubularyFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<Lessons>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<LessonsResponse>> call, Throwable t) {
                 textView.setText("THẤT BẠI (Lỗi mạng): " + t.getMessage());
             }
         });

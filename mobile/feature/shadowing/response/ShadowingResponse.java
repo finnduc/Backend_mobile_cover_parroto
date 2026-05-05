@@ -1,4 +1,4 @@
-package com.example.app.feature.shadowing.response;
+package com.example.app.feature.study.response;
 
 public class ShadowingResponse {
 }

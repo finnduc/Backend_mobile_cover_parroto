@@ -3,10 +3,9 @@ package com.example.app.data.repository;
 import android.content.Context;
 
 import com.example.app.data.remote.RetrofitClient;
-import com.example.app.data.remote.api.CategoryApi;
 import com.example.app.data.remote.api.LessonsApi;
 import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.lessons.Lessons;
+import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 
 import retrofit2.Call;
@@ -25,12 +24,12 @@ public class LessonsRepository {
         void onSuccess(T data);
         void onError(String message);
     }
-    public void getLessons(int limit,int page, int categoryId, String level, lessonsCallback<ListLessonsResponse<Lessons>> callback){
-        lessonsApi.getLessons(limit,page,categoryId,level).enqueue(new Callback<ApiResponse<ListLessonsResponse<Lessons>>>() {
+    public void getLessons(int limit,int page, int categoryId, String level, lessonsCallback<ListLessonsResponse<LessonsResponse>> callback){
+        lessonsApi.getLessons(limit,page,categoryId,level).enqueue(new Callback<ApiResponse<ListLessonsResponse<LessonsResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<ListLessonsResponse<Lessons>>> call, Response<ApiResponse<ListLessonsResponse<Lessons>>> response) {
+            public void onResponse(Call<ApiResponse<ListLessonsResponse<LessonsResponse>>> call, Response<ApiResponse<ListLessonsResponse<LessonsResponse>>> response) {
                 if(response.isSuccessful() && response.body() != null && response.body().issuccess()){
-                    ListLessonsResponse<Lessons> lessonsData = response.body().getData();
+                    ListLessonsResponse<LessonsResponse> lessonsData = response.body().getData();
                     callback.onSuccess(lessonsData);
                 }
                 else {
@@ -44,19 +43,19 @@ public class LessonsRepository {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<ListLessonsResponse<Lessons>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<ListLessonsResponse<LessonsResponse>>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });
     }
 
-    public void getLessonsDetail(int lessonId, lessonsCallback<Lessons> callback){
-        lessonsApi.getLessonsDetail(lessonId).enqueue(new Callback<ApiResponse<Lessons>>(){
+    public void getLessonsDetail(int lessonId, lessonsCallback<LessonsResponse> callback){
+        lessonsApi.getLessonsDetail(lessonId).enqueue(new Callback<ApiResponse<LessonsResponse>>(){
             @Override
-            public void onResponse(Call<ApiResponse<Lessons>> call, Response<ApiResponse<Lessons>> response) {
+            public void onResponse(Call<ApiResponse<LessonsResponse>> call, Response<ApiResponse<LessonsResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().issuccess()){
-                    Lessons lessonsData = response.body().getData();
-                    callback.onSuccess(lessonsData);
+                    LessonsResponse lessonsResponseData = response.body().getData();
+                    callback.onSuccess(lessonsResponseData);
                 }
                 else {
                     try {
@@ -70,7 +69,7 @@ public class LessonsRepository {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<Lessons>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<LessonsResponse>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });
