@@ -15,10 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.app.R;
-import com.example.app.data.remote.model.response.auth.SyncResponse;
 import com.example.app.data.repository.AuthRepository;
 
 public class SignupFragment extends Fragment {
+    private AuthRepository authRepository;
+    private Context context;
     @Override
     @Nullable
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class SignupFragment extends Fragment {
         EditText getUsername = view.findViewById(R.id.getUsername);
         EditText getPassword = view.findViewById(R.id.getPassword);
         EditText getConfirmPassword = view.findViewById(R.id.getConfirmPassword);
-        AuthRepository authRepository = new AuthRepository(requireContext());
+        authRepository = new AuthRepository(requireContext());
         Signup.setOnClickListener(v -> {
             String Fullname , Username, Password, Confirmpassword;
             Fullname = getFullname.getText().toString().trim();
@@ -63,26 +64,21 @@ public class SignupFragment extends Fragment {
                 isvalid = false;
             }
             if (isvalid){
-                Signup.setEnabled(false);
-                Signup.setText("Đang đăng ký...");
-                authRepository.register(Username,Password,Fullname,
-                        new AuthRepository.AuthCallback<SyncResponse>(){
+                authRepository.Register(Username,Password,Fullname, new AuthRepository.authCallBack<String>(){
                     @Override
-                    public void onSuccess(SyncResponse data) {
-                        Signup.setEnabled(true);
-                        Signup.setText("Đăng ký");
+                    public void onSuccess(String data) {
                         Toast.makeText(requireContext(), "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(v).navigate(R.id.action_signupFragment_to_loginFragment);
-
+                        Navigation.findNavController(requireView())
+                                .navigate(R.id.action_signupFragment_to_loginFragment);
                     }
+
                     @Override
                     public void onError(String message) {
-                        Signup.setEnabled(true);
-                        Signup.setText("ĐĂNG KÝ");
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), "Lỗi đăng kí " + message, android.widget.Toast.LENGTH_SHORT).show();
                     }
                 });
             }
+
 
                 }
             )
@@ -97,5 +93,6 @@ public class SignupFragment extends Fragment {
                     .navigate(R.id.action_signupFragment_to_loginFragment);
         });
     }
+
 
 }

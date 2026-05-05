@@ -24,7 +24,7 @@ public class CategoriesRepository {
         void onError(String message);
     }
 
-    public void getCategory(int limit, int page, categoryCallback<ListCategoryResponse<CategoryResponse>> callback){
+    public void getCategory(int limit, int  page, categoryCallback<ListCategoryResponse<CategoryResponse>> callback){
         categoryApi.getCategories(limit, page).enqueue(new Callback<ApiResponse<ListCategoryResponse<CategoryResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<ListCategoryResponse<CategoryResponse>>> call, Response<ApiResponse<ListCategoryResponse<CategoryResponse>>> response) {

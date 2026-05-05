@@ -6,7 +6,7 @@ public class UserResponse {
     @SerializedName("avatar_url")
     private String avatarUrl;
     private String email;
-    private int id;
+    private String id;
     private String name;
 
     public String getAvatar_url() {
@@ -17,7 +17,7 @@ public class UserResponse {
         return email;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/shadowingFragment"
+        android:id="@+id/StudyFragment"
         android:icon="@drawable/ic_study"
         android:title="Học tập" />
 

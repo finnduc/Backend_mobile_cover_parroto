@@ -2,140 +2,136 @@ package com.example.app.data.repository;
 
 import android.content.Context;
 
-import com.example.app.BuildConfig;
 import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.AuthApi;
+import com.example.app.data.remote.api.UserApi;
+import com.example.app.data.remote.model.request.auth.LoginRequest;
 import com.example.app.data.remote.model.request.auth.RegisterRequest;
-import com.example.app.data.remote.model.request.auth.SyncRequest;
-import com.example.app.data.remote.model.request.auth.TokenRequest;
+import com.example.app.data.remote.model.request.auth.UpdateProfileRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.auth.FirebaseSignUpResponse;
-import com.example.app.data.remote.model.response.auth.SyncResponse;
-import com.example.app.data.remote.model.response.auth.TokenResponse;
+import com.example.app.data.remote.model.response.user.UserResponse;
+import com.example.app.utils.Constants;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class AuthRepository {
 
     private final AuthApi authApi;
+    private final UserApi userApi;
     private final TokenManager tokenManager;
 
     public AuthRepository(Context context) {
         this.authApi = RetrofitClient.getInstance(context).getAuthApi();
+        this.userApi = RetrofitClient.getInstance(context).getUserApi();
         this.tokenManager = TokenManager.getInstance(context);
     }
 
-
-    public interface AuthCallback<T> {
+    public interface authCallBack<T>{
         void onSuccess(T data);
         void onError(String message);
     }
 
-    public void login(String email, String password, AuthCallback<SyncResponse> callback) {
-        TokenRequest request = new TokenRequest(email, password);
-
-        authApi.getToken(request).enqueue(new Callback<ApiResponse<TokenResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<TokenResponse>> call,
-                                   Response<ApiResponse<TokenResponse>> response) {
-                if (response.isSuccessful()
-                        && response.body() != null
-                        && response.body().issuccess()) {
-
-                    TokenResponse tokenData = response.body().getData();
-                    tokenManager.saveToken(tokenData.getIdToken(), tokenData.getRefreshToken());
-
-                    syncUser(tokenData.getIdToken(),"", callback);
-
-                } else {
-                    try {
-                        String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
-                        callback.onError("Lỗi từ đăng nhập: " + errorDetail);
-                    } catch (Exception e) {
-                        callback.onError(e.getMessage());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<TokenResponse>> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
-            }
-        });
-    }
-
-
-    public void syncUser(String idToken,String name, AuthCallback<SyncResponse> callback) {
-        SyncRequest request = new SyncRequest(idToken,name);
-
-        authApi.synUser(request).enqueue(new Callback<ApiResponse<SyncResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<SyncResponse>> call,
-                                   Response<ApiResponse<SyncResponse>> response) {
-                if (response.isSuccessful()
-                        && response.body() != null
-                        && response.body().issuccess()) {
-
-                    SyncResponse user = response.body().getData();
-                    tokenManager.saveUserInfo(
-                            user.getId(),
-                            user.getEmail(),
-                            user.getName(),
-                            user.getAvatarURL()
-                    );
-
-                    callback.onSuccess(user);
-
-                } else {
-                    callback.onError("Không thể đồng bộ tài khoản");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<SyncResponse>> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
-            }
-        });
-    }
-
-    public void register(String email, String password, String name, AuthCallback<SyncResponse> callback) {
-        RegisterRequest request = new RegisterRequest(email, password, true);
-
-        authApi.getRegister(BuildConfig.FIREBASE_API_KEY, request).enqueue(new Callback<FirebaseSignUpResponse>() {
+    public void Register(String email, String password,String name, authCallBack<String> callback) {
+        RegisterRequest registerRequest = new RegisterRequest(email, password, true);
+        authApi.register(registerRequest, Constants.FIREBASE_API_KEY).enqueue(new Callback<FirebaseSignUpResponse>(){
             @Override
             public void onResponse(Call<FirebaseSignUpResponse> call, Response<FirebaseSignUpResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    FirebaseSignUpResponse user = response.body();
-                    tokenManager.saveToken(user.getIdToken(), user.getRefreshToken());
-                    String idToken = user.getIdToken();
-                    syncUser(idToken, name, callback);
+                    String Token = response.body().getIdToken();
+                    String RefreshToken = response.body().getRefreshToken();
+                    tokenManager.saveToken(Token, RefreshToken);
+                    UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest(Token, name, true);
+                    authApi.updateProfile(updateProfileRequest,Constants.FIREBASE_API_KEY).enqueue(new Callback<FirebaseSignUpResponse>(){
+                        @Override
+                        public void onResponse(Call<FirebaseSignUpResponse> call, Response<FirebaseSignUpResponse> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                authApi.auth().enqueue(new Callback<ApiResponse<String>>() {
+                                    @Override
+                                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                                        if(response.isSuccessful() && response.body() != null){
+                                            callback.onSuccess(response.body().getData());
+                                        }
+                                        else {
+                                            callback.onError("Lỗi đăng ký local");
+                                        }
+                                    }
 
-                } else {
-                    try {
-                        String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
-                        callback.onError("Lỗi từ Firebase: " + errorDetail);
-                    } catch (Exception e) {
-                        callback.onError(e.getMessage());
-                    }
+                                    @Override
+                                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                                        callback.onError(t.getMessage());
+                                    }
+                                }
+);
+                            }
+                            else {
+                                callback.onError("Lỗi phần update profile");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<FirebaseSignUpResponse> call, Throwable t) {
+                            callback.onError(t.getMessage());
+                        }
+                    });
+                }
+                else {
+                    callback.onError("Lỗi đăng ký");
                 }
             }
 
             @Override
             public void onFailure(Call<FirebaseSignUpResponse> call, Throwable t) {
-                callback.onError("Lỗi kết nối: " + t.getMessage());
+                callback.onError(t.getMessage());
             }
         });
+    };
+
+    public void login(String email, String password, authCallBack<String> callback) {
+        LoginRequest loginRequest = new LoginRequest(email, password);
+        authApi.login(loginRequest, Constants.FIREBASE_API_KEY).enqueue(new Callback<FirebaseSignUpResponse>() {
+            @Override
+            public void onResponse(Call<FirebaseSignUpResponse> call, Response<FirebaseSignUpResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    tokenManager.saveToken(response.body().getIdToken(), response.body().getRefreshToken());
+                    userApi.getProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
+                        @Override
+                        public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                            if(response.isSuccessful() && response.body() != null){
+                                UserResponse userResponse = response.body().getData();
+                                tokenManager.saveUserInfo(userResponse.getId(),userResponse.getEmail(),
+                                        userResponse.getName(),userResponse.getAvatar_url());
+                                callback.onSuccess("Thành công");
+                            }
+                            else {
+                                callback.onError("Lỗi fetch user");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                            callback.onError(t.getMessage());
+                        }
+                    });
+
+                }
+                else {
+                    callback.onError("Sai tai khoan mat khau");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FirebaseSignUpResponse> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+
     }
 
 
-    public void logout() {
-        tokenManager.clear();
-    }
 
-    public boolean isLoggedIn() {
-        return tokenManager.hasToken();
-    }
 }

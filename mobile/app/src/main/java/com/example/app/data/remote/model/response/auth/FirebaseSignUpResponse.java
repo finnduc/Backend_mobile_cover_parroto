@@ -1,15 +1,10 @@
 package com.example.app.data.remote.model.response.auth;
 
 public class FirebaseSignUpResponse {
-    private String kind ;
     private String idToken ;
     private String email ;
     private String refreshToken ;
-    private String expiresIn ;
-
-    public String getKind() {
-        return kind;
-    }
+    private String localId ;
 
     public String getIdToken() {
         return idToken;
@@ -23,13 +18,7 @@ public class FirebaseSignUpResponse {
         return refreshToken;
     }
 
-    public String getExpiresIn() {
-        return expiresIn;
-    }
-
     public String getLocalId() {
         return localId;
     }
-
-    private String localId ;
 }

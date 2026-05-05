@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/shadowingFragment">
+    app:startDestination="@id/StudyFragment">
 
     <fragment
         android:id="@+id/SignupFragment"
@@ -20,12 +20,12 @@
         <action android:id="@+id/action_LoginFragment_to_signupFragment"
             app:destination="@id/SignupFragment" />
         <action
-            android:id="@+id/action_LoginFragment_to_shadowingFragment"
-            app:destination="@id/shadowingFragment" />
+            android:id="@+id/action_LoginFragment_to_StudyFragment"
+            app:destination="@id/StudyFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/shadowingFragment"
+        android:id="@+id/StudyFragment"
         android:name="com.example.app.feature.study.StudyFragment"
         android:label="Học tập" />
 

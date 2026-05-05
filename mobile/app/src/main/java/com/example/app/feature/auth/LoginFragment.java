@@ -13,11 +13,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.app.R;
-import com.example.app.data.remote.model.response.auth.SyncResponse;
+import com.example.app.data.local.TokenManager;
 import com.example.app.data.repository.AuthRepository;
 
 
 public class LoginFragment extends Fragment {
+
+    AuthRepository authRepository;
+    TokenManager tokenManager;
+
     @Override
     @Nullable
      public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -25,7 +29,7 @@ public class LoginFragment extends Fragment {
          TextView Login = view.findViewById(R.id.btnLogin);
          EditText getUsername = view.findViewById(R.id.getUsername);
          EditText getPassword = view.findViewById(R.id.getPassword);
-        AuthRepository authRepository = new AuthRepository(requireContext());
+
 
         Login.setOnClickListener(v ->
          {
@@ -52,27 +56,9 @@ public class LoginFragment extends Fragment {
                  isvalid = false;
              }
              if (isvalid){
-                 Login.setEnabled(false);
-                 Login.setText("Đang đăng nhập...");
-                 authRepository.login(Username,Password,
-                         new AuthRepository.AuthCallback<SyncResponse>(){
-                             @Override
-                             public void onSuccess(SyncResponse data) {
-                                 Login.setEnabled(true);
-                                 Login.setText("Đăng nhập");
-                                 Toast.makeText(requireContext(),"Đăng nhập thành công!",Toast.LENGTH_SHORT).show();
-                                 Navigation.findNavController(v).navigate(R.id.action_LoginFragment_to_shadowingFragment);
-                         }
-                             @Override
-                             public void onError(String message) {
-                                Login.setEnabled(true);
-                                Login.setText("ĐĂNG NHẬP");
-                                Toast.makeText(requireContext(),message,Toast.LENGTH_LONG).show();
-                             }
-                         }
-                     );
-
+                 Login(Username,Password);
              }
+
          });
          register(view);
          return view;
@@ -83,5 +69,26 @@ public class LoginFragment extends Fragment {
             Navigation.findNavController(v)
                     .navigate(R.id.action_LoginFragment_to_signupFragment);
                 });
+    }
+
+    private void Login(String email, String password) {
+        authRepository = new AuthRepository(requireContext());
+        authRepository.login(email, password, new AuthRepository.authCallBack<String>() {
+            @Override
+            public void onSuccess(String data) {
+                Toast.makeText(requireContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(requireView())
+                        .navigate(R.id.action_LoginFragment_to_StudyFragment);
+
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(requireContext(), "Lỗi đăng nhập "
+                        + message, android.widget.Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
     }
 }

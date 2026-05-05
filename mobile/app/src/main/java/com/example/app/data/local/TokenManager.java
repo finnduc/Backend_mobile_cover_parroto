@@ -46,7 +46,7 @@ public class TokenManager {
     public String getRefreshToken() {
         return prefs.getString(KEY_REFRESH_TOKEN, null);
     }
-    public int getUserId() { return prefs.getInt(KEY_USER_ID, -1); }
+    public String getUserId() { return prefs.getString(KEY_USER_ID, null); }
     public String getUserEmail() { return prefs.getString(KEY_USER_EMAIL, null); }
     public String getUserName() { return prefs.getString(KEY_USER_NAME, null); }
     public String getAvatarUrl() { return prefs.getString(KEY_AVATAR_URL, null); }
@@ -55,9 +55,9 @@ public class TokenManager {
         return getIdToken() != null;
     }
 
-    public void saveUserInfo(int userId, String email, String name, String avatarUrl) {
+    public void saveUserInfo(String userId, String email, String name, String avatarUrl) {
         prefs.edit()
-                .putInt(KEY_USER_ID, userId)
+                .putString(KEY_USER_ID, userId)
                 .putString(KEY_USER_EMAIL, email)
                 .putString(KEY_USER_NAME, name)
                 .putString(KEY_AVATAR_URL, avatarUrl)
