@@ -12,7 +12,7 @@ import (
 )
 
 func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAuth) {
-	repo := repositories.NewUserRepo(db)
+	repo := repositories.NewUserRepo(fbAuth)
 	svc := services.NewUserService(repo)
 	ctrl := NewUserController(svc)
 	adminCtrl := NewUserAdminController(svc)
@@ -26,7 +26,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	{
 		admin.GET("", adminCtrl.List)
 		admin.GET("/:id", adminCtrl.GetByID)
-		admin.PUT("/:id", adminCtrl.Update)
+		// admin.PUT("/:id", adminCtrl.Update)
 		admin.DELETE("/:id", adminCtrl.Delete)
 	}
 }

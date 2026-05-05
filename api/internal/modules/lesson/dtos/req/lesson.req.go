@@ -1,6 +1,6 @@
 package req
 
-import "go-cover-parroto/internal/core/database"
+import "go-cover-parroto/internal/database"
 
 type CreateLessonReq struct {
 	CategoryID   *uint   `json:"category_id"`

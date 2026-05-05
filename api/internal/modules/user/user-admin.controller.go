@@ -7,6 +7,7 @@ import (
 	"go-cover-parroto/internal/modules/user/dtos/req"
 	_ "go-cover-parroto/internal/modules/user/dtos/res"
 	"go-cover-parroto/internal/modules/user/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -70,37 +71,37 @@ func (ctrl *UserAdminController) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
-// Update godoc
-// @Summary Update user
-// @Description Update a user by ID (admin only)
-// @Tags admin-users
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Param body body req.UpdateUserReq true "User data"
-// @Success 200 {object} response.BaseResponse[res.UserRes]
-// @Failure 400 {object} response.BaseResponse[any]
-// @Failure 401 {object} response.BaseResponse[any]
-// @Router /admin/users/{id} [put]
-// @Security BearerAuth
-func (ctrl *UserAdminController) Update(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
-		return
-	}
-	var body req.UpdateUserReq
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
-		return
-	}
-	result, appErr := ctrl.svc.Update(c.Request.Context(), id, body)
-	if appErr != nil {
-		c.JSON(appErr.Code, response.Fail(appErr))
-		return
-	}
-	c.JSON(http.StatusOK, response.Success(result))
-}
+// // Update godoc
+// // @Summary Update user
+// // @Description Update a user by ID (admin only)
+// // @Tags admin-users
+// // @Accept json
+// // @Produce json
+// // @Param id path int true "User ID"
+// // @Param body body req.UpdateUserReq true "User data"
+// // @Success 200 {object} response.BaseResponse[res.UserRes]
+// // @Failure 400 {object} response.BaseResponse[any]
+// // @Failure 401 {object} response.BaseResponse[any]
+// // @Router /admin/users/{id} [put]
+// // @Security BearerAuth
+// func (ctrl *UserAdminController) Update(c *gin.Context) {
+// 	id := c.Param("id")
+// 	if id == "" {
+// 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
+// 		return
+// 	}
+// 	var body req.UpdateUserReq
+// 	if err := c.ShouldBindJSON(&body); err != nil {
+// 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+// 		return
+// 	}
+// 	result, appErr := ctrl.svc.Update(c.Request.Context(), id, body)
+// 	if appErr != nil {
+// 		c.JSON(appErr.Code, response.Fail(appErr))
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, response.Success(result))
+// }
 
 // Delete godoc
 // @Summary Delete user

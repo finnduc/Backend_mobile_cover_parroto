@@ -32,7 +32,7 @@ func FirebaseAuth(fbAuth firebase.IFirebaseAuth) gin.HandlerFunc {
 
 		ctx := c.Request.Context()
 		userID := decoded.UID
-		role, ok := decoded.Claims["role"].(enums.UserRole)
+		role, ok := decoded.Claims[string(enums.CustomClaimKeyUserRole)].(enums.UserRole)
 		if !ok {
 			role = enums.UserRoleGuest
 		}
