@@ -39,7 +39,13 @@ func (r *userRepo) FindByID(ctx context.Context, id string) (*models.User, error
 
 	user.ID = userRecord.UID
 	user.Email = userRecord.Email
-	user.UserRole = userRecord.CustomClaims[string(enums.CustomClaimKeyUserRole)].(enums.UserRole)
+
+	user.UserRole = enums.UserRoleUser
+	if userRecord.CustomClaims != nil {
+		if roleStr, ok := userRecord.CustomClaims[string(enums.CustomClaimKeyUserRole)].(string); ok {
+			user.UserRole = enums.UserRole(roleStr)
+		}
+	}
 
 	return &user, nil
 

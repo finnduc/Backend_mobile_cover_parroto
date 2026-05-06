@@ -364,13 +364,6 @@ definitions:
       vietnamese:
         type: string
     type: object
-  go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq:
-    properties:
-      avatar_url:
-        type: string
-      name:
-        type: string
-    type: object
   go-cover-parroto_internal_modules_user_dtos_res.UserRes:
     properties:
       avatar_url:
@@ -949,42 +942,6 @@ paths:
       summary: Get user by ID
       tags:
       - admin-users
-    put:
-      consumes:
-      - application/json
-      description: Update a user by ID (admin only)
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: User data
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_user_dtos_req.UpdateUserReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Update user
-      tags:
-      - admin-users
   /auth/complete-signup:
     post:
       consumes:
@@ -1335,7 +1292,7 @@ paths:
       summary: Get lesson transcripts
       tags:
       - transcripts
-  /users/me:
+  /user/profile:
     get:
       consumes:
       - application/json

@@ -25,7 +25,7 @@ func NewUserController(svc services.IUserService) *UserController {
 // @Success 200 {object} response.BaseResponse[res.UserRes]
 // @Failure 401 {object} response.BaseResponse[any]
 // @Failure 500 {object} response.BaseResponse[any]
-// @Router /users/me [get]
+// @Router /user/profile [get]
 // @Security BearerAuth
 func (ctrl *UserController) GetProfile(c *gin.Context) {
 	result, appErr := ctrl.svc.GetProfile(c.Request.Context())
