@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/reviewFragment"
-        android:name="com.example.app.feature.topic.ui.fragment_review"
+        android:name="com.example.app.feature.review.fragment_review"
         android:label="Ôn tập" />
 
     <fragment

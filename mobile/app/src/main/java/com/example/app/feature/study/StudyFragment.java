@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,30 +15,51 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
 import com.example.app.adapter.study.LessonSectionAdapter;
+import com.example.app.data.local.TokenManager;
+import com.example.app.data.remote.api.UserApi;
+import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.categories.CategoryResponse;
 import com.example.app.data.remote.model.response.categories.ListCategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
+import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
+import com.example.app.data.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class StudyFragment extends Fragment {
+    UserRepository userApi;
+
+    TextView UserName ;
 
     private RecyclerView rvLessonSections;
+    private TokenManager tokenManager;
     private LessonSectionAdapter sectionAdapter;
     private List<LessonSection> sectionList;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_study, container, false);
+        tokenManager = TokenManager.getInstance(requireContext());
+        UserName = view.findViewById(R.id.tvUserName);
         rvLessonSections = view.findViewById(R.id.rvLessonSections);
         rvLessonSections.setLayoutManager(new LinearLayoutManager(getContext()));
         sectionList = new ArrayList<>();
         sectionAdapter = new LessonSectionAdapter(sectionList);
         rvLessonSections.setAdapter(sectionAdapter);
+        if(tokenManager.getUserName() != null){
+            UserName.setText(tokenManager.getUserName());
+        }
+        else {
+            UserName.setText("Người dùng mới");
+        }
         loadDataFromApi();
         return view;
     }
@@ -54,7 +76,6 @@ public class StudyFragment extends Fragment {
                     List<CategoryResponse> categoryList = data.getData();
 
                     for (CategoryResponse category : categoryList) {
-
                         int categoryId = 0;
                         try {
                             categoryId = Integer.parseInt(category.getId());
@@ -91,4 +112,7 @@ public class StudyFragment extends Fragment {
             }
         });
     }
+
+
+
 }
