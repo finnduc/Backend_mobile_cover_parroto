@@ -38,7 +38,7 @@ api/
 │   ├── firebase/            # Firebase Auth client
 │   ├── middleware/          # FirebaseAuth middleware
 │   ├── modules/
-│   │   ├── auth/            # POST /auth/token, POST /auth/sync
+│   │   ├── auth/            # POST 
 │   │   ├── user/            # GET /user/profile
 │   │   ├── lesson/          # GET /lessons, GET /lessons/:lessonId
 │   │   ├── category/        # GET /categories
@@ -144,8 +144,6 @@ Server chạy tại: `http://localhost:3001`
 
 | Method | Endpoint | Auth | Mô tả |
 |--------|----------|------|-------|
-| POST | `/auth/token` | ❌ | Lấy Firebase ID token (email + password) |
-| POST | `/auth/sync` | ❌ | Sync user Firebase vào DB |
 | GET | `/user/profile` | ✅ | Lấy profile user hiện tại |
 | GET | `/lessons` | ❌ | Danh sách bài học (filter: `category_id`, `level`) |
 | GET | `/lessons/:lessonId` | ❌ | Chi tiết bài học |

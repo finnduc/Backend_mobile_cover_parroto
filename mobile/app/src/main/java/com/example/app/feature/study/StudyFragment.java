@@ -47,14 +47,16 @@ public class StudyFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_study, container, false);
+
         tokenManager = TokenManager.getInstance(requireContext());
+        String name = tokenManager.getUserName();
         UserName = view.findViewById(R.id.tvUserName);
         rvLessonSections = view.findViewById(R.id.rvLessonSections);
         rvLessonSections.setLayoutManager(new LinearLayoutManager(getContext()));
         sectionList = new ArrayList<>();
         sectionAdapter = new LessonSectionAdapter(sectionList);
         rvLessonSections.setAdapter(sectionAdapter);
-        if(tokenManager.getUserName() != null){
+        if(name != null && !name.isEmpty() && !name.equals("null")){
             UserName.setText(tokenManager.getUserName());
         }
         else {
