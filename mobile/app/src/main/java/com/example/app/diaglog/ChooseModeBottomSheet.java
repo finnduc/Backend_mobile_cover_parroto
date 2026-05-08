@@ -37,9 +37,13 @@ public class ChooseModeBottomSheet extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (getArguments() != null) {
-            String lessonId = getArguments().getString("LESSON_ID");
-            String lessonTitle = getArguments().getString("LESSON_TITLE");
-            String lessonDescription = getArguments().getString("LESSON_DESCRIPTION");
+            String lessonId = getArguments().getString("lessonId");
+            String lessonTitle = getArguments().getString("lessonTitle");
+            String lessonDescription = getArguments().getString("lessonDescription");
+            String lessonThumbnailUrl = getArguments().getString("lessonThumbnailUrl");
+            String lessonVideoUrl = getArguments().getString("lessonVideoUrl");
+            int lessonDuration = getArguments().getInt("lessonDuration");
+            String lessonLevel = getArguments().getString("lessonLevel");
 
         }
 

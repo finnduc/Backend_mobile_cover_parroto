@@ -73,7 +73,7 @@
     </fragment>
     <fragment
         android:id="@+id/ListenToDictationFragment"
-        android:name="com.example.app.feature.study.ListenToDictationFragment"
+        android:name="com.example.app.feature.study.DictationFragment"
         android:label="Học Chính Tả" >
 
 </fragment>
