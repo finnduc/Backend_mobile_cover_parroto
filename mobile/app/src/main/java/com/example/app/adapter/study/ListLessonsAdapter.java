@@ -21,9 +21,18 @@ public class ListLessonsAdapter extends RecyclerView.Adapter<ListLessonsAdapter.
 
     private List<LessonsResponse> lessonsResponseList;
 
-    public ListLessonsAdapter(List<LessonsResponse> lessonsResponseList) {
-        this.lessonsResponseList = lessonsResponseList;
+    public interface onLessonsItemClickListener{
+        void onLessonsItemClick(LessonsResponse lesson);
     }
+
+    private onLessonsItemClickListener listener;
+
+    public ListLessonsAdapter(List<LessonsResponse> lessonsResponseList, onLessonsItemClickListener listener) {
+        this.lessonsResponseList = lessonsResponseList;
+        this.listener = listener;
+    }
+
+
 
     @NonNull
     @Override
@@ -43,6 +52,14 @@ public class ListLessonsAdapter extends RecyclerView.Adapter<ListLessonsAdapter.
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_error)
                 .into(holder.imgThumbnail);
+
+        holder.cardRoot.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onLessonsItemClick(currentLesson);
+            };
+        });
+
+
         holder.cardRoot.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -60,13 +77,13 @@ public class ListLessonsAdapter extends RecyclerView.Adapter<ListLessonsAdapter.
                             .setDuration(120)
                             .setInterpolator(new DecelerateInterpolator())
                             .start();
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        v.performClick();
-                    }
                     break;
             }
             return false;
         });
+
+
+
     }
 
 

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
 import com.example.app.data.repository.UserRepository;
+import com.example.app.diaglog.ChooseModeBottomSheet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +56,25 @@ public class StudyFragment extends Fragment {
         rvLessonSections = view.findViewById(R.id.rvLessonSections);
         rvLessonSections.setLayoutManager(new LinearLayoutManager(getContext()));
         sectionList = new ArrayList<>();
-        sectionAdapter = new LessonSectionAdapter(sectionList);
+        sectionAdapter = new LessonSectionAdapter(sectionList,
+                new LessonSectionAdapter.OnSeeAllClickListener() {
+                    @Override
+                    public void onSeeAllClick(int categoryId, String categoryName) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("categoryId", categoryId);
+                        bundle.putString("categoryName", categoryName);
+                        Navigation.findNavController(requireView())
+                                .navigate(R.id.action_StudyFragment_to_LessonsListFragment, bundle);
+                    }
+                }, new LessonSectionAdapter.OnLessonClickListener() {
+            @Override
+            public void onLessonClick(LessonsResponse lesson) {
+                showBottomSheet(lesson);
+            }
+        });
         rvLessonSections.setAdapter(sectionAdapter);
+
+
         if(name != null && !name.isEmpty() && !name.equals("null")){
             UserName.setText(tokenManager.getUserName());
         }
@@ -84,12 +103,14 @@ public class StudyFragment extends Fragment {
                         } catch (NumberFormatException e) {
                             continue;
                         }
+                        final int finalCategoryId = categoryId;
                         lessonsRepo.getLessons(5, 1, categoryId, null,
                                 new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>() {
                             @Override
                             public void onSuccess(ListLessonsResponse<LessonsResponse> lessonData) {
                                 if (lessonData != null && lessonData.getData() != null) {
                                     LessonSection newSection = new LessonSection(
+                                            finalCategoryId,
                                             category.getName(),
                                             lessonData.getMeta().getTotal(),
                                             lessonData.getData()
@@ -97,7 +118,7 @@ public class StudyFragment extends Fragment {
 
                                     // 5. Thêm vào danh sách tổng và báo Adapter cập nhật UI
                                     sectionList.add(newSection);
-                                    sectionAdapter.notifyDataSetChanged();
+                                            sectionAdapter.notifyDataSetChanged();
                                 }
                             }
                             @Override
@@ -114,6 +135,21 @@ public class StudyFragment extends Fragment {
             }
         });
     }
+
+    private void showBottomSheet(LessonsResponse lesson){
+        ChooseModeBottomSheet bottomSheet = new ChooseModeBottomSheet();
+        Bundle bundle = new Bundle();
+        bundle.putInt("lessonId", lesson.getId());
+        bundle.putString("lessonTitle", lesson.getTitle());
+        bundle.putString("lessonDescription", lesson.getDescription());
+        bundle.putString("lessonThumbnailUrl", lesson.getThumbnailUrl());
+        bundle.putString("lessonVideoUrl", lesson.getVideoUrl());
+        bundle.putInt("lessonDuration", lesson.getDuration());
+        bundle.putString("lessonLevel", lesson.getLevel());
+        bottomSheet.setArguments(bundle);
+        bottomSheet.show(getChildFragmentManager(), "ChooseModeBottomSheet");
+    }
+
 
 
 

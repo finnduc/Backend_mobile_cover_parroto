@@ -27,7 +27,25 @@
     <fragment
         android:id="@+id/StudyFragment"
         android:name="com.example.app.feature.study.StudyFragment"
-        android:label="Học tập" />
+        android:label="Học tập" >
+        <action
+            android:id="@+id/action_StudyFragment_to_LessonsListFragment"
+            app:destination="@id/LessonsListFragment" />
+        <action
+            android:id="@+id/action_StudyFragment_to_ListenToDictationFragment"
+            app:destination="@id/ListenToDictationFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/LessonsListFragment"
+        android:name="com.example.app.feature.study.LessonsListFragment"
+        android:label="Tiến độ" >
+
+        <action
+            android:id="@+id/action_LessonsListFragment_to_ListenToDictationFragment"
+            app:destination="@id/ListenToDictationFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/vocabularyFragment"
@@ -53,5 +71,11 @@
             app:destination="@id/LoginFragment" >
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/ListenToDictationFragment"
+        android:name="com.example.app.feature.study.ListenToDictationFragment"
+        android:label="Học Chính Tả" >
+
+</fragment>
 
 </navigation>
