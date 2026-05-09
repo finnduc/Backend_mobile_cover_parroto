@@ -1,4 +1,4 @@
-package com.example.app.adapter.study;
+package com.example.app.adapter.dictation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +33,8 @@ public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.Senten
 
     @Override
     public void onBindViewHolder(@NonNull SentenceViewHolder holder, int position) {
-
+        TranscriptsResponse currentSentence = list.get(position);
+        holder.tvSentence.setText(String.valueOf(currentSentence.getSequence()));
     }
 
     @Override
@@ -53,6 +54,8 @@ public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.Senten
         }
 
         TextView tvSentence;
+
+
 
     }
 
