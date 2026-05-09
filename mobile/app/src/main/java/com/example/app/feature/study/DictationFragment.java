@@ -68,7 +68,6 @@ public class DictationFragment extends Fragment {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
-        // Fake UA để tránh YouTube chặn WebView
         String defaultUA = settings.getUserAgentString();
         String fakedUA = defaultUA.replace("; wv", "");
         settings.setUserAgentString(fakedUA);
@@ -78,15 +77,16 @@ public class DictationFragment extends Fragment {
 
         String embedUrl = lessonVideoUrl;
 
-        if (lessonVideoUrl.contains("watch?v=")) {
+        if (embedUrl.startsWith("http://")) {
+            embedUrl = embedUrl.replaceFirst("http://", "https://");
+        }
 
-            embedUrl = lessonVideoUrl.replace("watch?v=", "embed/");
-
-        } else if (lessonVideoUrl.contains("youtu.be/")) {
-
+        if (embedUrl.contains("watch?v=")) {
+            embedUrl = embedUrl.replace("watch?v=", "embed/");
+        } else if (embedUrl.contains("youtu.be/")) {
             embedUrl = "https://www.youtube.com/embed/"
-                    + lessonVideoUrl.substring(
-                    lessonVideoUrl.lastIndexOf("/") + 1
+                    + embedUrl.substring(
+                    embedUrl.lastIndexOf("/") + 1
             );
         }
 
@@ -95,8 +95,10 @@ public class DictationFragment extends Fragment {
                 "youtube-nocookie.com"
         );
 
+        String appOrigin = "https://" + requireContext().getPackageName();
+
         String youtubeParams =
-                "controls=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1";
+                "controls=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&origin=" + appOrigin;
 
         if (embedUrl.contains("?")) {
             embedUrl += "&" + youtubeParams;
@@ -118,7 +120,7 @@ public class DictationFragment extends Fragment {
                         "</body></html>";
 
         webViewYoutube.loadDataWithBaseURL(
-                "https://www.youtube-nocookie.com",
+                appOrigin,
                 html,
                 "text/html",
                 "utf-8",
