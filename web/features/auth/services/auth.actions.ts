@@ -5,7 +5,7 @@ import { BaseResponse } from "@/types/base-response";
 
 
 export async function completeSignUp(){
-  return apiFetch<BaseResponse<void>>("/auth/complete-signup", {
+  return apiFetch<void>("/auth/complete-signup", {
     method: "POST",
   });
 }
