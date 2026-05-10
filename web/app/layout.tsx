@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { FirebaseUIProviderHoc } from "@/lib/firebase/ui";
@@ -31,6 +32,7 @@ export default function RootLayout({
               {children}
             </FirebaseUIProviderHoc>
           </TooltipProvider>
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

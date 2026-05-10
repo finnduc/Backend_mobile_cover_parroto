@@ -1,36 +1,30 @@
 "use client";
 
-import { getTranslation } from "@firebase-oss/ui-core";
-import { useUI, type SignInAuthScreenProps, useOnUserAuthenticated } from "@firebase-oss/ui-react";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SignInAuthForm } from "@/components/sign-in-auth-form";
-import { MultiFactorAuthAssertionScreen } from "@/components/multi-factor-auth-assertion-screen";
 
-export type { SignInAuthScreenProps };
+interface SignInAuthScreenProps {
+  children?: React.ReactNode;
+  onSignIn?: () => void;
+  onSignUpClick?: () => void;
+  onForgotPasswordClick?: () => void;
+}
 
-export function SignInAuthScreen({ children, onSignIn, ...props }: SignInAuthScreenProps) {
-  const ui = useUI();
-
-  const titleText = getTranslation(ui, "labels", "signIn");
-  const subtitleText = getTranslation(ui, "prompts", "signInToAccount");
-
-  useOnUserAuthenticated(onSignIn);
-
-  if (ui.multiFactorResolver) {
-    return <MultiFactorAuthAssertionScreen />;
-  }
-
+export function SignInAuthScreen({ children, onSignIn, onSignUpClick, onForgotPasswordClick }: SignInAuthScreenProps) {
   return (
     <div className="max-w-sm mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>{titleText}</CardTitle>
-          <CardDescription>{subtitleText}</CardDescription>
+          <CardTitle>Sign in</CardTitle>
+          <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <SignInAuthForm {...props} />
+          <SignInAuthForm
+            onSignIn={onSignIn}
+            onSignUpClick={onSignUpClick}
+            onForgotPasswordClick={onForgotPasswordClick}
+          />
           {children ? (
             <>
               <Separator className="my-4" />

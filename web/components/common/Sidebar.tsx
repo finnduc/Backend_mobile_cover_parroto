@@ -1,12 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { Sun, Moon, LogOut } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { User, Sun, Moon, LogOut } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase/client-app"
+import { useUser } from "@/lib/firebase/hooks"
 import { mainNav, communityNav, type NavItem } from "@/lib/nav-items"
 import { ROUTES } from "@/lib/routes"
 import { Button } from "@/components/ui/button"
@@ -34,14 +36,15 @@ function NavLink({ item }: { item: NavItem }) {
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme()
-  const router = useRouter()
   const [mounted, setMounted] = useState(false)
+  const user = useUser()
 
   useEffect(() => { setMounted(true) }, [])
 
   const handleSignOut = async () => {
     await signOut(auth)
-    router.push(ROUTES.USER.HOME)
+    toast.success("Signed out successfully", { duration: 5000 })
+    window.location.href = ROUTES.USER.HOME
   }
 
   return (
@@ -69,6 +72,12 @@ export function AppSidebar() {
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          {user && (
+            <span className="flex items-center gap-2 text-sm text-muted-foreground mr-2">
+              <User className="size-4" />
+              {user.displayName || user.email}
+            </span>
+          )}
           <Button variant="ghost" onClick={handleSignOut}>
             <LogOut className="size-4 mr-1" />
             Sign Out

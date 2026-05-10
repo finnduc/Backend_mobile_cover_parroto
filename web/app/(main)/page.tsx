@@ -1,4 +1,3 @@
-import { PublicNavbar } from "@/components/common/PublicNavbar"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ROUTES } from "@/lib/routes"
@@ -6,7 +5,6 @@ import { ROUTES } from "@/lib/routes"
 export default function Page() {
   return (
     <div className="flex min-h-svh flex-col">
-      <PublicNavbar />
       <main className="flex-1">
         <section className="flex flex-col items-center justify-center px-6 py-24 text-center md:py-32">
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl">

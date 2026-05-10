@@ -1,15 +1,10 @@
 "use client";
 
-import type { SignInAuthFormSchema } from "@firebase-oss/ui-core";
-import {
-  useSignInAuthFormAction,
-  useSignInAuthFormSchema,
-  useUI,
-  type SignInAuthFormProps,
-} from "@firebase-oss/ui-react";
-import { Controller, useForm } from "react-hook-form";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { FirebaseUIError, getTranslation } from "@firebase-oss/ui-core";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { signInWithEmailAndPassword, type AuthError } from "firebase/auth";
+import { auth } from "@/lib/firebase/client-app";
 
 import {
   Field,
@@ -21,96 +16,111 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Policies } from "./policies";
 
-export type { SignInAuthFormProps };
+interface SignInFormValues {
+  email: string;
+  password: string;
+}
 
-export function SignInAuthForm(props: SignInAuthFormProps) {
-  const ui = useUI();
-  const schema = useSignInAuthFormSchema();
-  const action = useSignInAuthFormAction();
+interface SignInAuthFormProps {
+  onSignIn?: () => void;
+  onSignUpClick?: () => void;
+  onForgotPasswordClick?: () => void;
+}
 
-  const form = useForm<SignInAuthFormSchema>({
-    resolver: standardSchemaResolver(schema),
+export function SignInAuthForm({ onSignIn, onSignUpClick, onForgotPasswordClick }: SignInAuthFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rootError, setRootError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  async function onSubmit(values: SignInAuthFormSchema) {
+  async function onSubmit(values: SignInFormValues) {
+    setIsSubmitting(true);
+    setRootError(null);
+
     try {
-      const credential = await action(values);
-      props.onSignIn?.(credential);
-    } catch (error) {
-      const message = error instanceof FirebaseUIError ? error.message : String(error);
-      form.setError("root", { message });
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      toast.success("Signed in successfully!", { duration: 5000 });
+      onSignIn?.();
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      const message = authError.message || "An unexpected error occurred";
+      toast.error(message, { duration: 5000 });
+      setRootError(message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
       <FieldGroup>
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-in-email">
-                {getTranslation(ui, "labels", "emailAddress")}
-              </FieldLabel>
-              <Input
-                id="sign-in-email"
-                type="email"
-                {...field}
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="sign-in-email">
+            Email address
+          </FieldLabel>
+          <Input
+            id="sign-in-email"
+            type="email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email address",
+              },
+            })}
+            aria-invalid={!!errors.email}
+          />
+          {errors.email && (
+            <FieldError errors={[errors.email]} />
           )}
-        />
+        </Field>
 
-        <Controller
-          name="password"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-in-password" className="flex items-center gap-2">
-                <span className="grow">{getTranslation(ui, "labels", "password")}</span>
-                {props.onForgotPasswordClick ? (
-                  <Button type="button" variant="link" onClick={props.onForgotPasswordClick} size="sm">
-                    <span className="text-xs">{getTranslation(ui, "labels", "forgotPassword")}</span>
-                  </Button>
-                ) : null}
-              </FieldLabel>
-              <Input
-                id="sign-in-password"
-                type="password"
-                {...field}
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
+        <Field data-invalid={!!errors.password}>
+          <FieldLabel htmlFor="sign-in-password" className="flex items-center gap-2">
+            <span className="grow">Password</span>
+            {onForgotPasswordClick ? (
+              <Button type="button" variant="link" onClick={onForgotPasswordClick} size="sm">
+                <span className="text-xs">Forgot password?</span>
+              </Button>
+            ) : null}
+          </FieldLabel>
+          <Input
+            id="sign-in-password"
+            type="password"
+            {...register("password", {
+              required: "Password is required",
+            })}
+            aria-invalid={!!errors.password}
+          />
+          {errors.password && (
+            <FieldError errors={[errors.password]} />
           )}
-        />
+        </Field>
       </FieldGroup>
 
       <Policies />
-      
-      <Button type="submit" disabled={ui.state !== "idle"}>
-        {getTranslation(ui, "labels", "signIn")}
+
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
 
-      {form.formState.errors.root && (
-         <FieldError errors={[form.formState.errors.root]} />
+      {rootError && (
+        <FieldError errors={[{ message: rootError }]} />
       )}
 
-      {props.onSignUpClick ? (
-        <Button type="button" variant="link" size="sm" onClick={props.onSignUpClick}>
+      {onSignUpClick ? (
+        <Button type="button" variant="link" size="sm" onClick={onSignUpClick}>
           <span className="text-xs">
-            {getTranslation(ui, "prompts", "noAccount")} {getTranslation(ui, "labels", "signUp")}
+            Don&apos;t have an account? Sign up
           </span>
         </Button>
       ) : null}
