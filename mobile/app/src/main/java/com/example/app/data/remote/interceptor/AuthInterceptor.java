@@ -1,5 +1,7 @@
 package com.example.app.data.remote.interceptor;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.app.data.local.TokenManager;
@@ -34,6 +36,7 @@ public class AuthInterceptor implements Interceptor {
                 .header("Authorization", "Bearer " + token)
                 .header("Content-Type", "application/json")
                 .build();
+        Log.d("TokenCheck", "Token hiện tại là: " + token);
         return chain.proceed(newRequest);
     }
 
