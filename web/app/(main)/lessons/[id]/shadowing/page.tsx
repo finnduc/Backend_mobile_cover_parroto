@@ -30,6 +30,7 @@ export default async function ShadowingPage({
       ]}
     >
       <LessonLayout
+        videoUrl={lesson.videoUrl}
         title={lesson.title}
         duration={lesson.duration}
         transcript={transcripts.map((seg) => (

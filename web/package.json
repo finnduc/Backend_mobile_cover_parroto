@@ -14,6 +14,7 @@
   "dependencies": {
     "@firebase-oss/ui-react": "^7.0.2-beta",
     "@hookform/resolvers": "^5.2.2",
+    "@vidstack/react": "^1.12.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^12.12.1",

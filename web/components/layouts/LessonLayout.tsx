@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { VideoPlayerPlaceholder } from "@/components/common/VideoPlayerPlaceholder"
 import { LessonToolbar } from "@/features/lessons/components/user/LessonToolbar"
 
@@ -6,16 +7,22 @@ export function LessonLayout({
   transcript,
   exercise,
   duration,
+  videoUrl,
 }: {
   title?: string
   transcript: ReactNode
   exercise: ReactNode
   duration?: number
+  videoUrl?: string
 }) {
   return (
     <div className="flex h-full gap-6">
       <div className="flex flex-1 flex-col gap-4">
-        <VideoPlayerPlaceholder duration={duration} />
+        {videoUrl ? (
+          <VidstackYoutubePlayer videoUrl={videoUrl} />
+        ) : (
+          <VideoPlayerPlaceholder duration={duration} />
+        )}
         <LessonToolbar />
         <div className="flex-1">{exercise}</div>
       </div>
