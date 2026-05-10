@@ -8,7 +8,7 @@ export function SignUpScreen() {
   const router = useRouter();
 
   const onSignUp = () => {
-    router.push(ROUTES.ONBOARDING);
+    router.push(ROUTES.USER.HOME);
   }
 
   return (

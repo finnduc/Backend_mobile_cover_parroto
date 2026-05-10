@@ -13,38 +13,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 import { ROUTES } from "@/lib/routes"
-import {
-  BookOpen,
-  BookText,
-  Mic,
-  GraduationCap,
-  Swords,
-  Repeat,
-  Users,
-  Trophy,
-  MessageCircle,
-  MessageSquare,
-  Gift,
-  CreditCard,
-} from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-
-interface NavItem {
-  label: string
-  href: string
-  icon: LucideIcon
-}
-
-const mainNav: NavItem[] = [
-  { label: "Chủ đề", href: ROUTES.USER.CATEGORIES, icon: BookOpen },
-  { label: "Từ vựng", href: "/vocabulary", icon: BookText },
-]
-
-const communityNav: NavItem[] = [
-  { label: "Cộng đồng", href: "/community", icon: Users },
-  { label: "Trò chuyện", href: "/chat", icon: MessageCircle },
-  { label: "Feedback", href: "/feedbacks", icon: MessageSquare },
-]
+import { mainNav, communityNav, type NavItem } from "@/lib/nav-items"
 
 function NavItems({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
@@ -68,7 +37,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="px-4 py-3">
         <Link href={ROUTES.USER.HOME} className="flex items-center gap-2 text-lg font-bold">
-          Parroto
+          Engflix
         </Link>
       </SidebarHeader>
       <SidebarContent>
