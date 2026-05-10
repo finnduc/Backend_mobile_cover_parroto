@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
@@ -11,18 +10,10 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 function NavLink({ item }: { item: NavItem }) {
-  const pathname = usePathname()
-  const active = pathname.startsWith(item.href)
-
   return (
     <Link
-      href={item.href}
-      className={cn(
-        "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors",
-        active
-          ? "text-foreground font-medium"
-          : "text-muted-foreground hover:text-foreground hover:bg-muted"
-      )}
+      href={ROUTES.AUTH.REGISTER}
+      className="flex items-center gap-2 px-3 py-2 text-sm rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
     >
       <item.icon className="size-4" />
       <span>{item.label}</span>
@@ -61,6 +52,9 @@ export function PublicNavbar() {
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link href={ROUTES.AUTH.REGISTER}>Sign Up</Link>
+          </Button>
           <Button asChild variant="default">
             <Link href={ROUTES.AUTH.LOGIN}>Sign In</Link>
           </Button>
