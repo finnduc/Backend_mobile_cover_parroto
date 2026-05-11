@@ -44,7 +44,6 @@ public class ChooseModeBottomSheet extends DialogFragment {
             String lessonVideoUrl = getArguments().getString("lessonVideoUrl");
             int lessonDuration = getArguments().getInt("lessonDuration");
             String lessonLevel = getArguments().getString("lessonLevel");
-
         }
 
         View cardChinhTa = view.findViewById(R.id.cardChinhTa);
