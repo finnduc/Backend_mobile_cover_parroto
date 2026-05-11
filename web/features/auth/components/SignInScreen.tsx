@@ -1,37 +1,31 @@
 'use client'
 
-import { SignInAuthScreen } from '@/components/sign-in-auth-screen';
-import { auth } from '@/lib/firebase/client-app';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { SignInAuthForm } from '@/components/sign-in-auth-form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ROUTES } from '@/lib/routes';
 
 export function SignInScreen() {
-  useEffect(() => {
-    // Monitor ALL auth state changes
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log('Auth state changed:', user);
-      if (user) {
-        console.log('User is authenticated:', {
-          uid: user.uid,
-          isAnonymous: user.isAnonymous,
-          email: user.email,
-          provider: user.providerData[0]?.providerId
-        });
-      } else {
-        console.log('No user authenticated');
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  const router = useRouter();
 
   const onSignIn = () => {
-    console.log('onSignIn');
+    router.push(ROUTES.USER.HOME);
   }
 
   return (
-    <>
-      <SignInAuthScreen onSignIn={onSignIn} />
-    </>
+    <div className="max-w-sm mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Sign in</CardTitle>
+          <CardDescription>Sign in to your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SignInAuthForm
+            onSignIn={onSignIn}
+            onSignUpClick={() => router.push(ROUTES.AUTH.REGISTER)}
+          />
+        </CardContent>
+      </Card>
+    </div>
   )
 }
