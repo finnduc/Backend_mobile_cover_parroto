@@ -1,7 +1,6 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { LessonLayout } from "@/components/layouts/LessonLayout"
+import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { DictationArea } from "@/features/lessons/components/user/DictationArea"
-import { TranscriptLine } from "@/components/common/TranscriptLine"
 import { mockLessons, mockTranscripts } from "@/features/lessons/mock-data"
 import { ROUTES } from "@/lib/routes"
 
@@ -33,13 +32,7 @@ export default async function DictationPage({
         videoUrl={lesson.videoUrl}
         title={lesson.title}
         duration={lesson.duration}
-        transcript={transcripts.map((seg) => (
-          <TranscriptLine
-            key={seg.id}
-            text={seg.content}
-            timestamp={`${Math.floor(seg.startTimestamp / 60)}:${(seg.startTimestamp % 60).toString().padStart(2, "0")}`}
-          />
-        ))}
+        transcripts={transcripts}
         exercise={<DictationArea />}
       />
     </PageLayout>

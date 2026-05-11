@@ -2,24 +2,40 @@
 
 import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
 import { Button } from "@/components/ui/button"
-import { Mic, Square, Play, RefreshCw } from "lucide-react"
+import { Mic, Square, Play, Pause, SkipBack, SkipForward, RotateCcw } from "lucide-react"
 import { useState } from "react"
+import type { Transcript } from "@/types/lessons.models"
 
-const shadowLines = [
-  "In a world where the forest meets the iron age,",
-  "a young prince embarks on a journey to find a cure for a curse.",
-  "He encounters a fierce young woman raised by wolves,",
-  "who fights to protect the forest and its spirits.",
-]
+export interface ExerciseControlProps {
+  transcripts: Transcript[]
+  activeIndex: number
+  paused: boolean
+  onPlay: () => void
+  onPause: () => void
+  onNext: () => void
+  onPrev: () => void
+  onReplay: () => void
+}
 
-export function ShadowingArea() {
-  const [currentLine, setCurrentLine] = useState(0)
+export function ShadowingArea({
+  transcripts,
+  activeIndex,
+  paused,
+  onPlay,
+  onPause,
+  onNext,
+  onPrev,
+  onReplay,
+}: Partial<ExerciseControlProps>) {
   const [recording, setRecording] = useState(false)
   const [completed, setCompleted] = useState<number[]>([])
 
+  const lines = (transcripts ?? []).map((t) => t.content)
+  const safeActiveIndex = (activeIndex ?? -1) >= 0 && (activeIndex ?? -1) < lines.length ? activeIndex! : 0
+
   return (
     <div className="space-y-4">
-      <LessonProgressBar completed={completed.length} total={shadowLines.length} />
+      <LessonProgressBar completed={completed.length} total={lines.length} />
       <div className="rounded-xl bg-gradient-to-b from-muted/50 to-background p-6 text-center">
         <div className="mb-4 flex items-center justify-center gap-2">
           <div className="flex h-16 w-64 items-center justify-center gap-1 rounded-full bg-muted px-4">
@@ -35,7 +51,7 @@ export function ShadowingArea() {
             ))}
           </div>
         </div>
-        <p className="mb-6 text-lg font-medium">{shadowLines[currentLine]}</p>
+        <p className="mb-6 text-lg font-medium">{lines[safeActiveIndex]}</p>
         <div className="flex items-center justify-center gap-3">
           <Button
             size="lg"
@@ -48,31 +64,51 @@ export function ShadowingArea() {
           <Button
             size="icon"
             variant="outline"
+            onClick={onPrev ?? (() => {})}
+            disabled={(activeIndex ?? -1) <= 0}
+          >
+            <SkipBack className="size-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="outline"
             onClick={() => {
-              if (!completed.includes(currentLine)) {
-                setCompleted([...completed, currentLine])
-              }
-              if (currentLine < shadowLines.length - 1) {
-                setCurrentLine(currentLine + 1)
+              if (paused) {
+                onPlay?.()
+              } else {
+                onPause?.()
               }
             }}
           >
-            <Play className="size-4" />
+            {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
           </Button>
-          <Button size="icon" variant="ghost" onClick={() => { setCurrentLine(0); setCompleted([]) }}>
-            <RefreshCw className="size-4" />
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => {
+              if (!completed.includes(safeActiveIndex)) {
+                setCompleted([...completed, safeActiveIndex])
+              }
+              onNext?.()
+            }}
+            disabled={(activeIndex ?? -1) >= lines.length - 1}
+          >
+            <SkipForward className="size-4" />
+          </Button>
+          <Button size="icon" variant="ghost" onClick={onReplay ?? (() => {})}>
+            <RotateCcw className="size-4" />
           </Button>
         </div>
       </div>
       <div className="space-y-1">
-        {shadowLines.map((line, i) => (
+        {(transcripts ?? []).map((seg, i) => (
           <div
-            key={i}
+            key={seg.id}
             className={`rounded px-3 py-1.5 text-sm ${
               completed.includes(i) ? "bg-transcript-complete text-muted-foreground line-through" : ""
-            } ${i === currentLine ? "bg-transcript-active font-medium" : ""}`}
+            } ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
           >
-            {line}
+            {seg.content}
           </div>
         ))}
       </div>
