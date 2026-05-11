@@ -47,14 +47,12 @@ import retrofit2.Call;
 public class DictationFragment extends Fragment {
 
     private TranscriptsRepository transcriptsRepository;
-    private List<TranscriptsResponse> listTranscripts;
+    private List<TranscriptsResponse> listTranscripts = new ArrayList<>();
     private int currentSentenceIndex = 0;
     private SentenceAdapter sentenceAdapter;
     private WordCardAdapter wordCardAdapter;
     private List<WorkCardModel> listWordCards = new ArrayList<>();
-    private LinearLayoutManager layoutManager;
     private boolean showdiaglogwarning = false;
-
     private TextView toolbarTitle;
     private TextView toolbarProgress;
     private TextView timer;
@@ -74,8 +72,8 @@ public class DictationFragment extends Fragment {
     private static final float[] SPEED_LEVELS = {0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f};
     private int speedIndex = 3;
     private float currentSpeed = 1.0f;
-
-    private LinearLayout llSentenceNumbers;
+    private boolean isWaitingForNext = false;
+    private boolean btnPlaysentenceState = false;
 
     @Nullable
     @Override
@@ -108,17 +106,15 @@ public class DictationFragment extends Fragment {
         flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
         flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
         rvWordCards.setLayoutManager(flexboxLayoutManager);
-
-        listTranscripts = new ArrayList<>();
         sentenceAdapter = new SentenceAdapter(listTranscripts, new SentenceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 currentSentenceIndex = position;
                 prepareCurrentSentence();
+                replayCurrentSentence();
             }
         });
         rvSentenceNumbers.setAdapter(sentenceAdapter);
-        listWordCards = new ArrayList<>();
         wordCardAdapter = new WordCardAdapter(listWordCards,new WordCardAdapter.OnWordClickListener(){
             @Override
             public void onWordClick(int position, WorkCardModel word) {
@@ -140,8 +136,6 @@ public class DictationFragment extends Fragment {
             String lessonVideoUrl = getArguments().getString("lessonVideoUrl");
             int lessonDuration = getArguments().getInt("lessonDuration");
             int lessonId = getArguments().getInt("lessonId",-1);
-
-
             toolbarTitle.setText(lessonTitle);
             toolbarProgress.setText("0% hoàn thành");
             timer.setText(lessonDuration + " Giây");
@@ -153,13 +147,8 @@ public class DictationFragment extends Fragment {
                 android.util.Log.e("DictationFragment", "LỖI: Không nhận được lessonId từ màn hình trước!");
             }
         }
-
-
-
         return view;
     }
-
-
     public void fetchTranscripts(int lessonId) {
         android.util.Log.d("DictationFragment", "Bắt đầu gọi API lấy transcript với lessonId = " + lessonId);
 
@@ -168,10 +157,8 @@ public class DictationFragment extends Fragment {
             public void onSuccess(List<TranscriptsResponse> data) {
                 if (data != null && !data.isEmpty()) {
                     android.util.Log.d("DictationFragment", "Gọi API thành công! Số lượng câu: " + data.size());
-
                     listTranscripts = data;
                     sentenceAdapter.setData(listTranscripts);
-
                     currentSentenceIndex = 0;
                     prepareCurrentSentence();
                 } else {
@@ -179,7 +166,6 @@ public class DictationFragment extends Fragment {
                     Toast.makeText(requireContext(), "Không có dữ liệu bài học (Data rỗng)", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onError(String message) {
                 android.util.Log.e("DictationFragment", "Lỗi API tải transcript: " + message);
@@ -203,7 +189,7 @@ public class DictationFragment extends Fragment {
             WorkCardModel workCardModel = new WorkCardModel(word,false);
             listWordCards.add(workCardModel);
         }
-        if (wordCardAdapter== null){
+        if (wordCardAdapter == null){
             wordCardAdapter = new WordCardAdapter(listWordCards,new WordCardAdapter.OnWordClickListener(){
                 @Override
                 public void onWordClick(int position, WorkCardModel word) {
@@ -228,10 +214,7 @@ public class DictationFragment extends Fragment {
         if (rvSentenceNumbers != null) {
             rvSentenceNumbers.smoothScrollToPosition(currentSentenceIndex);
         }
-
     }
-
-
 
     private void setupYoutubeWebView(String lessonVideoUrl) {
 
@@ -331,14 +314,38 @@ public class DictationFragment extends Fragment {
         });
 
         btnStart.setOnClickListener(v -> {
+
+            if(currentSentenceIndex >= listTranscripts.size()){
+                Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_progressFragment);
+                return;
+            }
+
+            if(isWaitingForNext){
+                currentSentenceIndex++;
+                if(currentSentenceIndex < listTranscripts.size()) {
+                    prepareCurrentSentence();
+                    btnStart.setText("Kiểm tra");
+                    isWaitingForNext = false;
+                    etInput.requestFocus();
+                    etInput.setEnabled(true);
+                }
+                else {
+                    btnStart.setText("Hoàn thành! Xem kết quả");
+                }
+                return;
+
+            }
+
             if(!isPlaying){
                 isPlaying = true;
-                btnStart.setText("Kiềm tra");
+                btnStart.setText("Kiểm tra");
                 etInput.setEnabled(true);
                 etInput.requestFocus();
             }
             else {
                 String userInput = etInput.getText().toString().trim();
+                checkAnswer(userInput);
+
             }
         });
 
@@ -346,55 +353,107 @@ public class DictationFragment extends Fragment {
             speedIndex = (speedIndex + 1) % SPEED_LEVELS.length;
             currentSpeed = SPEED_LEVELS[speedIndex];
             tvSpeed.setText(currentSpeed + "x");
+            changeVideoSpeed(currentSpeed);
         });
 
 
         btnReplay.setOnClickListener(v -> {
+            replayCurrentSentence();
+            btnPlaysentenceState = true;
+
+        });
+
+        btnPlaySentence.setOnClickListener(v -> {
+            toggleVideoPlayback();
         });
     }
-
 
     public void changeVideoSpeed(float speed) {
         if (webViewYoutube != null) {
             String jsCommand = "javascript:(function() { " +
-                    "var player = document.getElementById('movie_player'); " +
-                    "if(player) { player.setPlaybackRate(" + speed + "); } " +
+                    "var iframe = document.querySelector('iframe'); " +
+                    "if(iframe && iframe.contentWindow) { " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'setPlaybackRate', args: [" + speed + "]}), '*'); " +
+                    "} " +
                     "})()";
             webViewYoutube.evaluateJavascript(jsCommand, null);
         }
     }
 
     public void replayCurrentSentence() {
-        // Giả sử câu hiện tại bắt đầu ở giây thứ 10
-        int startTimeInSeconds = 10;
-
+        if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
+            return;
+        }
+        float startTimestamp = listTranscripts.get(currentSentenceIndex).getStartTimestamp();
 
         if (webViewYoutube != null) {
             String jsCommand = "javascript:(function() { " +
-                    "var player = document.getElementById('movie_player'); " +
-                    "if(player) { player.seekTo(" + startTimeInSeconds + ", true); player.playVideo(); } " +
+                    "var iframe = document.querySelector('iframe'); " +
+                    "if(iframe && iframe.contentWindow) { " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'seekTo', args: [" + startTimestamp + ", true]}), '*'); " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*'); " +
+                    "} " +
                     "})()";
             webViewYoutube.evaluateJavascript(jsCommand, null);
         }
     }
 
-    public void checkAnswer(String userInput) {
-        // Tạm thời hardcode đáp án để test
-        String targetSentence = "princess mononoke";
+    private void toggleVideoPlayback() {
+        if (webViewYoutube != null) {
+            String action = btnPlaysentenceState ? "pauseVideo" : "playVideo";
 
-        if (userInput.equalsIgnoreCase(targetSentence)) {
-            btnStart.setText("Chính xác! Câu tiếp theo");
-            etInput.setBackgroundResource(R.drawable.bg_sentence_active);
-        } else {
-            btnStart.setText("Sai rồi, thử lại");
+            String jsCommand = "javascript:(function() { " +
+                    "var iframe = document.querySelector('iframe'); " +
+                    "if(iframe && iframe.contentWindow) { " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: '" + action + "', args: []}), '*'); " +
+                    "} " +
+                    "})()";
+
+            webViewYoutube.evaluateJavascript(jsCommand, null);
+
+            btnPlaysentenceState = !btnPlaysentenceState;
+            if (btnPlaysentenceState) {
+                btnPlaySentence.setImageResource(R.drawable.ic_pause);
+            } else {
+                btnPlaySentence.setImageResource(R.drawable.ic_play_filled);
+            }
         }
+    }
+
+    public void checkAnswer(String userInput) {
+
+        if (listTranscripts == null && currentSentenceIndex > listTranscripts.size()) {
+            return;
+        };
+
+        String correctAnswer = listTranscripts.get(currentSentenceIndex).getContent();
+        String normalizedInput = userInput.replaceAll("\\s+", " ");
+        String normalizedTarget = correctAnswer.replaceAll("\\s+", " ");
+
+        if(normalizedInput.equalsIgnoreCase(normalizedTarget)){
+            if( currentSentenceIndex != listTranscripts.size() - 1){
+            btnStart.setText("Chính xác! Câu tiếp theo");}
+            else {
+                btnStart.setText("Hoàn thành! Xem kết quả");
+            }
+            isWaitingForNext = true;
+            etInput.setEnabled(false);
+
+        }
+        else {
+            btnStart.setText("Sai! Thử lại");
+        }
+
     }
 
     public void seekVideoTo(float seconds) {
         if (webViewYoutube != null) {
             String jsCommand = "javascript:(function() { " +
-                    "var player = document.getElementById('movie_player'); " +
-                    "if(player) { player.seekTo(" + seconds + ", true); player.playVideo(); } " +
+                    "var iframe = document.querySelector('iframe'); " +
+                    "if(iframe && iframe.contentWindow) { " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'seekTo', args: [" + seconds + ", true]}), '*'); " +
+                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*'); " +
+                    "} " +
                     "})()";
             webViewYoutube.evaluateJavascript(jsCommand, null);
         }
@@ -415,12 +474,10 @@ public class DictationFragment extends Fragment {
                     wordCardAdapter.revealWord(position);
                 }
             }
-
             @Override
             public void onCancelClicked() {
             }
         });
-
         dialog.show(getChildFragmentManager(), "SpoilerWarningDialog");
     }
 

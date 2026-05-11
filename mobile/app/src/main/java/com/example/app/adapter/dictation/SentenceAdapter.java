@@ -17,14 +17,16 @@ import java.util.List;
 public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.SentenceViewHolder> {
 
     List<TranscriptsResponse> list = new ArrayList<>();
-
-    private OnItemClickListener listener;
     private int selectedPosition = 0;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+    private OnItemClickListener listener;
     public void setSelectedPosition(int position) {
         this.selectedPosition = position;
         notifyDataSetChanged();
     }
-
 
     public SentenceAdapter(List<TranscriptsResponse> newList, OnItemClickListener listener) {
         this.list = newList;
@@ -35,11 +37,6 @@ public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.Senten
         this.list = newList;
         notifyDataSetChanged();
     }
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
 
 
     @NonNull
@@ -62,7 +59,6 @@ public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.Senten
             holder.tvSentence.setBackgroundResource(R.drawable.bg_circle_white);
             holder.tvSentence.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
         }
-
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(position);
@@ -81,15 +77,11 @@ public class SentenceAdapter extends RecyclerView.Adapter<SentenceAdapter.Senten
     }
 
     public class SentenceViewHolder extends RecyclerView.ViewHolder {
-
         public SentenceViewHolder(@NonNull View itemView) {
             super(itemView);
             this.tvSentence = itemView.findViewById(R.id.tvSentence);
         }
-
         TextView tvSentence;
-
-
 
     }
 

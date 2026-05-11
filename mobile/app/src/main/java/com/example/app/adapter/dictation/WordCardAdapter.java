@@ -15,16 +15,27 @@ import java.util.List;
 public class WordCardAdapter extends RecyclerView.Adapter<WordCardAdapter.WordCardViewHolder> {
 
     private List<WorkCardModel> list = new ArrayList<>();
+
+    public interface OnWordClickListener {
+        void onWordClick(int position, WorkCardModel word);
+    }
     private OnWordClickListener listener;
 
     public WordCardAdapter(List<WorkCardModel> list,OnWordClickListener listener) {
         this.list = list;
         this.listener = listener;
     }
-    public interface OnWordClickListener {
-        void onWordClick(int position, WorkCardModel word);
-    }
 
+    public void setData(List<WorkCardModel> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+    public void revealWord(int position) {
+        if (position >= 0 && position < list.size()) {
+            list.get(position).setSelected(true);
+            notifyItemChanged(position);
+        }
+    }
 
     @NonNull
     @Override
@@ -53,8 +64,6 @@ public class WordCardAdapter extends RecyclerView.Adapter<WordCardAdapter.WordCa
                     listener.onWordClick(position,currentWord);
                 }
             });
-
-
     }
 
     @Override
@@ -64,19 +73,6 @@ public class WordCardAdapter extends RecyclerView.Adapter<WordCardAdapter.WordCa
         }
         return 0;
     }
-
-    public void setData(List<WorkCardModel> list) {
-        this.list = list;
-        notifyDataSetChanged();
-    }
-
-    public void revealWord(int position) {
-        if (position >= 0 && position < list.size()) {
-            list.get(position).setSelected(true);
-            notifyItemChanged(position);
-        }
-    }
-
 
     public class WordCardViewHolder extends RecyclerView.ViewHolder {
 
