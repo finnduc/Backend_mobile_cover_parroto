@@ -16,11 +16,14 @@ import com.example.app.adapter.study.ListLessonsAdapter;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.example.app.data.repository.LessonsRepository;
+import com.example.app.diaglog.ChooseModeBottomSheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LessonsListFragment extends Fragment {
+    private String currentCategoryName;
+    private int currentCategoryId = -1;
     private List<LessonsResponse> lessonsResponseList = new ArrayList<>();
     private ListLessonsAdapter adapter;
     private LessonsRepository repository;
@@ -31,9 +34,18 @@ public class LessonsListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.rvLessons);
         CountNotStarted = view.findViewById(R.id.tvCountNotStarted);
+        if (getArguments() != null) {
+            currentCategoryId = getArguments().getInt("categoryId", -1);
+            currentCategoryName = getArguments().getString("categoryName", "Danh mục");
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ListLessonsAdapter(lessonsResponseList);
+        adapter = new ListLessonsAdapter(lessonsResponseList, new ListLessonsAdapter.onLessonsItemClickListener(){
+            @Override
+            public void onLessonsItemClick(LessonsResponse lesson) {
+                showBottomSheet(lesson);
+            }
+        });
         repository = new LessonsRepository(requireContext());
         recyclerView.setAdapter(adapter);
         fetchLessons();
@@ -41,7 +53,8 @@ public class LessonsListFragment extends Fragment {
     }
 
     public void fetchLessons(){
-        repository.getLessons(100, 1, 1, null,
+        if (currentCategoryId == -1) return;
+        repository.getLessons(100, 1, currentCategoryId, null,
                 new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>(){
                     @Override
                     public void onSuccess(ListLessonsResponse<LessonsResponse> data) {
@@ -60,6 +73,20 @@ public class LessonsListFragment extends Fragment {
                         Toast.makeText(requireContext(), "Lỗi tải dữ liệu: " + message, android.widget.Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void showBottomSheet(LessonsResponse lesson){
+        ChooseModeBottomSheet bottomSheet = new ChooseModeBottomSheet();
+        Bundle bundle = new Bundle();
+        bundle.putInt("lessonId", lesson.getId());
+        bundle.putString("lessonTitle", lesson.getTitle());
+        bundle.putString("lessonDescription", lesson.getDescription());
+        bundle.putString("lessonThumbnailUrl", lesson.getThumbnailUrl());
+        bundle.putString("lessonVideoUrl", lesson.getVideoUrl());
+        bundle.putInt("lessonDuration", lesson.getDuration());
+        bundle.putString("lessonLevel", lesson.getLevel());
+        bottomSheet.setArguments(bundle);
+        bottomSheet.show(getChildFragmentManager(), "ChooseModeBottomSheet");
     }
 
 }

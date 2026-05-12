@@ -27,7 +27,25 @@
     <fragment
         android:id="@+id/StudyFragment"
         android:name="com.example.app.feature.study.StudyFragment"
-        android:label="Học tập" />
+        android:label="Học tập" >
+        <action
+            android:id="@+id/action_StudyFragment_to_LessonsListFragment"
+            app:destination="@id/LessonsListFragment" />
+        <action
+            android:id="@+id/action_StudyFragment_to_DictationFragment"
+            app:destination="@id/DictationFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/LessonsListFragment"
+        android:name="com.example.app.feature.study.LessonsListFragment"
+        android:label="Tiến độ" >
+
+        <action
+            android:id="@+id/action_LessonsListFragment_to_DictationFragment"
+            app:destination="@id/DictationFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/vocabularyFragment"
@@ -36,7 +54,7 @@
 
     <fragment
         android:id="@+id/reviewFragment"
-        android:name="com.example.app.feature.topic.ui.fragment_review"
+        android:name="com.example.app.feature.review.fragment_review"
         android:label="Ôn tập" />
 
     <fragment
@@ -53,5 +71,15 @@
             app:destination="@id/LoginFragment" >
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/DictationFragment"
+        android:name="com.example.app.feature.study.DictationFragment"
+        android:label="Học Chính Tả" >
+        <action
+            android:id="@+id/action_DictationFragment_to_progressFragment"
+            app:destination="@id/progressFragment" >
+        </action>
+
+</fragment>
 
 </navigation>

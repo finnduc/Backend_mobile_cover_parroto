@@ -48,6 +48,15 @@ public class LessonsCardAdapter extends RecyclerView.Adapter<LessonsCardAdapter.
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_error)
                 .into(holder.imgThumbnail);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onLessonClick(currentLesson);
+                }
+            }
+        });
+
     }
 
     @Override

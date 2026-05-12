@@ -17,9 +17,23 @@ import java.util.List;
 
 public class LessonSectionAdapter extends RecyclerView.Adapter<LessonSectionAdapter.LessonsSectionViewHolder> {
     private List<LessonSection> categories;
+    public interface OnSeeAllClickListener {
+        void onSeeAllClick(int categoryId, String categoryName);
+    }
 
-    public LessonSectionAdapter(List<LessonSection> categories) {
+    public interface OnLessonClickListener {
+        void onLessonClick(LessonsResponse lesson);
+    }
+
+    private OnSeeAllClickListener listener;
+    private OnLessonClickListener lessonClickListener;
+
+
+
+    public LessonSectionAdapter(List<LessonSection> categories, OnSeeAllClickListener listener, OnLessonClickListener lessonClickListener) {
         this.categories = categories;
+        this.listener = listener;
+        this.lessonClickListener = lessonClickListener;
     }
 
     @NonNull
@@ -38,16 +52,21 @@ public class LessonSectionAdapter extends RecyclerView.Adapter<LessonSectionAdap
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
         holder.rvLessonCards.setLayoutManager(layoutManager);
-        LessonsCardAdapter cardAdapter = new LessonsCardAdapter(
-                currentCategory.getLesssons(),
+        holder.rvLessonCards.setAdapter(new LessonsCardAdapter(currentCategory.getLesssons(),
                 new LessonsCardAdapter.OnLessonClickListener() {
-                    @Override
-                    public void onLessonClick(LessonsResponse lesson) {
-                        // (Lát nữa mình sẽ làm "đường dây điện" truyền click này lên Fragment sau)
-                    }
+            @Override
+            public void onLessonClick(LessonsResponse lesson) {
+                if (lessonClickListener != null) {
+                    lessonClickListener.onLessonClick(lesson);
                 }
-        );
-        holder.rvLessonCards.setAdapter(cardAdapter);
+            }
+        }));
+        holder.tvSeeAll.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onSeeAllClick(currentCategory.getIdCategory(), currentCategory.getCategoryName());
+            }
+        });
+
     }
 
     @Override

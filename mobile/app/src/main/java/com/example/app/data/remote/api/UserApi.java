@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 
 public interface UserApi {
 
-    @GET("users/profile")
+    @GET("user/profile")
     Call<ApiResponse<UserResponse>> getProfile();
 
 }
