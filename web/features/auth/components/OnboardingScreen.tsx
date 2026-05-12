@@ -7,6 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { auth } from "@/lib/firebase/client-app";
 
+import { completeSignUp } from "../services/auth.actions";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -57,36 +59,12 @@ export function OnboardingScreen() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(_values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     setError("");
 
     try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("User not authenticated");
-
-      const token = await user.getIdToken();
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/complete-signup`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error?.message || "Failed to complete signup");
-      }
-
-      await user.getIdToken(true);
-
-      const newToken = await user.getIdToken();
-      const payload = JSON.parse(atob(newToken.split('.')[1]));
-      console.log('JWT:', newToken);
-      console.log('Decoded payload:', payload);
-
+      await completeSignUp();
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
