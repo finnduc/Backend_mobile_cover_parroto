@@ -2,36 +2,40 @@
 
 import { SignInAuthScreen } from '@/components/sign-in-auth-screen';
 import { auth } from '@/lib/firebase/client-app';
-import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+
+const ALLOWED_ROLES = ['user', 'admin'];
 
 export function SignInScreen() {
+  const router = useRouter();
+  const initialLoad = useRef(true);
+
   useEffect(() => {
-    // Monitor ALL auth state changes
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log('Auth state changed:', user);
-      if (user) {
-        console.log('User is authenticated:', {
-          uid: user.uid,
-          isAnonymous: user.isAnonymous,
-          email: user.email,
-          provider: user.providerData[0]?.providerId
-        });
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (initialLoad.current) {
+        initialLoad.current = false;
+        return;
+      }
+
+      if (!user) return;
+
+      const tokenResult = await user.getIdTokenResult();
+      const role = tokenResult.claims.role as string | undefined;
+
+      if (!role || !ALLOWED_ROLES.includes(role)) {
+        router.push('/onboarding');
       } else {
-        console.log('No user authenticated');
+        router.push('/');
       }
     });
 
     return () => unsubscribe();
-  }, []);
-
-
-  const onSignIn = () => {
-    console.log('onSignIn');
-  }
+  }, [router]);
 
   return (
     <>
-      <SignInAuthScreen onSignIn={onSignIn} />
+      <SignInAuthScreen />
     </>
   )
 }
