@@ -1,6 +1,7 @@
 package com.example.app.feature.study;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class DictationFragment extends Fragment {
     private TextView timer;
     private WebView webViewYoutube;
     private ImageButton btnClose ;
+    private TextView vietnamese;
     private EditText etInput;
     private Button btnStart;
     private LinearLayout btnSpeed;
@@ -74,6 +76,14 @@ public class DictationFragment extends Fragment {
     private float currentSpeed = 1.0f;
     private boolean isWaitingForNext = false;
     private boolean btnPlaysentenceState = false;
+    private long elapsedSeconds = 0;
+    private Handler timerHandler = new Handler();
+    private Handler autoStopHandler = new Handler();
+    private Runnable timerRunnable;
+    private Runnable autoStopRunnable;
+
+
+
 
     @Nullable
     @Override
@@ -128,7 +138,7 @@ public class DictationFragment extends Fragment {
         rvWordCards.setAdapter(wordCardAdapter);
         etInput.setEnabled(false);
         setupListeners();
-
+        studyTime();
 
         if (getArguments() != null) {
 
@@ -138,7 +148,6 @@ public class DictationFragment extends Fragment {
             int lessonId = getArguments().getInt("lessonId",-1);
             toolbarTitle.setText(lessonTitle);
             toolbarProgress.setText("0% hoàn thành");
-            timer.setText(lessonDuration + " Giây");
 
             setupYoutubeWebView(lessonVideoUrl);
             if (lessonId != -1) {
@@ -292,6 +301,8 @@ public class DictationFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        stopStudyTime();
+        cancelAutoStop();
         if (webViewYoutube != null) {
             webViewYoutube.loadUrl("about:blank");
             webViewYoutube.onPause();
@@ -384,6 +395,8 @@ public class DictationFragment extends Fragment {
         if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
             return;
         }
+        cancelAutoStop();
+
         float startTimestamp = listTranscripts.get(currentSentenceIndex).getStartTimestamp();
 
         if (webViewYoutube != null) {
@@ -481,4 +494,30 @@ public class DictationFragment extends Fragment {
         dialog.show(getChildFragmentManager(), "SpoilerWarningDialog");
     }
 
+    public void studyTime(){
+        timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                elapsedSeconds++;
+                int minutes = (int) (elapsedSeconds / 60);
+                int seconds = (int) (elapsedSeconds % 60);
+                timer.setText(String.format("%02d:%02d", minutes, seconds));
+                timerHandler.postDelayed(timerRunnable,1000);
+            }
+
+        };
+        timerHandler.postDelayed(timerRunnable,1000);
+    }
+
+    public void stopStudyTime(){
+        if(timerHandler != null && timerRunnable != null){
+          timerHandler.removeCallbacks(timerRunnable);
+        };
+    }
+
+    public void cancelAutoStop(){
+        if (autoStopHandler != null && autoStopRunnable != null) {
+            autoStopHandler.removeCallbacks(autoStopRunnable);
+        }
+    }
 }
