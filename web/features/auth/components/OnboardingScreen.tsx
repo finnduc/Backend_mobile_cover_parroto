@@ -59,12 +59,30 @@ export function OnboardingScreen() {
     },
   });
 
-  async function onSubmit(_values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     setError("");
 
     try {
-      await completeSignUp();
+      // 1. Lấy Token mới nhất từ trình duyệt (Firebase Client)
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Vui lòng đăng nhập lại!");
+      }
+      const token = await user.getIdToken();
+
+      // 2. Gọi Server Action và truyền Token
+      const res = await completeSignUp(token);
+
+      if (res?.error) {
+        throw new Error(res.error.message || "Đăng ký thất bại");
+      }
+
+      const freshTokenResult = await user.getIdTokenResult(true);
+
+      console.info("[Auth] Successfully refreshed token claims:", freshTokenResult.claims);
+      console.info(`[Auth] Assigned user role: ${freshTokenResult.claims.role}`);
+
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -305,5 +323,6 @@ export function OnboardingScreen() {
         </Button>
       </form>
     </div>
+
   );
 }

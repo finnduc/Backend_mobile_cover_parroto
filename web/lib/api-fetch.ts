@@ -56,7 +56,11 @@ export async function apiFetch<T = any>(
 
     const fullUrl = `${baseUrl}${url}${queryString ? `?${queryString}` : ""}`;
 
-    console.log("🚀 Calling API:", fullUrl);
+    console.log({
+      url: fullUrl,
+      method: fetchOptions.method,
+      headers,
+    });
 
     const response = await fetch(fullUrl, {
       method: fetchOptions.method || "GET",
