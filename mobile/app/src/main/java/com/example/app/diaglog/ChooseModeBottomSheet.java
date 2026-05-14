@@ -53,7 +53,7 @@ public class ChooseModeBottomSheet extends DialogFragment {
                 dictationBundle.putAll(getArguments());
             }
             androidx.navigation.Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
-                    .navigate(R.id.ListenToDictationFragment, dictationBundle);
+                    .navigate(R.id.DictationFragment, dictationBundle);
             dismiss();
                 });
 

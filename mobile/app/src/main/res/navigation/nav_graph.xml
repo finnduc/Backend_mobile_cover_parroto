@@ -32,8 +32,8 @@
             android:id="@+id/action_StudyFragment_to_LessonsListFragment"
             app:destination="@id/LessonsListFragment" />
         <action
-            android:id="@+id/action_StudyFragment_to_ListenToDictationFragment"
-            app:destination="@id/ListenToDictationFragment" />
+            android:id="@+id/action_StudyFragment_to_DictationFragment"
+            app:destination="@id/DictationFragment" />
 
     </fragment>
 
@@ -43,8 +43,8 @@
         android:label="Tiến độ" >
 
         <action
-            android:id="@+id/action_LessonsListFragment_to_ListenToDictationFragment"
-            app:destination="@id/ListenToDictationFragment" />
+            android:id="@+id/action_LessonsListFragment_to_DictationFragment"
+            app:destination="@id/DictationFragment" />
     </fragment>
 
     <fragment
@@ -72,9 +72,13 @@
         </action>
     </fragment>
     <fragment
-        android:id="@+id/ListenToDictationFragment"
+        android:id="@+id/DictationFragment"
         android:name="com.example.app.feature.study.DictationFragment"
         android:label="Học Chính Tả" >
+        <action
+            android:id="@+id/action_DictationFragment_to_progressFragment"
+            app:destination="@id/progressFragment" >
+        </action>
 
 </fragment>
 
