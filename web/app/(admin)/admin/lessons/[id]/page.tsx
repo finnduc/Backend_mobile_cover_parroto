@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
-import { getAdminLesson } from "@/features/lessons/services/lessons-service"
+import { getAdminLesson } from "@/features/lessons/services/lessons.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function LessonDetailPage({

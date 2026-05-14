@@ -1,7 +1,7 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
-import { getLesson, getTranscripts } from "@/features/lessons/services/lessons-service"
+import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function ShadowingPage({
@@ -34,10 +34,9 @@ export default async function ShadowingPage({
     >
       <LessonLayout
         videoUrl={lesson.videoUrl}
-        title={lesson.title}
         duration={lesson.duration}
         transcripts={transcripts}
-        exercise={<ShadowingArea />}
+        exercise={ShadowingArea}
       />
     </PageLayout>
   )

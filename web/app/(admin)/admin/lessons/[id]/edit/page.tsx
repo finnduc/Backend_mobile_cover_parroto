@@ -1,6 +1,6 @@
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { LessonEditContent } from "@/features/lessons/components/admin/LessonEditContent"
-import { getAdminLesson } from "@/features/lessons/services/lessons-service"
+import { getAdminLesson } from "@/features/lessons/services/lessons.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function LessonEditPage({

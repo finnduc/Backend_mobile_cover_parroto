@@ -17,10 +17,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 	ctrl := NewTranscriptController(svc)
 	adminCtrl := NewTranscriptAdminController(svc)
 
-	protected := r.Group("", middleware.FirebaseAuth(fbAuth))
-	{
-		protected.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
-	}
+	r.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
 
 	admin := r.Group("/admin/transcripts", middleware.FirebaseAuth(fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
 	{

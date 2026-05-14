@@ -41,7 +41,7 @@ func (ctrl *LessonController) List(c *gin.Context) {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.Success(results))
+	c.JSON(http.StatusOK, response.SuccessWithMeta(results.Data, results.Meta))
 }
 
 // Get godoc

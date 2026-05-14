@@ -1,5 +1,5 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { getCategories } from "@/features/categories/services/categories-service"
+import { getCategories } from "@/features/categories/services/categories.get"
 import { ROUTES } from "@/lib/routes"
 import Link from "next/link"
 

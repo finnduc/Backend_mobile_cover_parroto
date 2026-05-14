@@ -1,23 +1,21 @@
 "use client"
 
-import { cloneElement } from "react"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { VideoPlayerPlaceholder } from "@/components/common/VideoPlayerPlaceholder"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
+import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
 import type { Transcript } from "@/types/lessons.models"
-import type { ReactNode } from "react"
+import type { ComponentType } from "react"
 
 export function LessonLayout({
-  exercise,
+  exercise: ExerciseComponent,
   duration,
   videoUrl,
   transcripts,
 }: {
-  title?: string
-  transcript?: ReactNode
-  exercise: ReactNode
+  exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
   videoUrl?: string
   transcripts?: Transcript[]
@@ -48,18 +46,18 @@ export function LessonLayout({
         )}
         <ModeToggle mode={playerMode} onChange={setPlayerMode} />
         <div className="flex-1">
-          {exercise != null
-            ? cloneElement(exercise as React.ReactElement<Record<string, unknown>>, {
-                transcripts: segments,
-                activeIndex,
-                paused,
-                onPlay: handlePlay,
-                onPause: handlePause,
-                onNext: handleNext,
-                onPrev: handlePrev,
-                onReplay: handleReplay,
-              })
-            : null}
+          {ExerciseComponent != null ? (
+            <ExerciseComponent
+              transcripts={segments}
+              activeIndex={activeIndex}
+              paused={paused}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onNext={handleNext}
+              onPrev={handlePrev}
+              onReplay={handleReplay}
+            />
+          ) : null}
         </div>
       </div>
       <aside className="hidden w-80 shrink-0 lg:block">

@@ -1,7 +1,7 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonCard } from "@/features/lessons/components/user/LessonCard"
-import { getLessons } from "@/features/lessons/services/lessons-service"
-import { getCategories } from "@/features/categories/services/categories-service"
+import { getLessons } from "@/features/lessons/services/lessons.get"
+import { getCategories } from "@/features/categories/services/categories.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function LessonsPage({
@@ -22,6 +22,8 @@ export default async function LessonsPage({
     categoryId: categoryId ? Number(categoryId) : undefined,
   })
   const lessons = lessonsRes.data ?? []
+
+  console.log(lessons)
 
   return (
     <PageLayout

@@ -1,6 +1,6 @@
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { CategoriesPageContent } from "@/features/categories/components/admin/CategoriesPageContent"
-import { getAdminCategories } from "@/features/categories/services/categories-service"
+import { getAdminCategories } from "@/features/categories/services/categories.get"
 
 export default async function CategoriesAdminPage() {
   const res = await getAdminCategories()

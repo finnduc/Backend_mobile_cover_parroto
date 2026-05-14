@@ -1,5 +1,5 @@
 import { LessonsPageContent } from "@/features/lessons/components/admin/LessonsPageContent"
-import { getAdminLessons } from "@/features/lessons/services/lessons-service"
+import { getAdminLessons } from "@/features/lessons/services/lessons.get"
 
 const DEFAULT_LIMIT = 10
 

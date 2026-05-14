@@ -1,6 +1,6 @@
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { TranscriptContent } from "@/features/lessons/components/admin/TranscriptContent"
-import { getAdminTranscripts } from "@/features/lessons/services/lessons-service"
+import { getAdminTranscripts } from "@/features/lessons/services/lessons.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function TranscriptsPage({
