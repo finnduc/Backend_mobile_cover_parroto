@@ -1,5 +1,5 @@
 import { LessonsPageContent } from "@/features/lessons/components/admin/LessonsPageContent"
-import { getLessons } from "@/features/lessons/services/lessons-service"
+import { getAdminLessons } from "@/features/lessons/services/lessons-service"
 
 const DEFAULT_LIMIT = 10
 
@@ -11,7 +11,17 @@ export default async function LessonsPage({
   const { page, limit } = await searchParams
   const pageNum = Math.max(1, Number(page) || 1)
   const limitNum = Math.max(1, Number(limit) || DEFAULT_LIMIT)
-  const { data, meta } = getLessons(pageNum, limitNum)
+  const res = await getAdminLessons(pageNum, limitNum)
 
-  return <LessonsPageContent data={data} meta={meta} limit={limitNum} />
+  if (res.error) {
+    return <div className="py-12 text-center text-muted-foreground">{res.error.message}</div>
+  }
+
+  return (
+    <LessonsPageContent
+      data={res.data ?? []}
+      meta={res.meta ?? { page: pageNum, limit: limitNum, total: 0, totalPages: 0 }}
+      limit={limitNum}
+    />
+  )
 }

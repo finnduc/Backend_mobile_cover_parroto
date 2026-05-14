@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
-import { getLesson } from "@/features/lessons/services/lessons-service"
+import { getAdminLesson } from "@/features/lessons/services/lessons-service"
 import { ROUTES } from "@/lib/routes"
 
 export default async function LessonDetailPage({
@@ -11,11 +11,16 @@ export default async function LessonDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const lesson = getLesson(Number(id))
+  const res = await getAdminLesson(Number(id))
 
-  if (!lesson) {
+  if (res.error) {
+    return <div className="py-12 text-center text-muted-foreground">{res.error.message}</div>
+  }
+  if (!res.data) {
     return <div className="py-12 text-center text-muted-foreground">Lesson not found</div>
   }
+
+  const lesson = res.data
 
   return (
     <AdminPageLayout backHref={ROUTES.ADMIN.LESSONS.LIST} backLabel="Back to Lessons" maxWidth="narrow">

@@ -1,26 +1,42 @@
-import type { Lesson } from "@/types/lessons.models"
-import { mockLessons } from "@/features/lessons/mock-data"
-import type { PaginatedMeta } from "@/types/base-response"
+'server-only'
+import { apiFetch } from "@/lib/api-fetch"
+import type { Lesson, Transcript } from "@/types/lessons.models"
+import type { BaseResponse } from "@/types/base-response"
 
-export function getLessons(
+export async function getLessons(
   page = 1,
   limit = 10,
   filters?: { categoryId?: number; level?: string }
-): { data: Lesson[]; meta: PaginatedMeta } {
-  let filtered = [...mockLessons]
-  if (filters?.categoryId) {
-    filtered = filtered.filter((l) => l.categoryId === filters.categoryId)
-  }
-  if (filters?.level) {
-    filtered = filtered.filter((l) => l.level === filters.level)
-  }
-  const total = filtered.length
-  const totalPages = Math.ceil(total / limit)
-  const start = (page - 1) * limit
-  const data = filtered.slice(start, start + limit)
-  return { data, meta: { page, limit, total, totalPages } }
+): Promise<BaseResponse<Lesson[]>> {
+  const query: Record<string, any> = { page, limit }
+  if (filters?.categoryId) query.category_id = filters.categoryId
+  if (filters?.level) query.level = filters.level
+  return apiFetch<Lesson[]>("/lessons", { query })
 }
 
-export function getLesson(id: number): Lesson | undefined {
-  return mockLessons.find((l) => l.id === id)
+export async function getLesson(id: number): Promise<BaseResponse<Lesson>> {
+  return apiFetch<Lesson>(`/lessons/${id}`)
+}
+
+export async function getTranscripts(lessonId: number): Promise<BaseResponse<Transcript[]>> {
+  return apiFetch<Transcript[]>(`/lessons/${lessonId}/transcripts`)
+}
+
+export async function getAdminLessons(
+  page = 1,
+  limit = 10,
+  filters?: { categoryId?: number; level?: string }
+): Promise<BaseResponse<Lesson[]>> {
+  const query: Record<string, any> = { page, limit }
+  if (filters?.categoryId) query.category_id = filters.categoryId
+  if (filters?.level) query.level = filters.level
+  return apiFetch<Lesson[]>("/admin/lessons", { query, withCredentials: true })
+}
+
+export async function getAdminLesson(id: number): Promise<BaseResponse<Lesson>> {
+  return apiFetch<Lesson>(`/admin/lessons/${id}`, { withCredentials: true })
+}
+
+export async function getAdminTranscripts(lessonId: number): Promise<BaseResponse<Transcript[]>> {
+  return apiFetch<Transcript[]>(`/admin/lessons/${lessonId}/transcripts`, { withCredentials: true })
 }

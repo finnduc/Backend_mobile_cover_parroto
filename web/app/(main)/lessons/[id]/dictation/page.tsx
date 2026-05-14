@@ -1,7 +1,7 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { DictationArea } from "@/features/lessons/components/user/DictationArea"
-import { mockLessons, mockTranscripts } from "@/features/lessons/mock-data"
+import { getLesson, getTranscripts } from "@/features/lessons/services/lessons-service"
 import { ROUTES } from "@/lib/routes"
 
 export default async function DictationPage({
@@ -10,14 +10,18 @@ export default async function DictationPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const lesson = mockLessons.find((l) => l.id === Number(id))
+  const lessonRes = await getLesson(Number(id))
 
-  if (!lesson) {
+  if (lessonRes.error) {
+    return <div className="p-6 text-center text-muted-foreground">{lessonRes.error.message}</div>
+  }
+  if (!lessonRes.data) {
     return <div className="p-6 text-center text-muted-foreground">Lesson not found</div>
   }
 
-  const transcripts = mockTranscripts
-    .filter((t) => t.lessonId === lesson.id)
+  const lesson = lessonRes.data
+  const transcriptsRes = await getTranscripts(lesson.id)
+  const transcripts = (transcriptsRes.data ?? [])
     .sort((a, b) => a.sequence - b.sequence)
 
   return (

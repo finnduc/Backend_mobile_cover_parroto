@@ -144,17 +144,17 @@ Server chạy tại: `http://localhost:3001`
 
 | Method | Endpoint | Auth | Mô tả |
 |--------|----------|------|-------|
-| GET | `/user/profile` | ✅ | Lấy profile user hiện tại |
 | GET | `/lessons` | ❌ | Danh sách bài học (filter: `category_id`, `level`) |
 | GET | `/lessons/:lessonId` | ❌ | Chi tiết bài học |
 | GET | `/categories` | ❌ | Danh sách category |
+| GET | `/lessons/:lessonId/transcripts` | ❌ | Transcript của bài học |
+| GET | `/user/profile` | ✅ | Lấy profile user hiện tại |
 | GET | `/bookmarks` | ✅ | Danh sách bookmark của user |
 | POST | `/bookmarks/:lessonId` | ✅ | Thêm bookmark |
 | DELETE | `/bookmarks/:lessonId` | ✅ | Xóa bookmark |
 | POST | `/learning-history` | ✅ | Ghi lại tiến độ học (upsert) |
 | GET | `/learning-history` | ✅ | Lịch sử học của user |
 | GET | `/learning-history/:lessonId` | ✅ | Tiến độ học 1 bài cụ thể |
-| GET | `/lessons/:lessonId/transcripts` | ✅ | Transcript của bài học |
 
 ---
 

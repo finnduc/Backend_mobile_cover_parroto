@@ -1,11 +1,14 @@
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { CategoriesPageContent } from "@/features/categories/components/admin/CategoriesPageContent"
-import { mockCategories } from "@/features/lessons/mock-data"
+import { getAdminCategories } from "@/features/categories/services/categories-service"
 
-export default function CategoriesAdminPage() {
+export default async function CategoriesAdminPage() {
+  const res = await getAdminCategories()
+  const categories = res.data ?? []
+
   return (
     <AdminPageLayout>
-      <CategoriesPageContent categories={mockCategories} />
+      <CategoriesPageContent categories={categories} />
     </AdminPageLayout>
   )
 }

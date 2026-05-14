@@ -48,3 +48,15 @@ export const ROUTES = {
     },
   }
 }
+
+export const RESOURCES = {
+  USER: {
+    LIST: "/users",
+  },
+  CATEGORY: {
+    LIST: "/categories",
+  },
+  LESSON: {
+    LIST: "/lessons",
+  },
+}

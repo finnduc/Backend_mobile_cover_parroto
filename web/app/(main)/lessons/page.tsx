@@ -1,6 +1,7 @@
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonCard } from "@/features/lessons/components/user/LessonCard"
-import { mockLessons, mockCategories } from "@/features/lessons/mock-data"
+import { getLessons } from "@/features/lessons/services/lessons-service"
+import { getCategories } from "@/features/categories/services/categories-service"
 import { ROUTES } from "@/lib/routes"
 
 export default async function LessonsPage({
@@ -9,12 +10,18 @@ export default async function LessonsPage({
   searchParams: Promise<{ categoryId?: string }>
 }) {
   const { categoryId } = await searchParams
+
+  const categoriesRes = await getCategories()
+  const categories = categoriesRes.data ?? []
+
   const category = categoryId
-    ? mockCategories.find((c) => c.id === Number(categoryId))
+    ? categories.find((c) => c.id === Number(categoryId))
     : null
-  const lessons = categoryId
-    ? mockLessons.filter((l) => l.categoryId === Number(categoryId))
-    : mockLessons
+
+  const lessonsRes = await getLessons(1, 100, {
+    categoryId: categoryId ? Number(categoryId) : undefined,
+  })
+  const lessons = lessonsRes.data ?? []
 
   return (
     <PageLayout
