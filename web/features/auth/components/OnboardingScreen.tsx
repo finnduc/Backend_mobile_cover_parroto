@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -8,6 +8,8 @@ import { z } from "zod";
 import { auth } from "@/lib/firebase/client-app";
 
 import { completeSignUp } from "../services/auth.actions";
+import { setAuthCookie } from "@/lib/cookie/actions/cookie.action"; // Cần để ghi token mới
+import { useAction } from "@/hooks/use-action"; // Tận dụng custom hook của bạn
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,8 +37,28 @@ const formSchema = z.object({
 export function OnboardingScreen() {
   const router = useRouter();
   const [success, setSuccess] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+
+  const { execute, isPending, error: actionError } = useAction(completeSignUp, {
+    onSuccess: async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) throw new Error("Mất kết nối người dùng");
+
+        // Tải lại Token từ server để lấy Role mới
+        const freshTokenResult = await user.getIdTokenResult(true);
+
+        // Cập nhật Token mới có Role vào Cookie để Server Next.js biết
+        await setAuthCookie(freshTokenResult.token);
+
+        console.info("[Auth] Successfully refreshed token claims:", freshTokenResult.claims);
+        console.info(`[Auth] Assigned user role: ${freshTokenResult.claims.role}`);
+
+        setSuccess(true);
+      } catch (err) {
+        console.error("Lỗi khi tải lại Token:", err);
+      }
+    },
+  });
 
   useEffect(() => {
     if (!success) return;
@@ -59,36 +81,11 @@ export function OnboardingScreen() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setSubmitting(true);
-    setError("");
-
-    try {
-      // 1. Lấy Token mới nhất từ trình duyệt (Firebase Client)
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error("Vui lòng đăng nhập lại!");
-      }
-      const token = await user.getIdToken();
-
-      // 2. Gọi Server Action và truyền Token
-      const res = await completeSignUp(token);
-
-      if (res?.error) {
-        throw new Error(res.error.message || "Đăng ký thất bại");
-      }
-
-      const freshTokenResult = await user.getIdTokenResult(true);
-
-      console.info("[Auth] Successfully refreshed token claims:", freshTokenResult.claims);
-      console.info(`[Auth] Assigned user role: ${freshTokenResult.claims.role}`);
-
-      setSuccess(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setSubmitting(false);
-    }
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // THAY THẾ: Gửi thẳng values thông qua useAction
+    startTransition(() => {
+      execute(values);
+    });
   }
 
   if (success) {
@@ -314,15 +311,16 @@ export function OnboardingScreen() {
           </FieldGroup>
         </FieldSet>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
+        {/* THAY THẾ: Hiển thị lỗi từ actionError của useAction */}
+        {actionError && (
+          <p className="text-sm text-destructive">{actionError.message}</p>
         )}
 
-        <Button className="w-full" type="submit" disabled={submitting}>
-          {submitting ? "Submitting..." : "Complete Registration"}
+        {/* THAY THẾ: isPending vô hiệu hóa nút bấm */}
+        <Button className="w-full" type="submit" disabled={isPending}>
+          {isPending ? "Submitting..." : "Complete Registration"}
         </Button>
       </form>
     </div>
-
   );
 }
