@@ -2,15 +2,15 @@ package configs
 
 import "go-cover-parroto/internal/utils"
 
-type FirebaseConfig struct {
-	CredentialsFile string
+type ClerkConfig struct {
+	ClerkSecret string
 	// ProjectID       string
 	// WebAPIKey       string
 }
 
-func loadFirebaseConfig() FirebaseConfig {
-	return FirebaseConfig{
-		CredentialsFile: utils.GetEnv("FIREBASE_CREDENTIALS_FILE", ""),
+func loadFirebaseConfig() ClerkConfig {
+	return ClerkConfig{
+		ClerkSecret: utils.GetEnv("CLERK_SECRET", ""),
 		// ProjectID:       utils.GetEnv("FIREBASE_PROJECT_ID", ""),
 		// WebAPIKey:       utils.GetEnv("FIREBASE_WEB_API_KEY", ""),
 	}

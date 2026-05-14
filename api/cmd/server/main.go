@@ -7,14 +7,12 @@ import (
 	"go-cover-parroto/internal/configs"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/database"
-	fb "go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
 	learninghistory "go-cover-parroto/internal/modules/learning_history"
 	"go-cover-parroto/internal/modules/lesson"
 	"go-cover-parroto/internal/modules/transcript"
-	"go-cover-parroto/internal/modules/user"
 
 	_ "go-cover-parroto/cmd/server/docs"
 
@@ -59,8 +57,6 @@ func main() {
 		logger.S().Fatalf("Failed to connect to database: %v", err)
 	}
 
-	fbClient, err := fb.Init(cfg.Firebase)
-
 	if err != nil {
 		logger.S().Fatalf("WARNING: Failed to initialize Firebase (%v) — continuing without auth", err)
 	}
@@ -94,13 +90,12 @@ func main() {
 
 		v1 := api.Group("/v1")
 		db := database.DB
-		auth.RegisterRoutes(v1, db, fbClient)
-		user.RegisterRoutes(v1, db, fbClient)
-		lesson.RegisterRoutes(v1, db, fbClient)
-		category.RegisterRoutes(v1, db, fbClient)
-		bookmark.RegisterRoutes(v1, db, fbClient)
-		learninghistory.RegisterRoutes(v1, db, fbClient)
-		transcript.RegisterRoutes(v1, db, fbClient)
+		auth.RegisterRoutes(v1, db)
+		lesson.RegisterRoutes(v1, db)
+		category.RegisterRoutes(v1, db)
+		bookmark.RegisterRoutes(v1, db)
+		learninghistory.RegisterRoutes(v1, db)
+		transcript.RegisterRoutes(v1, db)
 	}
 
 	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)

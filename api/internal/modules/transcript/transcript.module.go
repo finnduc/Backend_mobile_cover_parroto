@@ -5,13 +5,12 @@ import (
 	"gorm.io/gorm"
 
 	"go-cover-parroto/internal/core/enums"
-	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/transcript/repositories"
 	"go-cover-parroto/internal/modules/transcript/services"
 )
 
-func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAuth) {
+func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	repo := repositories.NewTranscriptRepo(db)
 	svc := services.NewTranscriptService(repo)
 	ctrl := NewTranscriptController(svc)
@@ -19,7 +18,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 
 	r.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
 
-	admin := r.Group("/admin/transcripts", middleware.FirebaseAuth(fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
+	admin := r.Group("/admin/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("/:id", adminCtrl.GetByID)
 		admin.POST("", adminCtrl.Create)

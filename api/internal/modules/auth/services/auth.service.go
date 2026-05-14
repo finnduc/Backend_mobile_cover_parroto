@@ -2,14 +2,15 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/modules/auth/repositories"
 
+	clerkUser "github.com/clerk/clerk-sdk-go/v2/user"
 	"go.uber.org/zap"
 )
 
@@ -22,12 +23,11 @@ type IAuthService interface {
 }
 
 type authService struct {
-	repo   repositories.IAuthRepo
-	fbAuth firebase.IFirebaseAuth
+	repo repositories.IAuthRepo
 }
 
-func NewAuthService(repo repositories.IAuthRepo, fbAuth firebase.IFirebaseAuth) IAuthService {
-	return &authService{repo: repo, fbAuth: fbAuth}
+func NewAuthService(repo repositories.IAuthRepo) IAuthService {
+	return &authService{repo: repo}
 }
 
 func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
@@ -40,11 +40,19 @@ func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
 	}
 
 	log.With("userId", userID)
+	roleMeta := map[string]interface{}{
+		"role": string(enums.UserRoleUser),
+	}
+	metaJSON, _ := json.Marshal(roleMeta)
+	meta := json.RawMessage(metaJSON)
 
-	err := s.fbAuth.SetCustomUserClaims(ctx, userID, map[string]interface{}{string(enums.CustomClaimKeyUserRole): enums.UserRoleUser})
+	_, err := clerkUser.Update(ctx, userID, &clerkUser.UpdateParams{
+		PublicMetadata: &meta,
+	})
+
 	if err != nil {
-		log.Errorw("failed to set custom user claims", "error", err)
-		return response.Internal("failed to set custom user claims")
+		log.Error("Failed to sync role to Clerk", zap.Error(err))
+		return response.Internal("failed to sync role to Clerk")
 	}
 
 	return nil

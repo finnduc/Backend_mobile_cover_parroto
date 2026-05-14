@@ -1,7 +1,6 @@
 package learning_history
 
 import (
-	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/learning_history/repositories"
 	"go-cover-parroto/internal/modules/learning_history/services"
@@ -10,12 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAuth) {
+func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	repo := repositories.NewLearningHistoryRepo(db)
 	svc := services.NewLearningHistoryService(repo)
 	ctrl := NewLearningHistoryController(svc)
 
-	protected := r.Group("/learning-history", middleware.FirebaseAuth(fbAuth))
+	protected := r.Group("/learning-history", middleware.ClerkAuthMiddleware())
 	{
 		protected.POST("", ctrl.Record)
 		protected.GET("", ctrl.List)

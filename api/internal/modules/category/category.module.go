@@ -5,13 +5,12 @@ import (
 	"gorm.io/gorm"
 
 	"go-cover-parroto/internal/core/enums"
-	"go-cover-parroto/internal/firebase"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/category/repositories"
 	"go-cover-parroto/internal/modules/category/services"
 )
 
-func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAuth) {
+func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	repo := repositories.NewCategoryRepo(db)
 	svc := services.NewCategoryService(repo)
 	ctrl := NewCategoryController(svc)
@@ -19,7 +18,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, fbAuth firebase.IFirebaseAu
 
 	r.GET("/categories", ctrl.List)
 
-	admin := r.Group("/admin/categories", middleware.FirebaseAuth(fbAuth), middleware.RequireRole(enums.UserRoleAdmin))
+	admin := r.Group("/admin/categories", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("", adminCtrl.List)
 		admin.GET("/:id", adminCtrl.GetByID)
