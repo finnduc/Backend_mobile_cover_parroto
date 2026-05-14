@@ -1,6 +1,7 @@
 'server-only'
 import type { BaseResponse } from "@/types/base-response";
 import { snakeToCamel } from "./case";
+import { auth } from "@clerk/nextjs/server";
 
 type ApiFetchOptions = {
   baseUrl?: string;
@@ -32,11 +33,11 @@ export async function apiFetch<T = any>(
       apikey: process.env.API_KEY || "",
     };
 
-    // if (withCredentials) {
-    //   const { getToken } = await auth();
-    //   const token = await getToken();
-    //   if (token) headers["Authorization"] = `Bearer ${token}`;
-    // }
+    if (withCredentials) {
+      const { getToken } = await auth();
+      const token = await getToken();
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const searchParams = new URLSearchParams();
     if (query) {

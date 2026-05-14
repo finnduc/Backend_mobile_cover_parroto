@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { FirebaseUIProviderHoc } from "@/lib/firebase/ui";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
@@ -27,9 +27,12 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <TooltipProvider delayDuration={0}>
-            <FirebaseUIProviderHoc>
+            <ClerkProvider
+              signInUrl="/sign-in"
+              signUpUrl="/sign-up"
+            >
               {children}
-            </FirebaseUIProviderHoc>
+            </ClerkProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

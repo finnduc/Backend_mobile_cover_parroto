@@ -12,12 +12,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@firebase-oss/ui-react": "^7.0.2-beta",
+    "@clerk/nextjs": "^7.3.3",
     "@hookform/resolvers": "^5.2.2",
     "@vidstack/react": "^1.12.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "firebase": "^12.12.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^1.14.0",
     "next": "16.1.7",

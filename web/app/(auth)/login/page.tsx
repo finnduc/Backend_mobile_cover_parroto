@@ -1,5 +1,0 @@
-import { SignInScreen } from "@/features/auth/components/SignInScreen";
-
-export default function Page() {
-  return <SignInScreen />;
-}
