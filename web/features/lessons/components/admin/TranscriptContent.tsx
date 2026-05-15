@@ -5,8 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTable } from "@/components/common/DataTable"
-import { Plus, Trash2, Save } from "lucide-react"
-import { createAdminTranscript, updateAdminTranscript, deleteAdminTranscript } from "@/features/lessons/services/transcripts.action"
+import { Plus, Trash2, Save, Upload, Download } from "lucide-react"
+import {
+  createAdminTranscript,
+  updateAdminTranscript,
+  deleteAdminTranscript,
+} from "@/features/lessons/services/transcripts.action"
+import { TranscriptBulkDialog } from "@/features/lessons/components/admin/TranscriptBulkDialog"
 import { toast } from "sonner"
 import type { Transcript } from "@/types/lessons.models"
 import type { Column } from "@/components/common/DataTable"
@@ -19,6 +24,29 @@ export function TranscriptContent({
   transcripts: Transcript[]
 }) {
   const [transcripts, setTranscripts] = useState(initialTranscripts)
+
+  const [importOpen, setImportOpen] = useState(false)
+
+  const exportJson = () => {
+    const data = transcripts.map((t) => ({
+      sequence: t.sequence,
+      content: t.content,
+      phonetic: t.phonetic,
+      vietnamese: t.vietnamese,
+      startTimestamp: t.startTimestamp,
+      endTimestamp: t.endTimestamp,
+    }))
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `lesson-${lessonId}-transcripts.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    toast.success("Transcripts exported as JSON.")
+  }
 
   const addNew = async () => {
     const maxSeq = Math.max(0, ...transcripts.map((t) => t.sequence))
@@ -124,10 +152,20 @@ export function TranscriptContent({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Transcripts for Lesson #{lessonId}</h3>
-        <Button size="sm" onClick={addNew}>
-          <Plus className="mr-1 size-4" />
-          Add Segment
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="mr-1 size-4" />
+            Import JSON
+          </Button>
+          <Button size="sm" variant="outline" onClick={exportJson}>
+            <Download className="mr-1 size-4" />
+            Export JSON
+          </Button>
+          <Button size="sm" onClick={addNew}>
+            <Plus className="mr-1 size-4" />
+            Add Segment
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -138,6 +176,12 @@ export function TranscriptContent({
           <DataTable columns={columns} data={transcripts} emptyMessage={"No transcripts yet. Click \"Add Segment\" to add one."} />
         </CardContent>
       </Card>
+
+      <TranscriptBulkDialog
+        lessonId={lessonId}
+        open={importOpen}
+        onOpenChange={setImportOpen}
+      />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { updateTag, refresh } from "next/cache"
 import type { BaseResponse } from "@/types/base-response"
 import type { Transcript } from "@/types/lessons.models"
 import type { CreateTranscriptDto, UpdateTranscriptDto } from "@/features/lessons/dtos/transcript.dto"
+import type { TranscriptImportEntry } from "@/features/lessons/dtos/transcript-import.dto"
 
 export async function createAdminTranscript(
   body: CreateTranscriptDto
@@ -57,5 +58,43 @@ export async function deleteAdminTranscript(
     }
     refresh()
   }
+  return res
+}
+
+export async function replaceTranscripts(
+  lessonId: number,
+  transcripts: TranscriptImportEntry[]
+): Promise<BaseResponse<Transcript[]>> {
+  const res = await apiFetch<Transcript[]>(`/admin/lessons/${lessonId}/transcripts`, {
+    method: "PUT",
+    body: transcripts,
+    withCredentials: true,
+  })
+
+  if (!res.error) {
+    updateTag(CACHE_TAGS.transcripts)
+    updateTag(CACHE_TAGS.lesson(lessonId))
+    refresh()
+  }
+
+  return res
+}
+
+export async function appendTranscripts(
+  lessonId: number,
+  transcripts: TranscriptImportEntry[]
+): Promise<BaseResponse<Transcript[]>> {
+  const res = await apiFetch<Transcript[]>(`/admin/lessons/${lessonId}/transcripts/bulk`, {
+    method: "POST",
+    body: transcripts,
+    withCredentials: true,
+  })
+
+  if (!res.error) {
+    updateTag(CACHE_TAGS.transcripts)
+    updateTag(CACHE_TAGS.lesson(lessonId))
+    refresh()
+  }
+
   return res
 }
