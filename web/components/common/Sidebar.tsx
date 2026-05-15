@@ -36,6 +36,7 @@ interface NavItem {
 }
 
 const mainNav: NavItem[] = [
+  { label: "Bài học", href: ROUTES.USER.LESSONS.LIST, icon: BookText },
   { label: "Chủ đề", href: ROUTES.USER.CATEGORIES, icon: BookOpen },
   { label: "Từ vựng", href: "/vocabulary", icon: BookText },
 ]
@@ -67,8 +68,8 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-3">
-        <Link href={ROUTES.USER.HOME} className="flex items-center gap-2 text-lg font-bold">
-          Parroto
+        <Link href={ROUTES.USER.LESSONS.LIST} className="flex items-center gap-2 text-lg font-bold">
+          Engflix
         </Link>
       </SidebarHeader>
       <SidebarContent>

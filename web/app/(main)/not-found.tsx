@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="flex h-full flex-col items-center justify-center gap-4 p-6">
       <h1 className="text-4xl font-bold">404</h1>
       <p className="text-muted-foreground">Page or resource not found.</p>
-      <Link href={ROUTES.USER.HOME} className="text-sm text-primary hover:underline">
+      <Link href={ROUTES.USER.LESSONS.LIST} className="text-sm text-primary hover:underline">
         Go to Home
       </Link>
     </div>
