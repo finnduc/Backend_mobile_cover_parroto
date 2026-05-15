@@ -23,8 +23,6 @@ export default async function LessonsPage({
   })
   const lessons = lessonsRes.data ?? []
 
-  console.log(lessons)
-
   return (
     <PageLayout
       title={category ? category.name : "Tất cả bài học"}

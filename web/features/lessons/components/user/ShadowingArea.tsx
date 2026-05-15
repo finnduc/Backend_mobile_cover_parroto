@@ -9,12 +9,14 @@ import type { Transcript } from "@/types/lessons.models"
 export interface ExerciseControlProps {
   transcripts: Transcript[]
   activeIndex: number
+  highlightedIndex: number
   paused: boolean
   onPlay: () => void
   onPause: () => void
   onNext: () => void
   onPrev: () => void
   onReplay: () => void
+  onTranscriptClick: (index: number) => void
 }
 
 export function ShadowingArea({
@@ -101,16 +103,19 @@ export function ShadowingArea({
         </div>
       </div>
       <div className="space-y-1">
-        {(transcripts ?? []).map((seg, i) => (
-          <div
-            key={seg.id}
-            className={`rounded px-3 py-1.5 text-sm ${
-              completed.includes(i) ? "bg-transcript-complete text-muted-foreground line-through" : ""
-            } ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
-          >
-            {seg.content}
-          </div>
-        ))}
+        {(transcripts ?? []).map((seg, i) => {
+          const isCompleted = completed.includes(i) && i !== safeActiveIndex
+          return (
+            <div
+              key={seg.id}
+              className={`rounded px-3 py-1.5 text-sm ${
+                isCompleted ? "bg-transcript-complete text-muted-foreground" : ""
+              } ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
+            >
+              {seg.content}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

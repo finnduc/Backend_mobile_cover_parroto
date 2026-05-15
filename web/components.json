@@ -20,8 +20,5 @@
     "hooks": "@/hooks"
   },
   "menuColor": "default",
-  "menuAccent": "subtle",
-  "registries": {
-    "@firebase": "https://firebaseopensource.com/r/{name}.json"
-  }
+  "menuAccent": "subtle"
 }

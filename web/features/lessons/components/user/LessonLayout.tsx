@@ -50,12 +50,14 @@ export function LessonLayout({
             <ExerciseComponent
               transcripts={segments}
               activeIndex={activeIndex}
+              highlightedIndex={highlightedIndex}
               paused={paused}
               onPlay={handlePlay}
               onPause={handlePause}
               onNext={handleNext}
               onPrev={handlePrev}
               onReplay={handleReplay}
+              onTranscriptClick={handleTranscriptClick}
             />
           ) : null}
         </div>

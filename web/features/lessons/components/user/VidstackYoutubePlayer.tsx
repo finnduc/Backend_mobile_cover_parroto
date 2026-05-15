@@ -1,6 +1,6 @@
 "use client"
 
-import "@vidstack/react/player/styles/base.css"
+import "@vidstack/react/player/styles/base.css" 
 import "@vidstack/react/player/styles/default/theme.css"
 import "@vidstack/react/player/styles/default/layouts/video.css"
 
@@ -27,8 +27,8 @@ export const VidstackYoutubePlayer = forwardRef<
   if (!src) return null
 
   return (
-    <div className="aspect-video w-full overflow-hidden rounded-xl">
-      <MediaPlayer src={src} ref={ref} className="size-full" onTimeUpdate={onTimeUpdate}>
+    <div className="aspect-video w-full rounded-xl">
+      <MediaPlayer src={src} ref={ref} onTimeUpdate={onTimeUpdate}>
         <MediaProvider />
         <DefaultVideoLayout icons={defaultLayoutIcons} />
       </MediaPlayer>
