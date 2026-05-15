@@ -3,15 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Search, Sun, Moon } from "lucide-react"
+import { Show, SignInButton, UserButton } from "@clerk/nextjs"
+import { Moon, Search, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
 
 export function Topbar() {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => { setMounted(true) }, [])
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background px-4">
@@ -21,15 +18,19 @@ export function Topbar() {
         <Input placeholder="Tra từ điển..." className="pl-9 h-9 rounded-lg bg-muted/50" />
       </div>
       <div className="flex items-center gap-1 ml-auto">
-        {mounted && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        </Button>
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
+        <Show when="signed-out">
+          <SignInButton />
+        </Show>
       </div>
     </header>
   )

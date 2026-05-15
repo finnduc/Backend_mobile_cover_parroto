@@ -14,8 +14,9 @@ import (
 )
 
 type ClerkMetadata struct {
-	Role     enums.UserRole `json:"role"`
-	Username string         `json:"username"`
+	Metadata struct {
+		Role enums.UserRole `json:"role"`
+	} `json:"metadata"`
 }
 
 func customClaimsConstructor(ctx context.Context) any {
@@ -55,12 +56,24 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 		}
 
 		claims, ok := clerk.SessionClaimsFromContext(nextReq.Context())
-		if !ok || claims.Subject == "" {
-			logger.Warnw("Invalid clerk session", "path", nextReq.URL.Path, "method", nextReq.Method, "subject", claims.Subject)
+
+		if !ok || claims == nil || claims.Subject == "" {
+			subject := ""
+			if claims != nil {
+				subject = claims.Subject
+			}
+
+			logger.Warnw(
+				"Invalid clerk session",
+				"path", nextReq.URL.Path,
+				"method", nextReq.Method,
+				"authHeader", c.GetHeader("Authorization"),
+				"subject", subject,
+			)
+
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response.Unauthorized())
 			return
 		}
-
 		userID := claims.Subject
 		role := enums.UserRoleUser
 
@@ -69,8 +82,8 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 			"hasCustomClaims", claims.Custom != nil,
 		)
 
-		if customClaims, ok := claims.Custom.(*ClerkMetadata); ok && customClaims.Role != "" {
-			role = customClaims.Role
+		if customClaims, ok := claims.Custom.(*ClerkMetadata); ok && customClaims.Metadata.Role != "" {
+			role = customClaims.Metadata.Role
 		}
 
 		ctx := context.WithValue(nextReq.Context(), enums.ContextKeyUserID, userID)
