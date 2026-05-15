@@ -5,19 +5,16 @@ import (
 
 	"go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/database/models"
+	db_repos "go-cover-parroto/internal/database/repositories"
+
 	"gorm.io/gorm"
 )
-
-type IAuthRepo interface {
-	FindByEmail(ctx context.Context, email string) (*models.User, error)
-	Create(ctx context.Context, user *models.User) error
-}
 
 type authRepo struct {
 	db *gorm.DB
 }
 
-func NewAuthRepo(db *gorm.DB) IAuthRepo {
+func NewAuthRepo(db *gorm.DB) db_repos.IAuthRepo {
 	return &authRepo{db: db}
 }
 

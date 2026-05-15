@@ -18,3 +18,16 @@ type UpdateTranscriptReq struct {
 	StartTimestamp *float64 `json:"start_timestamp"`
 	EndTimestamp   *float64 `json:"end_timestamp"`
 }
+
+type BulkCreateTranscriptItem struct {
+	Sequence       int     `json:"sequence" binding:"required"`
+	Content        string  `json:"content" binding:"required"`
+	Phonetic       string  `json:"phonetic"`
+	Vietnamese     string  `json:"vietnamese"`
+	StartTimestamp float64 `json:"start_timestamp"`
+	EndTimestamp   float64 `json:"end_timestamp"`
+}
+
+type BulkCreateTranscriptReq struct {
+	Transcripts []BulkCreateTranscriptItem `json:"transcripts" binding:"required,min=1"`
+}

@@ -7,23 +7,16 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
+	db_repos "go-cover-parroto/internal/database/repositories"
 
 	"gorm.io/gorm"
 )
-
-type ICategoryRepo interface {
-	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Category], error)
-	FindByID(ctx context.Context, id uint) (*models.Category, error)
-	Create(ctx context.Context, category *models.Category) error
-	Update(ctx context.Context, category *models.Category) error
-	Delete(ctx context.Context, id uint) error
-}
 
 type categoryRepo struct {
 	db *gorm.DB
 }
 
-func NewCategoryRepo(db *gorm.DB) ICategoryRepo {
+func NewCategoryRepo(db *gorm.DB) db_repos.ICategoryRepo {
 	return &categoryRepo{db: db}
 }
 

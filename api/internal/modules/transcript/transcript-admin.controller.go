@@ -72,6 +72,70 @@ func (ctrl *TranscriptAdminController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
+// BulkCreate godoc
+// @Summary Bulk create transcripts for a lesson
+// @Description Upload a list of transcript entries for a specific lesson (admin only)
+// @Tags admin-lessons
+// @Accept json
+// @Produce json
+// @Param lessonId path int true "Lesson ID"
+// @Param body body req.BulkCreateTranscriptReq true "List of transcripts"
+// @Success 200 {object} response.BaseResponse[[]res.TranscriptRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons/{lessonId}/transcripts/bulk [post]
+// @Security BearerAuth
+func (ctrl *TranscriptAdminController) BulkCreate(c *gin.Context) {
+	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
+		return
+	}
+	var body req.BulkCreateTranscriptReq
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	result, appErr := ctrl.svc.BulkCreate(c.Request.Context(), uint(lessonID), body)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
+// ReplaceByLesson godoc
+// @Summary Replace all transcripts for a lesson
+// @Description Atomically delete all existing transcripts for a lesson and create new ones (admin only)
+// @Tags admin-lessons
+// @Accept json
+// @Produce json
+// @Param lessonId path int true "Lesson ID"
+// @Param body body req.BulkCreateTranscriptReq true "List of transcripts"
+// @Success 200 {object} response.BaseResponse[[]res.TranscriptRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons/{lessonId}/transcripts [put]
+// @Security BearerAuth
+func (ctrl *TranscriptAdminController) ReplaceByLesson(c *gin.Context) {
+	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
+		return
+	}
+	var body req.BulkCreateTranscriptReq
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	result, appErr := ctrl.svc.ReplaceByLesson(c.Request.Context(), uint(lessonID), body)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
 // Update godoc
 // @Summary Update transcript
 // @Description Update a transcript entry by ID (admin only)

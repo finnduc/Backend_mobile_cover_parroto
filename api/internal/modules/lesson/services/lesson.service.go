@@ -10,7 +10,7 @@ import (
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
 	"go-cover-parroto/internal/modules/lesson/dtos/res"
-	"go-cover-parroto/internal/modules/lesson/repositories"
+	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
@@ -28,10 +28,10 @@ type ILessonService interface {
 }
 
 type lessonService struct {
-	repo repositories.ILessonRepo
+	repo db_repos.ILessonRepo
 }
 
-func NewLessonService(repo repositories.ILessonRepo) ILessonService {
+func NewLessonService(repo db_repos.ILessonRepo) ILessonService {
 	return &lessonService{repo: repo}
 }
 

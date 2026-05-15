@@ -11,7 +11,7 @@ import (
 	"go-cover-parroto/internal/database/models"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
 	lhres "go-cover-parroto/internal/modules/learning_history/dtos/res"
-	"go-cover-parroto/internal/modules/learning_history/repositories"
+	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
@@ -27,10 +27,10 @@ type ILearningHistoryService interface {
 }
 
 type learningHistoryService struct {
-	repo repositories.ILearningHistoryRepo
+	repo db_repos.ILearningHistoryRepo
 }
 
-func NewLearningHistoryService(repo repositories.ILearningHistoryRepo) ILearningHistoryService {
+func NewLearningHistoryService(repo db_repos.ILearningHistoryRepo) ILearningHistoryService {
 	return &learningHistoryService{repo: repo}
 }
 

@@ -8,7 +8,7 @@ import (
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/modules/auth/repositories"
+	db_repos "go-cover-parroto/internal/database/repositories"
 
 	clerkUser "github.com/clerk/clerk-sdk-go/v2/user"
 	"go.uber.org/zap"
@@ -23,10 +23,10 @@ type IAuthService interface {
 }
 
 type authService struct {
-	repo repositories.IAuthRepo
+	repo db_repos.IAuthRepo
 }
 
-func NewAuthService(repo repositories.IAuthRepo) IAuthService {
+func NewAuthService(repo db_repos.IAuthRepo) IAuthService {
 	return &authService{repo: repo}
 }
 

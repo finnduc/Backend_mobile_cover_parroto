@@ -7,21 +7,16 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
+	db_repos "go-cover-parroto/internal/database/repositories"
 
 	"gorm.io/gorm"
 )
-
-type IBookmarkRepo interface {
-	Create(ctx context.Context, userID string, lessonID uint) error
-	Delete(ctx context.Context, userID string, lessonID uint) error
-	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error)
-}
 
 type bookmarkRepo struct {
 	db *gorm.DB
 }
 
-func NewBookmarkRepo(db *gorm.DB) IBookmarkRepo {
+func NewBookmarkRepo(db *gorm.DB) db_repos.IBookmarkRepo {
 	return &bookmarkRepo{db: db}
 }
 

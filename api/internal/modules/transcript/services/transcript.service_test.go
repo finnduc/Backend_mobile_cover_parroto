@@ -6,47 +6,15 @@ import (
 	"testing"
 
 	"go-cover-parroto/internal/database/models"
+	"go-cover-parroto/internal/modules/transcript/repositories"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-type mockTranscriptRepo struct{ mock.Mock }
-
-func (m *mockTranscriptRepo) FindByLesson(ctx context.Context, lessonID uint) ([]*models.Transcript, error) {
-	args := m.Called(ctx, lessonID)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).([]*models.Transcript), args.Error(1)
-}
-
-func (m *mockTranscriptRepo) FindByID(ctx context.Context, id uint) (*models.Transcript, error) {
-	args := m.Called(ctx, id)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.Transcript), args.Error(1)
-}
-
-func (m *mockTranscriptRepo) Create(ctx context.Context, transcript *models.Transcript) error {
-	args := m.Called(ctx, transcript)
-	return args.Error(0)
-}
-
-func (m *mockTranscriptRepo) Update(ctx context.Context, transcript *models.Transcript) error {
-	args := m.Called(ctx, transcript)
-	return args.Error(0)
-}
-
-func (m *mockTranscriptRepo) Delete(ctx context.Context, id uint) error {
-	args := m.Called(ctx, id)
-	return args.Error(0)
-}
-
 func TestGetByLesson_Success(t *testing.T) {
-	repo := new(mockTranscriptRepo)
-	svc := NewTranscriptService(repo)
+	repo := new(repositories.MockTranscriptRepo)
+	svc := NewTranscriptService(repo, nil)
 
 	transcripts := []*models.Transcript{
 		{ID: 1, LessonID: 2, Sequence: 1, Content: "Hello world", Phonetic: "ˈhɛloʊ wɜːld", Vietnamese: "Xin chào thế giới", StartTimestamp: 0.0, EndTimestamp: 2.5},
@@ -65,8 +33,8 @@ func TestGetByLesson_Success(t *testing.T) {
 }
 
 func TestGetByLesson_Error(t *testing.T) {
-	repo := new(mockTranscriptRepo)
-	svc := NewTranscriptService(repo)
+	repo := new(repositories.MockTranscriptRepo)
+	svc := NewTranscriptService(repo, nil)
 
 	repo.On("FindByLesson", mock.Anything, uint(99)).Return(nil, errors.New("db error"))
 
@@ -78,8 +46,8 @@ func TestGetByLesson_Error(t *testing.T) {
 }
 
 func TestGetByLesson_Empty(t *testing.T) {
-	repo := new(mockTranscriptRepo)
-	svc := NewTranscriptService(repo)
+	repo := new(repositories.MockTranscriptRepo)
+	svc := NewTranscriptService(repo, nil)
 
 	repo.On("FindByLesson", mock.Anything, uint(1)).Return([]*models.Transcript{}, nil)
 

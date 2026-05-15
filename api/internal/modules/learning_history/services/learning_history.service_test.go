@@ -6,38 +6,15 @@ import (
 	"testing"
 
 	"go-cover-parroto/internal/core/enums"
-	coreError "go-cover-parroto/internal/core/errors"
+	coreError 	"go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
+	"go-cover-parroto/internal/modules/learning_history/repositories"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
-
-type mockLHRepo struct{ mock.Mock }
-
-func (m *mockLHRepo) Upsert(ctx context.Context, history *models.LearningHistory) error {
-	args := m.Called(ctx, history)
-	return args.Error(0)
-}
-
-func (m *mockLHRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error) {
-	args := m.Called(ctx, query)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*response.PaginatedResult[*models.LearningHistory]), args.Error(1)
-}
-
-func (m *mockLHRepo) FindByUserAndLesson(ctx context.Context, userID string, lessonID uint) (*models.LearningHistory, error) {
-	args := m.Called(ctx, userID, lessonID)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.LearningHistory), args.Error(1)
-}
 
 func testCtx(userID string, role enums.UserRole) context.Context {
 	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
@@ -46,7 +23,7 @@ func testCtx(userID string, role enums.UserRole) context.Context {
 }
 
 func TestRecord_Success(t *testing.T) {
-	mockRepo := new(mockLHRepo)
+	mockRepo := new(repositories.MockLearningHistoryRepo)
 	svc := NewLearningHistoryService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.RecordHistoryReq{LessonID: 3, DurationWatched: 120.5, Completed: true}
@@ -62,7 +39,7 @@ func TestRecord_Success(t *testing.T) {
 }
 
 func TestRecord_UpsertError(t *testing.T) {
-	mockRepo := new(mockLHRepo)
+	mockRepo := new(repositories.MockLearningHistoryRepo)
 	svc := NewLearningHistoryService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.RecordHistoryReq{LessonID: 3, DurationWatched: 10.0}
@@ -76,7 +53,7 @@ func TestRecord_UpsertError(t *testing.T) {
 }
 
 func TestList_Success(t *testing.T) {
-	mockRepo := new(mockLHRepo)
+	mockRepo := new(repositories.MockLearningHistoryRepo)
 	svc := NewLearningHistoryService(mockRepo)
 	q := lhreq.ListHistoryQuery{Page: 1, Limit: 10}
 
@@ -96,7 +73,7 @@ func TestList_Success(t *testing.T) {
 }
 
 func TestGetByLesson_Success(t *testing.T) {
-	mockRepo := new(mockLHRepo)
+	mockRepo := new(repositories.MockLearningHistoryRepo)
 	svc := NewLearningHistoryService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.GetHistoryReq{LessonID: 5}
@@ -111,7 +88,7 @@ func TestGetByLesson_Success(t *testing.T) {
 }
 
 func TestGetByLesson_NotFound(t *testing.T) {
-	mockRepo := new(mockLHRepo)
+	mockRepo := new(repositories.MockLearningHistoryRepo)
 	svc := NewLearningHistoryService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := lhreq.GetHistoryReq{LessonID: 99}

@@ -8,7 +8,7 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/bookmark/dtos/res"
-	"go-cover-parroto/internal/modules/bookmark/repositories"
+	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
@@ -24,10 +24,10 @@ type IBookmarkService interface {
 }
 
 type bookmarkService struct {
-	repo repositories.IBookmarkRepo
+	repo db_repos.IBookmarkRepo
 }
 
-func NewBookmarkService(repo repositories.IBookmarkRepo) IBookmarkService {
+func NewBookmarkService(repo db_repos.IBookmarkRepo) IBookmarkService {
 	return &bookmarkService{repo: repo}
 }
 

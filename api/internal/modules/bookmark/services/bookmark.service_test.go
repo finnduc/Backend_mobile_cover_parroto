@@ -7,34 +7,12 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
-	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
+	"go-cover-parroto/internal/modules/bookmark/repositories"
 
 	"github.com/stretchr/testify/mock"
 )
-
-type mockBookmarkRepo struct {
-	mock.Mock
-}
-
-func (m *mockBookmarkRepo) Create(ctx context.Context, userID string, lessonID uint) error {
-	args := m.Called(ctx, userID, lessonID)
-	return args.Error(0)
-}
-
-func (m *mockBookmarkRepo) Delete(ctx context.Context, userID string, lessonID uint) error {
-	args := m.Called(ctx, userID, lessonID)
-	return args.Error(0)
-}
-
-func (m *mockBookmarkRepo) FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.Bookmark], error) {
-	args := m.Called(ctx, query)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*response.PaginatedResult[*models.Bookmark]), args.Error(1)
-}
 
 func testCtx(userID string, role enums.UserRole) context.Context {
 	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
@@ -43,7 +21,7 @@ func testCtx(userID string, role enums.UserRole) context.Context {
 }
 
 func TestAddBookmark_Success(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.AddBookmarkReq{LessonID: 10}
@@ -58,7 +36,7 @@ func TestAddBookmark_Success(t *testing.T) {
 }
 
 func TestAddBookmark_Error(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.AddBookmarkReq{LessonID: 10}
@@ -73,7 +51,7 @@ func TestAddBookmark_Error(t *testing.T) {
 }
 
 func TestAddBookmark_Unauthenticated(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := context.Background()
 
@@ -84,7 +62,7 @@ func TestAddBookmark_Unauthenticated(t *testing.T) {
 }
 
 func TestRemoveBookmark_Success(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.RemoveBookmarkReq{LessonID: 10}
@@ -99,7 +77,7 @@ func TestRemoveBookmark_Success(t *testing.T) {
 }
 
 func TestRemoveBookmark_Error(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	body := req.RemoveBookmarkReq{LessonID: 10}
@@ -114,7 +92,7 @@ func TestRemoveBookmark_Error(t *testing.T) {
 }
 
 func TestList_Success(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	q := req.ListBookmarkQuery{Page: 1, Limit: 10}
@@ -139,7 +117,7 @@ func TestList_Success(t *testing.T) {
 }
 
 func TestList_Error(t *testing.T) {
-	mockRepo := new(mockBookmarkRepo)
+	mockRepo := new(repositories.MockBookmarkRepo)
 	svc := NewBookmarkService(mockRepo)
 	ctx := testCtx("1", enums.UserRoleUser)
 	q := req.ListBookmarkQuery{Page: 1, Limit: 10}

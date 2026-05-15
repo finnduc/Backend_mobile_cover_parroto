@@ -7,21 +7,16 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/database/models"
+	db_repos "go-cover-parroto/internal/database/repositories"
 
 	"gorm.io/gorm"
 )
-
-type ILearningHistoryRepo interface {
-	Upsert(ctx context.Context, history *models.LearningHistory) error
-	FindAll(ctx context.Context, query *database.Query) (*response.PaginatedResult[*models.LearningHistory], error)
-	FindByUserAndLesson(ctx context.Context, userID string, lessonID uint) (*models.LearningHistory, error)
-}
 
 type learningHistoryRepo struct {
 	db *gorm.DB
 }
 
-func NewLearningHistoryRepo(db *gorm.DB) ILearningHistoryRepo {
+func NewLearningHistoryRepo(db *gorm.DB) db_repos.ILearningHistoryRepo {
 	return &learningHistoryRepo{db: db}
 }
 

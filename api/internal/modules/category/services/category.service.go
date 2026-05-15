@@ -10,7 +10,7 @@ import (
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/category/dtos/req"
 	"go-cover-parroto/internal/modules/category/dtos/res"
-	"go-cover-parroto/internal/modules/category/repositories"
+	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
@@ -28,10 +28,10 @@ type ICategoryService interface {
 }
 
 type categoryService struct {
-	repo repositories.ICategoryRepo
+	repo db_repos.ICategoryRepo
 }
 
-func NewCategoryService(repo repositories.ICategoryRepo) ICategoryService {
+func NewCategoryService(repo db_repos.ICategoryRepo) ICategoryService {
 	return &categoryService{repo: repo}
 }
 

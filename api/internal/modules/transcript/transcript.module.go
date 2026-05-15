@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 
 	"go-cover-parroto/internal/core/enums"
+	"go-cover-parroto/internal/database/transaction"
 	"go-cover-parroto/internal/middleware"
 	"go-cover-parroto/internal/modules/transcript/repositories"
 	"go-cover-parroto/internal/modules/transcript/services"
@@ -12,12 +13,15 @@ import (
 
 func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	repo := repositories.NewTranscriptRepo(db)
-	svc := services.NewTranscriptService(repo)
+	uow := transaction.NewUnitOfWork(db)
+	svc := services.NewTranscriptService(repo, uow)
 	ctrl := NewTranscriptController(svc)
 	adminCtrl := NewTranscriptAdminController(svc)
 
 	r.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
 	r.GET("/admin/lessons/:lessonId/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin), adminCtrl.GetByLesson)
+	r.PUT("/admin/lessons/:lessonId/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin), adminCtrl.ReplaceByLesson)
+	r.POST("/admin/lessons/:lessonId/transcripts/bulk", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin), adminCtrl.BulkCreate)
 	admin := r.Group("/admin/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("/:id", adminCtrl.GetByID)
