@@ -1,33 +1,26 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { ROUTES } from "@/lib/routes"
+import type { LucideIcon } from "lucide-react"
 import {
   BookOpen,
   BookText,
-  Mic,
-  GraduationCap,
-  Swords,
-  Repeat,
-  Users,
-  Trophy,
   MessageCircle,
   MessageSquare,
-  Gift,
-  CreditCard,
+  Users
 } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface NavItem {
   label: string
