@@ -20,7 +20,7 @@ func NewUnitOfWork(db *gorm.DB) UnitOfWork {
 
 func (u *gormUnitOfWork) Do(ctx context.Context, fn func(ctx context.Context, p IProvider) error) error {
 	return u.db.Transaction(func(tx *gorm.DB) error {
-		provider := NewProvider(tx)
+		provider := NewGormProvider(tx)
 		return fn(ctx, provider)
 	})
 }

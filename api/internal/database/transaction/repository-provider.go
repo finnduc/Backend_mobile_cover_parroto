@@ -31,7 +31,7 @@ type gormProvider struct {
 	transcriptRepo db_repos.ITranscriptRepo
 }
 
-func NewProvider(tx *gorm.DB) *gormProvider {
+func NewGormProvider(tx *gorm.DB) *gormProvider {
 	return &gormProvider{tx: tx}
 }
 
