@@ -2,7 +2,7 @@ import Link from "next/link"
 import { DataTable } from "@/components/common/DataTable"
 import { PaginationBar } from "@/components/common/PaginationBar"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
-import { mockUsers } from "@/features/users/mock-data"
+import { getAdminUsers } from "@/features/users/services/users.get"
 import { ROUTES } from "@/lib/routes"
 import type { Column } from "@/components/common/DataTable"
 import type { User } from "@/types/users.models"
@@ -17,8 +17,10 @@ export default async function UsersPage({
   const { page, limit } = await searchParams
   const pageNum = Math.max(1, Number(page) || 1)
   const limitNum = Math.max(1, Number(limit) || DEFAULT_LIMIT)
-  const totalPages = Math.ceil(mockUsers.length / limitNum)
-  const data = mockUsers.slice((pageNum - 1) * limitNum, pageNum * limitNum)
+  const res = await getAdminUsers()
+  const users = res.data ?? []
+  const totalPages = Math.ceil(users.length / limitNum)
+  const data = users.slice((pageNum - 1) * limitNum, pageNum * limitNum)
 
   const columns: Column<User>[] = [
     { key: "id", header: "ID" },

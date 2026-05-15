@@ -1,7 +1,8 @@
 'server-only'
-import { apiFetch } from "@/lib/api-fetch"
-import type { Lesson, Transcript } from "@/types/lessons.models"
-import type { BaseResponse } from "@/types/base-response"
+import { apiFetch } from "@/lib/api-fetch";
+import { CACHE_TAGS } from "@/lib/tags";
+import type { BaseResponse } from "@/types/base-response";
+import type { Lesson, Transcript } from "@/types/lessons.models";
 
 export async function getLessons(
   page = 1,
@@ -30,13 +31,23 @@ export async function getAdminLessons(
   const query: Record<string, any> = { page, limit }
   if (filters?.categoryId) query.category_id = filters.categoryId
   if (filters?.level) query.level = filters.level
-  return apiFetch<Lesson[]>("/admin/lessons", { query, withCredentials: true })
+  return apiFetch<Lesson[]>("/admin/lessons", {
+    query,
+    withCredentials: true,
+    tags: [CACHE_TAGS.lessons],
+  })
 }
 
 export async function getAdminLesson(id: number): Promise<BaseResponse<Lesson>> {
-  return apiFetch<Lesson>(`/admin/lessons/${id}`, { withCredentials: true })
+  return apiFetch<Lesson>(`/admin/lessons/${id}`, {
+    withCredentials: true,
+    tags: [CACHE_TAGS.lesson(id)],
+  })
 }
 
 export async function getAdminTranscripts(lessonId: number): Promise<BaseResponse<Transcript[]>> {
-  return apiFetch<Transcript[]>(`/admin/lessons/${lessonId}/transcripts`, { withCredentials: true })
+  return apiFetch<Transcript[]>(`/admin/lessons/${lessonId}/transcripts`, {
+    withCredentials: true,
+    tags: [CACHE_TAGS.transcripts, CACHE_TAGS.lesson(lessonId)],
+  })
 }

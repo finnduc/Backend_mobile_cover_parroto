@@ -13,10 +13,6 @@ export default async function LessonsPage({
   const limitNum = Math.max(1, Number(limit) || DEFAULT_LIMIT)
   const res = await getAdminLessons(pageNum, limitNum)
 
-  if (res.error) {
-    return <div className="py-12 text-center text-muted-foreground">{res.error.message}</div>
-  }
-
   return (
     <LessonsPageContent
       data={res.data ?? []}

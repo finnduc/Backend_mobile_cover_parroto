@@ -77,11 +77,6 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 		userID := claims.Subject
 		role := enums.UserRoleUser
 
-		logger.Warnw("Clerk claims debug",
-			"subject", userID,
-			"hasCustomClaims", claims.Custom != nil,
-		)
-
 		if customClaims, ok := claims.Custom.(*ClerkMetadata); ok && customClaims.Metadata.Role != "" {
 			role = customClaims.Metadata.Role
 		}

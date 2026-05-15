@@ -1,5 +1,6 @@
 "use client"
 
+import { notFound } from "next/navigation"
 import "@vidstack/react/player/styles/base.css" 
 import "@vidstack/react/player/styles/default/theme.css"
 import "@vidstack/react/player/styles/default/layouts/video.css"
@@ -24,7 +25,10 @@ export const VidstackYoutubePlayer = forwardRef<
   const youtubeId = extractYoutubeId(videoUrl) ?? videoUrl
   const src = youtubeId ? `youtube/${youtubeId}` : null
 
-  if (!src) return null
+  if (!src) {
+    notFound()
+    return null
+  }
 
   return (
     <div className="aspect-video w-full rounded-xl">

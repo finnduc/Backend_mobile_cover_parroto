@@ -6,15 +6,16 @@ import { DataTable } from "@/components/common/DataTable"
 import { CreateModal } from "@/components/common/CreateModal"
 import { EditModal } from "@/components/common/EditModal"
 import { CategoryForm, type CategoryFormValues } from "@/features/categories/components/admin/CategoryForm"
+import { createAdminCategory, updateAdminCategory, deleteAdminCategory } from "@/features/categories/services/categories.action"
+import { toast } from "sonner"
 import type { Column } from "@/components/common/DataTable"
 import type { Category } from "@/types/categories.models"
 
 export function CategoriesPageContent({
-  categories: initialCategories,
+  categories,
 }: {
   categories: Category[]
 }) {
-  const [categories, setCategories] = useState(initialCategories)
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
@@ -40,9 +41,12 @@ export function CategoriesPageContent({
           <Button
             size="xs"
             variant="destructive"
-            onClick={() =>
-              setCategories((prev) => prev.filter((c) => c.id !== cat.id))
-            }
+            onClick={async () => {
+              const res = await deleteAdminCategory(cat.id)
+              if (res.error) {
+                toast.error(res.error.message)
+              }
+            }}
           >
             Delete
           </Button>
@@ -69,10 +73,13 @@ export function CategoriesPageContent({
         submitLabel=""
       >
         <CategoryForm
-          onSubmit={(values) => {
-            const newId = Math.max(0, ...categories.map((c) => c.id)) + 1
-            setCategories((prev) => [...prev, { id: newId, name: values.name }])
-            setCreateOpen(false)
+          onSubmit={async (values) => {
+            const res = await createAdminCategory({ name: values.name })
+            if (res.error) {
+              toast.error(res.error.message)
+            } else {
+              setCreateOpen(false)
+            }
           }}
         />
       </CreateModal>
@@ -87,12 +94,14 @@ export function CategoriesPageContent({
           <CategoryForm
             key={editing.id}
             defaultValues={{ name: editing.name }}
-            onSubmit={(values) => {
+            onSubmit={async (values) => {
               if (!editing) return
-              setCategories((prev) =>
-                prev.map((c) => (c.id === editing.id ? { ...c, name: values.name } : c))
-              )
-              setEditOpen(false)
+              const res = await updateAdminCategory(editing.id, { name: values.name })
+              if (res.error) {
+                toast.error(res.error.message)
+              } else {
+                setEditOpen(false)
+              }
             }}
           />
         )}

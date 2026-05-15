@@ -2,12 +2,23 @@
 
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LessonForm } from "@/features/lessons/components/admin/LessonForm"
+import { LessonForm, type LessonFormValues } from "@/features/lessons/components/admin/LessonForm"
+import { updateAdminLesson } from "@/features/lessons/services/lessons.action"
 import { ROUTES } from "@/lib/routes"
+import { toast } from "sonner"
 import type { Lesson } from "@/types/lessons.models"
 
 export function LessonEditContent({ lesson }: { lesson: Lesson }) {
   const router = useRouter()
+
+  const handleSubmit = async (values: LessonFormValues) => {
+    const res = await updateAdminLesson(lesson.id, values)
+    if (res.error) {
+      toast.error(res.error.message)
+    } else {
+      router.push(ROUTES.ADMIN.LESSONS.LIST)
+    }
+  }
 
   return (
     <Card>
@@ -25,7 +36,7 @@ export function LessonEditContent({ lesson }: { lesson: Lesson }) {
             level: lesson.level,
             categoryId: lesson.categoryId,
           }}
-          onSubmit={() => router.push(ROUTES.ADMIN.LESSONS.LIST)}
+          onSubmit={handleSubmit}
         />
       </CardContent>
     </Card>

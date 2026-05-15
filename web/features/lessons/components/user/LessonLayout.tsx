@@ -1,7 +1,7 @@
 "use client"
 
+import { notFound } from "next/navigation"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
-import { VideoPlayerPlaceholder } from "@/components/common/VideoPlayerPlaceholder"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
@@ -42,7 +42,7 @@ export function LessonLayout({
         {videoUrl ? (
           <VidstackYoutubePlayer videoUrl={videoUrl} ref={playerRef} />
         ) : (
-          <VideoPlayerPlaceholder duration={duration} />
+          notFound()
         )}
         <ModeToggle mode={playerMode} onChange={setPlayerMode} />
         <div className="flex-1">

@@ -17,7 +17,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	adminCtrl := NewTranscriptAdminController(svc)
 
 	r.GET("/lessons/:lessonId/transcripts", ctrl.GetByLesson)
-
+	r.GET("/admin/lessons/:lessonId/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin), adminCtrl.GetByLesson)
 	admin := r.Group("/admin/transcripts", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("/:id", adminCtrl.GetByID)

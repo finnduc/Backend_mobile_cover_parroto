@@ -23,14 +23,6 @@ export function DataTable<T>({
   data: T[]
   emptyMessage?: string
 }) {
-  if (data.length === 0) {
-    return (
-      <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        {emptyMessage}
-      </div>
-    )
-  }
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -41,16 +33,32 @@ export function DataTable<T>({
             ))}
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          {data.map((item, i) => (
-            <TableRow key={i}>
-              {columns.map((col) => (
-                <TableCell key={col.key}>
-                  {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}
-                </TableCell>
-              ))}
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="text-center text-sm text-muted-foreground"
+              >
+                {emptyMessage}
+              </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            data.map((item, i) => (
+              <TableRow key={i}>
+                {columns.map((col) => (
+                  <TableCell key={col.key}>
+                    {col.render
+                      ? col.render(item)
+                      : String(
+                          (item as Record<string, unknown>)[col.key] ?? ""
+                        )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

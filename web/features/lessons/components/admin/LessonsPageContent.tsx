@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/common/DataTable"
 import { PaginationBar } from "@/components/common/PaginationBar"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
+import { deleteAdminLesson } from "@/features/lessons/services/lessons.action"
 import { ROUTES } from "@/lib/routes"
+import { toast } from "sonner"
 import type { Lesson } from "@/types/lessons.models"
 import type { PaginatedMeta } from "@/types/base-response"
 import type { Column } from "@/components/common/DataTable"
@@ -42,6 +44,14 @@ function getLessonColumns(): Column<Lesson>[] {
           </Button>
           <Button size="xs" variant="outline" asChild>
             <Link href={ROUTES.ADMIN.LESSONS.TRANSCRIPTS(String(l.id))}>Transcripts</Link>
+          </Button>
+          <Button size="xs" variant="destructive" onClick={async () => {
+            const res = await deleteAdminLesson(l.id)
+            if (res.error) {
+              toast.error(res.error.message)
+            }
+          }}>
+            Delete
           </Button>
         </div>
       ),

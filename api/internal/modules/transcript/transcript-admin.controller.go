@@ -129,3 +129,30 @@ func (ctrl *TranscriptAdminController) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.Success("transcript deleted"))
 }
+
+// GetByLesson godoc
+// @Summary Get lesson transcripts
+// @Description Get all transcripts for a lesson sorted by sequence
+// @Tags transcripts
+// @Accept json
+// @Produce json
+// @Param lessonId path int true "Lesson ID"
+// @Success 200 {object} response.BaseResponse[[]res.TranscriptRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /admin/lessons/{lessonId}/transcripts [get]
+// @Security BearerAuth
+func (ctrl *TranscriptAdminController) GetByLesson(c *gin.Context) {
+	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
+		return
+	}
+
+	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), uint(lessonID))
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}

@@ -1,6 +1,7 @@
+import { notFound } from "next/navigation"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { TranscriptContent } from "@/features/lessons/components/admin/TranscriptContent"
-import { getAdminTranscripts } from "@/features/lessons/services/lessons.get"
+import { getAdminLesson, getAdminTranscripts } from "@/features/lessons/services/lessons.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function TranscriptsPage({
@@ -9,11 +10,12 @@ export default async function TranscriptsPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const res = await getAdminTranscripts(Number(id))
-
-  if (res.error) {
-    return <div className="py-12 text-center text-muted-foreground">{res.error.message}</div>
+  const lessonRes = await getAdminLesson(Number(id))
+  if (!lessonRes.data) {
+    notFound()
   }
+
+  const res = await getAdminTranscripts(Number(id))
 
   return (
     <AdminPageLayout backHref={ROUTES.ADMIN.LESSONS.LIST} backLabel="Back to Lessons">

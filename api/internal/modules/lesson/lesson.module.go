@@ -22,9 +22,10 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	admin := r.Group("/admin/lessons", middleware.ClerkAuthMiddleware(), middleware.RequireRole(enums.UserRoleAdmin))
 	{
 		admin.GET("", adminCtrl.List)
-		admin.GET("/:id", adminCtrl.Get)
 		admin.POST("", adminCtrl.Create)
-		admin.PUT("/:id", adminCtrl.Update)
-		admin.DELETE("/:id", adminCtrl.Delete)
+
+		admin.GET("/:lessonId", adminCtrl.Get)
+		admin.PUT("/:lessonId", adminCtrl.Update)
+		admin.DELETE("/:lessonId", adminCtrl.Delete)
 	}
 }

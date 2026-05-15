@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,11 +14,8 @@ export default async function LessonDetailPage({
   const { id } = await params
   const res = await getAdminLesson(Number(id))
 
-  if (res.error) {
-    return <div className="py-12 text-center text-muted-foreground">{res.error.message}</div>
-  }
   if (!res.data) {
-    return <div className="py-12 text-center text-muted-foreground">Lesson not found</div>
+    notFound()
   }
 
   const lesson = res.data

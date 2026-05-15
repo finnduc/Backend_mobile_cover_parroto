@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation"
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
@@ -12,11 +13,8 @@ export default async function ShadowingPage({
   const { id } = await params
   const lessonRes = await getLesson(Number(id))
 
-  if (lessonRes.error) {
-    return <div className="p-6 text-center text-muted-foreground">{lessonRes.error.message}</div>
-  }
   if (!lessonRes.data) {
-    return <div className="p-6 text-center text-muted-foreground">Lesson not found</div>
+    notFound()
   }
 
   const lesson = lessonRes.data

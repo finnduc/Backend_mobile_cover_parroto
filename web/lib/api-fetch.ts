@@ -1,13 +1,15 @@
 'server-only'
 import type { BaseResponse } from "@/types/base-response";
-import { snakeToCamel } from "./case";
+import { snakeToCamel, camelToSnake } from "./case";
 import { auth } from "@clerk/nextjs/server";
 
 type ApiFetchOptions = {
   baseUrl?: string;
   withCredentials?: boolean;
   query?: Record<string, any>;
-} & RequestInit;
+  body?: Record<string, any> | BodyInit | null;
+  tags?: string[];
+} & Omit<RequestInit, "body">;
 
 export async function apiFetch<T = any>(
   url: string,
@@ -19,6 +21,7 @@ export async function apiFetch<T = any>(
       withCredentials = false,
       baseUrl = process.env.API_URL,
       query,
+      tags,
       ...fetchOptions
     } = options || {};
 
@@ -53,6 +56,12 @@ export async function apiFetch<T = any>(
       });
     }
 
+    let body = fetchOptions.body;
+    if (body && typeof body === "object" && !(body instanceof FormData) && !(body instanceof Blob) && !(body instanceof URLSearchParams) && !(body instanceof ArrayBuffer) && !(body instanceof ReadableStream)) {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify(camelToSnake(body));
+    }
+
     const queryString = searchParams.toString();
 
     const fullUrl = `${baseUrl}${url}${queryString ? `?${queryString}` : ""}`;
@@ -62,23 +71,18 @@ export async function apiFetch<T = any>(
     const response = await fetch(fullUrl, {
       method: fetchOptions.method || "GET",
       ...fetchOptions,
-      headers
+      headers,
+      body,
+      ...(tags && { next: { tags } }),
     });
 
     if (!response.ok) {
       let message = "Unknown error";
       try {
         const errorData = await response.json();
-        message = errorData.error.message || errorData.message || message;
+        message = errorData.error?.message || errorData.message || message;
       } catch (_) { }
-      return {
-        data: null,
-        error: {
-          code: response.status,
-          message,
-        },
-        meta: undefined,
-      } as BaseResponse<T>;
+      throw { code: response.status, message };
     }
 
     let rawData: any;
@@ -92,20 +96,15 @@ export async function apiFetch<T = any>(
     }
 
     const data = snakeToCamel<any>(rawData);
+    const resultData = data.data !== undefined ? data.data : data;
+    const resultMeta = data.pagination || data.meta
+      ? { pagination: data.pagination, ...data.meta }
+      : undefined;
 
-    if (data.pagination || data.meta) {
-      return {
-        data: data.data ? (data.data as T) : ([] as T),
-        error: null,
-        meta: {
-          pagination: data.pagination,
-          ...data.meta,
-        },
-      } as BaseResponse<T>;
-    }
     return {
-      data: data.data !== undefined ? (data.data as T) : (data as T),
+      data: resultData as T,
       error: null,
+      ...(resultMeta && { meta: resultMeta }),
     } as BaseResponse<T>;
   } catch (error: any) {
     console.error(error);
@@ -115,7 +114,6 @@ export async function apiFetch<T = any>(
         code: error.code || 500,
         message: error.message || "Unknown error",
       },
-      meta: undefined,
     } as BaseResponse<T>;
   }
 }

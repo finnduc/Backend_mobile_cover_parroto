@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTable } from "@/components/common/DataTable"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, Save } from "lucide-react"
+import { createAdminTranscript, updateAdminTranscript, deleteAdminTranscript } from "@/features/lessons/services/transcripts.action"
+import { toast } from "sonner"
 import type { Transcript } from "@/types/lessons.models"
 import type { Column } from "@/components/common/DataTable"
 
@@ -18,32 +20,48 @@ export function TranscriptContent({
 }) {
   const [transcripts, setTranscripts] = useState(initialTranscripts)
 
-  const addNew = () => {
-    const newId = Math.max(0, ...transcripts.map((t) => t.id)) + 1
+  const addNew = async () => {
     const maxSeq = Math.max(0, ...transcripts.map((t) => t.sequence))
-    setTranscripts([
-      ...transcripts,
-      {
-        id: newId,
-        lessonId,
-        sequence: maxSeq + 1,
-        content: "",
-        phonetic: "",
-        vietnamese: "",
-        startTimestamp: 0,
-        endTimestamp: 0,
-      },
-    ])
+    const res = await createAdminTranscript({
+      lessonId,
+      sequence: maxSeq + 1,
+      content: "",
+      phonetic: "",
+      vietnamese: "",
+      startTimestamp: 0,
+      endTimestamp: 0,
+    })
+    if (res.error) {
+      toast.error(res.error.message)
+    }
   }
 
-  const remove = (id: number) => {
-    setTranscripts((prev) => prev.filter((t) => t.id !== id))
+  const remove = async (id: number) => {
+    const res = await deleteAdminTranscript(id, lessonId)
+    if (res.error) {
+      toast.error(res.error.message)
+    }
   }
 
   const update = (id: number, field: keyof Transcript, value: string | number) => {
     setTranscripts((prev) =>
       prev.map((t) => (t.id === id ? { ...t, [field]: value } : t))
     )
+  }
+
+  const saveRow = async (t: Transcript) => {
+    const res = await updateAdminTranscript(t.id, {
+      lessonId: t.lessonId,
+      sequence: t.sequence,
+      content: t.content,
+      phonetic: t.phonetic,
+      vietnamese: t.vietnamese,
+      startTimestamp: t.startTimestamp,
+      endTimestamp: t.endTimestamp,
+    })
+    if (res.error) {
+      toast.error(res.error.message)
+    }
   }
 
   const columns: Column<Transcript>[] = [
@@ -55,6 +73,7 @@ export function TranscriptContent({
         <Input
           value={t.content}
           onChange={(e) => update(t.id, "content", e.target.value)}
+          onBlur={() => saveRow(t)}
           className="h-8 text-sm"
         />
       ),
@@ -67,6 +86,7 @@ export function TranscriptContent({
           type="number"
           value={t.startTimestamp}
           onChange={(e) => update(t.id, "startTimestamp", Number(e.target.value))}
+          onBlur={() => saveRow(t)}
           className="h-8 w-full text-sm"
         />
       ),
@@ -79,6 +99,7 @@ export function TranscriptContent({
           type="number"
           value={t.endTimestamp}
           onChange={(e) => update(t.id, "endTimestamp", Number(e.target.value))}
+          onBlur={() => saveRow(t)}
           className="h-8 w-full text-sm"
         />
       ),
@@ -87,9 +108,14 @@ export function TranscriptContent({
       key: "actions",
       header: "",
       render: (t) => (
-        <Button size="icon" variant="ghost" onClick={() => remove(t.id)}>
-          <Trash2 className="size-4 text-destructive" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button size="icon" variant="ghost" onClick={() => saveRow(t)}>
+            <Save className="size-4 text-primary" />
+          </Button>
+          <Button size="icon" variant="ghost" onClick={() => remove(t.id)}>
+            <Trash2 className="size-4 text-destructive" />
+          </Button>
+        </div>
       ),
     },
   ]

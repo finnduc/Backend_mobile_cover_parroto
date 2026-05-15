@@ -1,6 +1,7 @@
+import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
-import { mockUsers } from "@/features/users/mock-data"
+import { getAdminUser } from "@/features/users/services/users.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function UserDetailPage({
@@ -9,11 +10,13 @@ export default async function UserDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const user = mockUsers.find((u) => u.id === Number(id))
+  const res = await getAdminUser(Number(id))
 
-  if (!user) {
-    return <div className="py-12 text-center text-muted-foreground">User not found</div>
+  if (!res.data) {
+    notFound()
   }
+
+  const user = res.data
 
   return (
     <AdminPageLayout backHref={ROUTES.ADMIN.USERS.LIST} backLabel="Back to Users" maxWidth="narrow">
