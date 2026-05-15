@@ -8,6 +8,7 @@ import (
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
 	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
 	"go-cover-parroto/internal/modules/lesson/services"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -113,7 +114,7 @@ func (ctrl *LessonAdminController) Create(c *gin.Context) {
 // @Router /admin/lessons/{id} [put]
 // @Security BearerAuth
 func (ctrl *LessonAdminController) Update(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
@@ -144,7 +145,7 @@ func (ctrl *LessonAdminController) Update(c *gin.Context) {
 // @Router /admin/lessons/{id} [delete]
 // @Security BearerAuth
 func (ctrl *LessonAdminController) Delete(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := strconv.ParseUint(c.Param("lessonId"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return

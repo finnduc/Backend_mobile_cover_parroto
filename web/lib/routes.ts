@@ -22,8 +22,7 @@ export const ROUTES = {
     DASHBOARD: "/admin/dashboard",
     USERS: {
       LIST: "/admin/users",
-      DETAIL: (id: string) => `/admin/users/${id}`, // Page - complex
-      // Create/Edit via modal on LIST page
+      // Create/Edit/Delete via modal on LIST page (Clerk)
     },
     CATEGORIES: {
       LIST: "/admin/categories",

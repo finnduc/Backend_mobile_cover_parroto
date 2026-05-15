@@ -2,31 +2,30 @@
 
 import { apiFetch } from "@/lib/api-fetch"
 import { CACHE_TAGS } from "@/lib/tags"
-import { redirect } from "next/navigation"
+import { updateTag, refresh } from "next/cache"
 import type { BaseResponse } from "@/types/base-response"
 import type { Lesson } from "@/types/lessons.models"
-import { updateTag, refresh } from "next/cache"
-export type CreateLessonInput = Omit<Lesson, "id" | "createdAt">
-export type UpdateLessonInput = Partial<Omit<Lesson, "id" | "createdAt">>
+import type { CreateLessonDto, UpdateLessonDto } from "@/features/lessons/dtos/lesson.dto"
 
 export async function createAdminLesson(
-  body: CreateLessonInput
+  body: CreateLessonDto
 ): Promise<BaseResponse<Lesson>> {
   const res = await apiFetch<Lesson>("/admin/lessons", {
     method: "POST",
     body,
     withCredentials: true,
   })
+
   if (!res.error) {
-    const { updateTag } = await import("next/cache")
     updateTag(CACHE_TAGS.lessons)
+    refresh()
   }
   return res
 }
 
 export async function updateAdminLesson(
   id: number,
-  body: UpdateLessonInput
+  body: UpdateLessonDto
 ): Promise<BaseResponse<Lesson>> {
   const res = await apiFetch<Lesson>(`/admin/lessons/${id}`, {
     method: "PUT",
@@ -34,9 +33,9 @@ export async function updateAdminLesson(
     withCredentials: true,
   })
   if (!res.error) {
-    const { updateTag } = await import("next/cache")
     updateTag(CACHE_TAGS.lessons)
     updateTag(CACHE_TAGS.lesson(id))
+    refresh()
   }
   return res
 }
@@ -47,7 +46,6 @@ export async function deleteAdminLesson(id: number): Promise<BaseResponse<void>>
     withCredentials: true,
   })
   if (!res.error) {
-    
     updateTag(CACHE_TAGS.lessons)
     updateTag(CACHE_TAGS.lesson(id))
     refresh()

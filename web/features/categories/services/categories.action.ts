@@ -2,15 +2,13 @@
 
 import { apiFetch } from "@/lib/api-fetch"
 import { CACHE_TAGS } from "@/lib/tags"
+import { updateTag, refresh } from "next/cache"
 import type { BaseResponse } from "@/types/base-response"
 import type { Category } from "@/types/categories.models"
-import { updateTag, refresh } from "next/cache"
-
-export type CreateCategoryInput = Omit<Category, "id">
-export type UpdateCategoryInput = Partial<Omit<Category, "id">>
+import type { CreateCategoryDto, UpdateCategoryDto } from "@/features/categories/dtos/category.dto"
 
 export async function createAdminCategory(
-  body: CreateCategoryInput
+  body: CreateCategoryDto
 ): Promise<BaseResponse<Category>> {
   const res = await apiFetch<Category>("/admin/categories", {
     method: "POST",
@@ -18,7 +16,6 @@ export async function createAdminCategory(
     withCredentials: true,
   })
   if (!res.error) {
-
     updateTag(CACHE_TAGS.categories)
     refresh()
   }
@@ -27,7 +24,7 @@ export async function createAdminCategory(
 
 export async function updateAdminCategory(
   id: number,
-  body: UpdateCategoryInput
+  body: UpdateCategoryDto
 ): Promise<BaseResponse<Category>> {
   const res = await apiFetch<Category>(`/admin/categories/${id}`, {
     method: "PUT",
@@ -35,7 +32,6 @@ export async function updateAdminCategory(
     withCredentials: true,
   })
   if (!res.error) {
-
     updateTag(CACHE_TAGS.categories)
     updateTag(CACHE_TAGS.category(id))
     refresh()
@@ -49,7 +45,6 @@ export async function deleteAdminCategory(id: number): Promise<BaseResponse<void
     withCredentials: true,
   })
   if (!res.error) {
-
     updateTag(CACHE_TAGS.categories)
     updateTag(CACHE_TAGS.category(id))
     refresh()

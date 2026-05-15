@@ -1,7 +1,7 @@
 "use client"
 
 import type { Lesson } from "@/types/lessons.models"
-import { mockCategories } from "@/features/lessons/mock-data"
+import type { Category } from "@/types/categories.models"
 import { useForm, Controller } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -24,9 +24,11 @@ export type LessonFormValues = Pick<Lesson, "title" | "description" | "thumbnail
 
 export function LessonForm({
   defaultValues,
+  categories,
   onSubmit,
 }: {
   defaultValues?: LessonFormValues
+  categories: Category[]
   onSubmit: (values: LessonFormValues) => void
 }) {
   const form = useForm<LessonFormValues>({
@@ -145,7 +147,7 @@ export function LessonForm({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockCategories.map((c) => (
+                  {categories.map((c) => (
                     <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
                   ))}
                 </SelectContent>

@@ -1,22 +1,19 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import type { Lesson } from "@/types/lessons.models"
+import type { Category } from "@/types/categories.models"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LessonForm, type LessonFormValues } from "@/features/lessons/components/admin/LessonForm"
 import { updateAdminLesson } from "@/features/lessons/services/lessons.action"
-import { ROUTES } from "@/lib/routes"
 import { toast } from "sonner"
-import type { Lesson } from "@/types/lessons.models"
 
-export function LessonEditContent({ lesson }: { lesson: Lesson }) {
-  const router = useRouter()
-
+export function LessonEditContent({ lesson, categories }: { lesson: Lesson; categories: Category[] }) {
   const handleSubmit = async (values: LessonFormValues) => {
     const res = await updateAdminLesson(lesson.id, values)
     if (res.error) {
       toast.error(res.error.message)
     } else {
-      router.push(ROUTES.ADMIN.LESSONS.LIST)
+      toast.success("Lesson updated successfully")
     }
   }
 
@@ -36,6 +33,7 @@ export function LessonEditContent({ lesson }: { lesson: Lesson }) {
             level: lesson.level,
             categoryId: lesson.categoryId,
           }}
+          categories={categories}
           onSubmit={handleSubmit}
         />
       </CardContent>

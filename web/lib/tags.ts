@@ -6,5 +6,5 @@ export const CACHE_TAGS = {
   transcripts: "transcripts",
   transcript: (id: number) => `transcript-${id}`,
   users: "users",
-  user: (id: number) => `user-${id}`,
+  user: (id: string) => `user-${id}`,
 } as const

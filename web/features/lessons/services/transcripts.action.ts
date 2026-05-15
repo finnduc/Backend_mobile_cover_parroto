@@ -2,15 +2,13 @@
 
 import { apiFetch } from "@/lib/api-fetch"
 import { CACHE_TAGS } from "@/lib/tags"
+import { updateTag, refresh } from "next/cache"
 import type { BaseResponse } from "@/types/base-response"
 import type { Transcript } from "@/types/lessons.models"
-import { updateTag, refresh } from "next/cache"
-
-export type CreateTranscriptInput = Omit<Transcript, "id">
-export type UpdateTranscriptInput = Partial<Omit<Transcript, "id">>
+import type { CreateTranscriptDto, UpdateTranscriptDto } from "@/features/lessons/dtos/transcript.dto"
 
 export async function createAdminTranscript(
-  body: CreateTranscriptInput
+  body: CreateTranscriptDto
 ): Promise<BaseResponse<Transcript>> {
   const res = await apiFetch<Transcript>("/admin/transcripts", {
     method: "POST",
@@ -18,7 +16,6 @@ export async function createAdminTranscript(
     withCredentials: true,
   })
   if (!res.error) {
-    
     updateTag(CACHE_TAGS.transcripts)
     updateTag(CACHE_TAGS.lesson(body.lessonId))
     refresh()
@@ -28,7 +25,7 @@ export async function createAdminTranscript(
 
 export async function updateAdminTranscript(
   id: number,
-  body: UpdateTranscriptInput
+  body: UpdateTranscriptDto
 ): Promise<BaseResponse<Transcript>> {
   const res = await apiFetch<Transcript>(`/admin/transcripts/${id}`, {
     method: "PUT",
@@ -36,7 +33,6 @@ export async function updateAdminTranscript(
     withCredentials: true,
   })
   if (!res.error) {
-    
     updateTag(CACHE_TAGS.transcripts)
     if (body.lessonId) {
       updateTag(CACHE_TAGS.lesson(body.lessonId))
@@ -55,7 +51,6 @@ export async function deleteAdminTranscript(
     withCredentials: true,
   })
   if (!res.error) {
-    
     updateTag(CACHE_TAGS.transcripts)
     if (lessonId) {
       updateTag(CACHE_TAGS.lesson(lessonId))
