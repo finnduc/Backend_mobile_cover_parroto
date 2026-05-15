@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	coreError "go-cover-parroto/internal/core/errors"
 	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/database/transaction"
 	"go-cover-parroto/internal/database/models"
@@ -169,6 +170,281 @@ func TestTranscriptService_ReplaceByLesson(t *testing.T) {
 				assert.Len(t, result, tt.wantLen)
 			}
 			tRepo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestTranscriptService_GetByID(t *testing.T) {
+	tests := []struct {
+		name     string
+		id       uint
+		setup    func(*repositories.MockTranscriptRepo)
+		wantSeq  int
+		wantErr  bool
+		wantCode int
+	}{
+		{
+			name: "success",
+			id:   1,
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(&models.Transcript{ID: 1, Sequence: 3, Content: "Test"}, nil)
+			},
+			wantSeq: 3,
+		},
+		{
+			name: "not found returns 404",
+			id:   999,
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
+			},
+			wantErr:  true,
+			wantCode: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := new(repositories.MockTranscriptRepo)
+			tt.setup(repo)
+			svc := NewTranscriptService(repo, nil)
+
+			result, appErr := svc.GetByID(context.Background(), tt.id)
+
+			if tt.wantErr {
+				assert.Nil(t, result)
+				assert.NotNil(t, appErr)
+				assert.Equal(t, tt.wantCode, appErr.Code)
+			} else {
+				assert.Nil(t, appErr)
+				assert.Equal(t, tt.wantSeq, result.Sequence)
+			}
+			repo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestTranscriptService_Create(t *testing.T) {
+	tests := []struct {
+		name     string
+		body     req.CreateTranscriptReq
+		setup    func(*repositories.MockTranscriptRepo)
+		wantSeq  int
+		wantErr  bool
+		wantCode int
+	}{
+		{
+			name: "success",
+			body: req.CreateTranscriptReq{LessonID: 1, Sequence: 5, Content: "New transcript"},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("Create", mock.Anything, mock.MatchedBy(func(t *models.Transcript) bool {
+					return t.Sequence == 5 && t.Content == "New transcript"
+				})).Return(nil)
+			},
+			wantSeq: 5,
+		},
+		{
+			name: "db error returns 500",
+			body: req.CreateTranscriptReq{LessonID: 1, Sequence: 1, Content: "x"},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("Create", mock.Anything, mock.Anything).Return(errors.New("db error"))
+			},
+			wantErr:  true,
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := new(repositories.MockTranscriptRepo)
+			tt.setup(repo)
+			svc := NewTranscriptService(repo, nil)
+
+			result, appErr := svc.Create(context.Background(), tt.body)
+
+			if tt.wantErr {
+				assert.Nil(t, result)
+				assert.NotNil(t, appErr)
+				assert.Equal(t, tt.wantCode, appErr.Code)
+			} else {
+				assert.Nil(t, appErr)
+				assert.Equal(t, tt.wantSeq, result.Sequence)
+			}
+			repo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestTranscriptService_BulkCreate(t *testing.T) {
+	tests := []struct {
+		name     string
+		lessonID uint
+		body     req.BulkCreateTranscriptReq
+		setup    func(*repositories.MockTranscriptRepo)
+		wantLen  int
+		wantErr  bool
+		wantCode int
+	}{
+		{
+			name:     "success",
+			lessonID: 1,
+			body: req.BulkCreateTranscriptReq{
+				Transcripts: []req.BulkCreateTranscriptItem{
+					{Sequence: 1, Content: "First"},
+					{Sequence: 2, Content: "Second"},
+				},
+			},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("BulkCreate", mock.Anything, mock.Anything).Return(nil)
+			},
+			wantLen: 2,
+		},
+		{
+			name:     "db error returns 500",
+			lessonID: 1,
+			body: req.BulkCreateTranscriptReq{
+				Transcripts: []req.BulkCreateTranscriptItem{
+					{Sequence: 1, Content: "x"},
+				},
+			},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("BulkCreate", mock.Anything, mock.Anything).Return(errors.New("db error"))
+			},
+			wantErr:  true,
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := new(repositories.MockTranscriptRepo)
+			tt.setup(repo)
+			svc := NewTranscriptService(repo, nil)
+
+			result, appErr := svc.BulkCreate(context.Background(), tt.lessonID, tt.body)
+
+			if tt.wantErr {
+				assert.Nil(t, result)
+				assert.NotNil(t, appErr)
+				assert.Equal(t, tt.wantCode, appErr.Code)
+			} else {
+				assert.Nil(t, appErr)
+				assert.Len(t, result, tt.wantLen)
+			}
+			repo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestTranscriptService_Update(t *testing.T) {
+	existing := &models.Transcript{ID: 1, Sequence: 1, Content: "Original"}
+	seq := 2
+	content := "Updated"
+	tests := []struct {
+		name     string
+		id       uint
+		body     req.UpdateTranscriptReq
+		setup    func(*repositories.MockTranscriptRepo)
+		wantSeq  int
+		wantErr  bool
+		wantCode int
+	}{
+		{
+			name: "success",
+			id:   1,
+			body: req.UpdateTranscriptReq{Sequence: &seq, Content: &content},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
+				r.On("Update", mock.Anything, mock.MatchedBy(func(t *models.Transcript) bool {
+					return t.Sequence == 2 && t.Content == "Updated"
+				})).Return(nil)
+			},
+			wantSeq: 2,
+		},
+		{
+			name: "not found returns 404",
+			id:   999,
+			body: req.UpdateTranscriptReq{Sequence: &seq},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, errors.New("record not found"))
+			},
+			wantErr:  true,
+			wantCode: http.StatusNotFound,
+		},
+		{
+			name: "update error returns 500",
+			id:   1,
+			body: req.UpdateTranscriptReq{Sequence: &seq, Content: &content},
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
+				r.On("Update", mock.Anything, mock.Anything).Return(errors.New("db error"))
+			},
+			wantErr:  true,
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := new(repositories.MockTranscriptRepo)
+			tt.setup(repo)
+			svc := NewTranscriptService(repo, nil)
+
+			result, appErr := svc.Update(context.Background(), tt.id, tt.body)
+
+			if tt.wantErr {
+				assert.Nil(t, result)
+				assert.NotNil(t, appErr)
+				assert.Equal(t, tt.wantCode, appErr.Code)
+			} else {
+				assert.Nil(t, appErr)
+				assert.Equal(t, tt.wantSeq, result.Sequence)
+			}
+			repo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestTranscriptService_Delete(t *testing.T) {
+	tests := []struct {
+		name     string
+		id       uint
+		setup    func(*repositories.MockTranscriptRepo)
+		wantErr  bool
+		wantCode int
+	}{
+		{
+			name: "success",
+			id:   1,
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("Delete", mock.Anything, uint(1)).Return(nil)
+			},
+		},
+		{
+			name: "db error returns 500",
+			id:   2,
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("Delete", mock.Anything, uint(2)).Return(errors.New("db error"))
+			},
+			wantErr:  true,
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := new(repositories.MockTranscriptRepo)
+			tt.setup(repo)
+			svc := NewTranscriptService(repo, nil)
+
+			appErr := svc.Delete(context.Background(), tt.id)
+
+			if tt.wantErr {
+				assert.NotNil(t, appErr)
+				assert.Equal(t, tt.wantCode, appErr.Code)
+			} else {
+				assert.Nil(t, appErr)
+			}
+			repo.AssertExpectations(t)
 		})
 	}
 }
