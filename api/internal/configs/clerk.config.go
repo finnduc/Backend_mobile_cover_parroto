@@ -10,7 +10,7 @@ type ClerkConfig struct {
 
 func loadFirebaseConfig() ClerkConfig {
 	return ClerkConfig{
-		ClerkSecret: utils.GetEnv("CLERK_SECRET", ""),
+		ClerkSecret: utils.GetEnv("CLERK_SECRET_KEY", ""),
 		// ProjectID:       utils.GetEnv("FIREBASE_PROJECT_ID", ""),
 		// WebAPIKey:       utils.GetEnv("FIREBASE_WEB_API_KEY", ""),
 	}
