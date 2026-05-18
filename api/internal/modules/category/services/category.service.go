@@ -9,9 +9,7 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/category/dtos/req"
-	"go-cover-parroto/internal/modules/category/dtos/res"
 	db_repos "go-cover-parroto/internal/database/repositories"
-	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -20,10 +18,10 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ICategoryService interface {
-	List(ctx context.Context, query req.ListCategoryQuery) (*response.PaginatedResponse[res.CategoryRes], *response.AppError)
-	GetByID(ctx context.Context, id uint) (*res.CategoryRes, *response.AppError)
-	Create(ctx context.Context, body req.CreateCategoryReq) (*res.CategoryRes, *response.AppError)
-	Update(ctx context.Context, id uint, body req.UpdateCategoryReq) (*res.CategoryRes, *response.AppError)
+	List(ctx context.Context, query req.ListCategoryQuery) (*response.PaginatedResult[*models.Category], *response.AppError)
+	GetByID(ctx context.Context, id uint) (*models.Category, *response.AppError)
+	Create(ctx context.Context, body req.CreateCategoryReq) (*models.Category, *response.AppError)
+	Update(ctx context.Context, id uint, body req.UpdateCategoryReq) (*models.Category, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
 }
 
@@ -35,7 +33,7 @@ func NewCategoryService(repo db_repos.ICategoryRepo) ICategoryService {
 	return &categoryService{repo: repo}
 }
 
-func (s *categoryService) GetByID(ctx context.Context, id uint) (*res.CategoryRes, *response.AppError) {
+func (s *categoryService) GetByID(ctx context.Context, id uint) (*models.Category, *response.AppError) {
 	log := sLog().With("categoryId", id)
 	log.Infow("getting category by id")
 	category, err := s.repo.FindByID(ctx, id)
@@ -46,14 +44,10 @@ func (s *categoryService) GetByID(ctx context.Context, id uint) (*res.CategoryRe
 		log.Errorw("failed to get category", "error", err)
 		return nil, response.Internal("failed to get category")
 	}
-	var result res.CategoryRes
-	if err := utils.MapToDTO(category, &result); err != nil {
-		return nil, response.Internal("failed to map category")
-	}
-	return &result, nil
+	return category, nil
 }
 
-func (s *categoryService) Create(ctx context.Context, body req.CreateCategoryReq) (*res.CategoryRes, *response.AppError) {
+func (s *categoryService) Create(ctx context.Context, body req.CreateCategoryReq) (*models.Category, *response.AppError) {
 	log := sLog()
 	log.Infow("creating category")
 	category := &models.Category{Name: body.Name}
@@ -62,14 +56,10 @@ func (s *categoryService) Create(ctx context.Context, body req.CreateCategoryReq
 		return nil, response.Internal("failed to create category")
 	}
 	log.Infow("category created", "categoryId", category.ID)
-	var result res.CategoryRes
-	if err := utils.MapToDTO(category, &result); err != nil {
-		return nil, response.Internal("failed to map category")
-	}
-	return &result, nil
+	return category, nil
 }
 
-func (s *categoryService) Update(ctx context.Context, id uint, body req.UpdateCategoryReq) (*res.CategoryRes, *response.AppError) {
+func (s *categoryService) Update(ctx context.Context, id uint, body req.UpdateCategoryReq) (*models.Category, *response.AppError) {
 	log := sLog().With("categoryId", id)
 	log.Infow("updating category")
 	category, err := s.repo.FindByID(ctx, id)
@@ -82,11 +72,7 @@ func (s *categoryService) Update(ctx context.Context, id uint, body req.UpdateCa
 		return nil, response.Internal("failed to update category")
 	}
 	log.Infow("category updated")
-	var result res.CategoryRes
-	if err := utils.MapToDTO(category, &result); err != nil {
-		return nil, response.Internal("failed to map category")
-	}
-	return &result, nil
+	return category, nil
 }
 
 func (s *categoryService) Delete(ctx context.Context, id uint) *response.AppError {
@@ -100,7 +86,7 @@ func (s *categoryService) Delete(ctx context.Context, id uint) *response.AppErro
 	return nil
 }
 
-func (s *categoryService) List(ctx context.Context, query req.ListCategoryQuery) (*response.PaginatedResponse[res.CategoryRes], *response.AppError) {
+func (s *categoryService) List(ctx context.Context, query req.ListCategoryQuery) (*response.PaginatedResult[*models.Category], *response.AppError) {
 	log := sLog()
 	log.Infow("listing categories")
 	result, err := s.repo.FindAll(ctx, query.ToQuery())
@@ -108,9 +94,5 @@ func (s *categoryService) List(ctx context.Context, query req.ListCategoryQuery)
 		log.Errorw("failed to list categories", "error", err)
 		return nil, response.Internal("failed to list categories")
 	}
-	var categories []res.CategoryRes
-	if err := utils.MapToDTOs(result.Data, &categories); err != nil {
-		return nil, response.Internal("failed to map categories")
-	}
-	return &response.PaginatedResponse[res.CategoryRes]{Data: categories, Meta: result.Meta}, nil
+	return result, nil
 }

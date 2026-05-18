@@ -5,8 +5,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
-	_ "go-cover-parroto/internal/modules/lesson/dtos/res"
+	"go-cover-parroto/internal/modules/lesson/dtos/res"
 	"go-cover-parroto/internal/modules/lesson/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,12 +37,17 @@ func (ctrl *LessonController) List(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	results, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(results.Data, results.Meta))
+	var lessons []res.LessonRes
+	if err := utils.MapToDTOs(result.Data, &lessons); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map lessons")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.LessonRes]{Data: lessons, Meta: result.Meta}, result.Meta))
 }
 
 // Get godoc
@@ -66,5 +72,10 @@ func (ctrl *LessonController) Get(c *gin.Context) {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.Success(lesson))
+	var result res.LessonRes
+	if err := utils.MapToDTO(lesson, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map lesson")))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
 }

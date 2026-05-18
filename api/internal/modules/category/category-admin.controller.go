@@ -6,8 +6,10 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/category/dtos/req"
-	_ "go-cover-parroto/internal/modules/category/dtos/res"
+	"go-cover-parroto/internal/modules/category/dtos/res"
 	"go-cover-parroto/internal/modules/category/services"
+	"go-cover-parroto/internal/utils"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +44,12 @@ func (ctrl *CategoryAdminController) List(c *gin.Context) {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(result.Data, result.Meta))
+	var categories []res.CategoryRes
+	if err := utils.MapToDTOs(result.Data, &categories); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map categories")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.CategoryRes]{Data: categories, Meta: result.Meta}, result.Meta))
 }
 
 // GetByID godoc
@@ -63,9 +70,14 @@ func (ctrl *CategoryAdminController) GetByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
 	}
-	result, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
+	category, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.CategoryRes
+	if err := utils.MapToDTO(category, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map category")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -89,9 +101,14 @@ func (ctrl *CategoryAdminController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Create(c.Request.Context(), body)
+	category, appErr := ctrl.svc.Create(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.CategoryRes
+	if err := utils.MapToDTO(category, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map category")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -121,9 +138,14 @@ func (ctrl *CategoryAdminController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Update(c.Request.Context(), uint(id), body)
+	category, appErr := ctrl.svc.Update(c.Request.Context(), uint(id), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.CategoryRes
+	if err := utils.MapToDTO(category, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map category")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))

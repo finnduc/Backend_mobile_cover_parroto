@@ -11,8 +11,6 @@ import (
 	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/database/transaction"
 	req "go-cover-parroto/internal/modules/transcript/dtos/req"
-	transcriptres "go-cover-parroto/internal/modules/transcript/dtos/res"
-	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -21,12 +19,12 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ITranscriptService interface {
-	GetByLesson(ctx context.Context, lessonID uint) ([]transcriptres.TranscriptRes, *response.AppError)
-	GetByID(ctx context.Context, id uint) (*transcriptres.TranscriptRes, *response.AppError)
-	Create(ctx context.Context, body req.CreateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError)
-	BulkCreate(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]transcriptres.TranscriptRes, *response.AppError)
-	ReplaceByLesson(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]transcriptres.TranscriptRes, *response.AppError)
-	Update(ctx context.Context, id uint, body req.UpdateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError)
+	GetByLesson(ctx context.Context, lessonID uint) ([]*models.Transcript, *response.AppError)
+	GetByID(ctx context.Context, id uint) (*models.Transcript, *response.AppError)
+	Create(ctx context.Context, body req.CreateTranscriptReq) (*models.Transcript, *response.AppError)
+	BulkCreate(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]*models.Transcript, *response.AppError)
+	ReplaceByLesson(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]*models.Transcript, *response.AppError)
+	Update(ctx context.Context, id uint, body req.UpdateTranscriptReq) (*models.Transcript, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
 }
 
@@ -39,7 +37,7 @@ func NewTranscriptService(repo db_repos.ITranscriptRepo, uow transaction.UnitOfW
 	return &transcriptService{repo: repo, uow: uow}
 }
 
-func (s *transcriptService) GetByID(ctx context.Context, id uint) (*transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) GetByID(ctx context.Context, id uint) (*models.Transcript, *response.AppError) {
 	log := sLog().With("transcriptId", id)
 	log.Infow("getting transcript by id")
 	transcript, err := s.repo.FindByID(ctx, id)
@@ -50,14 +48,10 @@ func (s *transcriptService) GetByID(ctx context.Context, id uint) (*transcriptre
 		log.Errorw("failed to get transcript", "error", err)
 		return nil, response.Internal("failed to get transcript")
 	}
-	var result transcriptres.TranscriptRes
-	if err := utils.MapToDTO(transcript, &result); err != nil {
-		return nil, response.Internal("failed to map transcript")
-	}
-	return &result, nil
+	return transcript, nil
 }
 
-func (s *transcriptService) GetByLesson(ctx context.Context, lessonID uint) ([]transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) GetByLesson(ctx context.Context, lessonID uint) ([]*models.Transcript, *response.AppError) {
 	log := sLog().With("lessonId", lessonID)
 	log.Infow("getting transcripts by lesson")
 	transcripts, err := s.repo.FindByLesson(ctx, lessonID)
@@ -65,15 +59,10 @@ func (s *transcriptService) GetByLesson(ctx context.Context, lessonID uint) ([]t
 		log.Errorw("failed to get transcripts by lesson", "error", err)
 		return nil, response.Internal("failed to get transcripts")
 	}
-
-	var result []transcriptres.TranscriptRes
-	if err := utils.MapToDTOs(transcripts, &result); err != nil {
-		return nil, response.Internal("failed to map transcripts")
-	}
-	return result, nil
+	return transcripts, nil
 }
 
-func (s *transcriptService) Create(ctx context.Context, body req.CreateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) Create(ctx context.Context, body req.CreateTranscriptReq) (*models.Transcript, *response.AppError) {
 	log := sLog().With("lessonId", body.LessonID)
 	log.Infow("creating transcript")
 	transcript := &models.Transcript{
@@ -90,14 +79,10 @@ func (s *transcriptService) Create(ctx context.Context, body req.CreateTranscrip
 		return nil, response.Internal("failed to create transcript")
 	}
 	log.Infow("transcript created", "transcriptId", transcript.ID)
-	var result transcriptres.TranscriptRes
-	if err := utils.MapToDTO(transcript, &result); err != nil {
-		return nil, response.Internal("failed to map transcript")
-	}
-	return &result, nil
+	return transcript, nil
 }
 
-func (s *transcriptService) BulkCreate(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) BulkCreate(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]*models.Transcript, *response.AppError) {
 	log := sLog().With("lessonId", lessonID, "count", len(body.Transcripts))
 	log.Infow("bulk creating transcripts")
 
@@ -120,18 +105,14 @@ func (s *transcriptService) BulkCreate(ctx context.Context, lessonID uint, body 
 	}
 
 	log.Infow("transcripts created", "count", len(transcripts))
-	var result []transcriptres.TranscriptRes
-	if err := utils.MapToDTOs(transcripts, &result); err != nil {
-		return nil, response.Internal("failed to map transcripts")
-	}
-	return result, nil
+	return transcripts, nil
 }
 
-func (s *transcriptService) ReplaceByLesson(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) ReplaceByLesson(ctx context.Context, lessonID uint, body req.BulkCreateTranscriptReq) ([]*models.Transcript, *response.AppError) {
 	log := sLog().With("lessonId", lessonID, "count", len(body.Transcripts))
 	log.Infow("replacing transcripts")
 
-	var result []transcriptres.TranscriptRes
+	var result []*models.Transcript
 	err := s.uow.Do(ctx, func(ctx context.Context, p transaction.IProvider) error {
 		tRepo := p.Transcript()
 
@@ -156,9 +137,7 @@ func (s *transcriptService) ReplaceByLesson(ctx context.Context, lessonID uint, 
 			return err
 		}
 
-		if err := utils.MapToDTOs(transcripts, &result); err != nil {
-			return err
-		}
+		result = transcripts
 		return nil
 	})
 
@@ -171,7 +150,7 @@ func (s *transcriptService) ReplaceByLesson(ctx context.Context, lessonID uint, 
 	return result, nil
 }
 
-func (s *transcriptService) Update(ctx context.Context, id uint, body req.UpdateTranscriptReq) (*transcriptres.TranscriptRes, *response.AppError) {
+func (s *transcriptService) Update(ctx context.Context, id uint, body req.UpdateTranscriptReq) (*models.Transcript, *response.AppError) {
 	log := sLog().With("transcriptId", id)
 	log.Infow("updating transcript")
 	transcript, err := s.repo.FindByID(ctx, id)
@@ -201,11 +180,7 @@ func (s *transcriptService) Update(ctx context.Context, id uint, body req.Update
 		return nil, response.Internal("failed to update transcript")
 	}
 	log.Infow("transcript updated")
-	var result transcriptres.TranscriptRes
-	if err := utils.MapToDTO(transcript, &result); err != nil {
-		return nil, response.Internal("failed to map transcript")
-	}
-	return &result, nil
+	return transcript, nil
 }
 
 func (s *transcriptService) Delete(ctx context.Context, id uint) *response.AppError {

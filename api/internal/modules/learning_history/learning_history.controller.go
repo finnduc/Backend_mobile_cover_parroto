@@ -5,8 +5,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
-	_ "go-cover-parroto/internal/modules/learning_history/dtos/res"
+	"go-cover-parroto/internal/modules/learning_history/dtos/res"
 	"go-cover-parroto/internal/modules/learning_history/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,9 +38,14 @@ func (ctrl *LearningHistoryController) Record(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Record(c.Request.Context(), body)
+	history, appErr := ctrl.svc.Record(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.LearningHistoryRes
+	if err := utils.MapToDTO(history, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map history")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -68,7 +74,12 @@ func (ctrl *LearningHistoryController) List(c *gin.Context) {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(result.Data, result.Meta))
+	var histories []res.LearningHistoryRes
+	if err := utils.MapToDTOs(result.Data, &histories); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map history")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.LearningHistoryRes]{Data: histories, Meta: result.Meta}, result.Meta))
 }
 
 // GetByLesson godoc
@@ -90,9 +101,14 @@ func (ctrl *LearningHistoryController) GetByLesson(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), body)
+	history, appErr := ctrl.svc.GetByLesson(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.LearningHistoryRes
+	if err := utils.MapToDTO(history, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map history")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))

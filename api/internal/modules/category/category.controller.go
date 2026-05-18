@@ -5,8 +5,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/category/dtos/req"
-	_ "go-cover-parroto/internal/modules/category/dtos/res"
+	"go-cover-parroto/internal/modules/category/dtos/res"
 	"go-cover-parroto/internal/modules/category/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,10 +35,15 @@ func (ctrl *CategoryController) List(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	results, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.List(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(results.Data, results.Meta))
+	var categories []res.CategoryRes
+	if err := utils.MapToDTOs(result.Data, &categories); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map categories")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.CategoryRes]{Data: categories, Meta: result.Meta}, result.Meta))
 }

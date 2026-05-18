@@ -5,8 +5,9 @@ import (
 	"strconv"
 
 	"go-cover-parroto/internal/core/response"
-	_ "go-cover-parroto/internal/modules/transcript/dtos/res"
+	"go-cover-parroto/internal/modules/transcript/dtos/res"
 	"go-cover-parroto/internal/modules/transcript/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,9 +39,14 @@ func (ctrl *TranscriptController) GetByLesson(c *gin.Context) {
 		return
 	}
 
-	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), uint(lessonID))
+	transcripts, appErr := ctrl.svc.GetByLesson(c.Request.Context(), uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result []res.TranscriptRes
+	if err := utils.MapToDTOs(transcripts, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcripts")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))

@@ -6,10 +6,9 @@ import (
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
-	"go-cover-parroto/internal/modules/bookmark/dtos/res"
 	db_repos "go-cover-parroto/internal/database/repositories"
-	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +19,7 @@ func sLog() *zap.SugaredLogger {
 type IBookmarkService interface {
 	AddBookmark(ctx context.Context, body req.AddBookmarkReq) *response.AppError
 	RemoveBookmark(ctx context.Context, body req.RemoveBookmarkReq) *response.AppError
-	List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError)
+	List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResult[*models.Bookmark], *response.AppError)
 }
 
 type bookmarkService struct {
@@ -63,7 +62,7 @@ func (s *bookmarkService) RemoveBookmark(ctx context.Context, body req.RemoveBoo
 	return nil
 }
 
-func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResponse[res.BookmarkRes], *response.AppError) {
+func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery) (*response.PaginatedResult[*models.Bookmark], *response.AppError) {
 	log := sLog()
 	log.Infow("listing bookmarks")
 	if query.UserID != nil {
@@ -77,15 +76,5 @@ func (s *bookmarkService) List(ctx context.Context, query req.ListBookmarkQuery)
 		log.Errorw("failed to list bookmarks", "error", err)
 		return nil, response.Internal("failed to list bookmarks")
 	}
-
-	var bookmarks []res.BookmarkRes
-	if err := utils.MapToDTOs(result.Data, &bookmarks); err != nil {
-		log.Errorw("failed to map bookmarks", "error", err)
-		return nil, response.Internal("failed to map bookmarks")
-	}
-
-	return &response.PaginatedResponse[res.BookmarkRes]{
-		Data: bookmarks,
-		Meta: result.Meta,
-	}, nil
+	return result, nil
 }

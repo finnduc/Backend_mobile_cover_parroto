@@ -61,16 +61,6 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes
-  : properties:
-      data:
-        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
-      error: {}
-      meta:
-        allOf:
-        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-        description: optional
-    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
     properties:
       data:
@@ -105,16 +95,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes'
-      error: {}
-      meta:
-        allOf:
-        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-        description: optional
-    type: object
-  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes:
-    properties:
-      data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_user_dtos_res.UserRes'
       error: {}
       meta:
         allOf:
@@ -165,15 +145,6 @@ definitions:
       data:
         items:
           $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes'
-        type: array
-      meta:
-        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-    type: object
-  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_user_dtos_res.UserRes'
         type: array
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
@@ -309,6 +280,34 @@ definitions:
       video_url:
         type: string
     type: object
+  go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptItem:
+    properties:
+      content:
+        type: string
+      end_timestamp:
+        type: number
+      phonetic:
+        type: string
+      sequence:
+        type: integer
+      start_timestamp:
+        type: number
+      vietnamese:
+        type: string
+    required:
+    - content
+    - sequence
+    type: object
+  go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptReq:
+    properties:
+      transcripts:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptItem'
+        minItems: 1
+        type: array
+    required:
+    - transcripts
+    type: object
   go-cover-parroto_internal_modules_transcript_dtos_req.CreateTranscriptReq:
     properties:
       content:
@@ -362,17 +361,6 @@ definitions:
       start_timestamp:
         type: number
       vietnamese:
-        type: string
-    type: object
-  go-cover-parroto_internal_modules_user_dtos_res.UserRes:
-    properties:
-      avatar_url:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
-      name:
         type: string
     type: object
 externalDocs:
@@ -720,6 +708,112 @@ paths:
       summary: Update lesson
       tags:
       - admin-lessons
+  /admin/lessons/{lessonId}/transcripts:
+    get:
+      consumes:
+      - application/json
+      description: Get all transcripts for a lesson sorted by sequence
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get lesson transcripts
+      tags:
+      - transcripts
+    put:
+      consumes:
+      - application/json
+      description: Atomically delete all existing transcripts for a lesson and create
+        new ones (admin only)
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonId
+        required: true
+        type: integer
+      - description: List of transcripts
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Replace all transcripts for a lesson
+      tags:
+      - admin-lessons
+  /admin/lessons/{lessonId}/transcripts/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Upload a list of transcript entries for a specific lesson (admin
+        only)
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: lessonId
+        required: true
+        type: integer
+      - description: List of transcripts
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Bulk create transcripts for a lesson
+      tags:
+      - admin-lessons
   /admin/transcripts:
     post:
       consumes:
@@ -849,99 +943,6 @@ paths:
       summary: Update transcript
       tags:
       - admin-transcripts
-  /admin/users:
-    get:
-      consumes:
-      - application/json
-      description: List all users with pagination (admin only)
-      parameters:
-      - default: 1
-        description: Page number
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: List users
-      tags:
-      - admin-users
-  /admin/users/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a user by ID (admin only)
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Delete user
-      tags:
-      - admin-users
-    get:
-      consumes:
-      - application/json
-      description: Get a user by their ID (admin only)
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Get user by ID
-      tags:
-      - admin-users
   /auth/complete-signup:
     post:
       consumes:
@@ -1292,31 +1293,6 @@ paths:
       summary: Get lesson transcripts
       tags:
       - transcripts
-  /user/profile:
-    get:
-      consumes:
-      - application/json
-      description: Get the profile of the currently authenticated user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_user_dtos_res_UserRes'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Get user profile
-      tags:
-      - users
 securityDefinitions:
   BearerAuth:
     in: header

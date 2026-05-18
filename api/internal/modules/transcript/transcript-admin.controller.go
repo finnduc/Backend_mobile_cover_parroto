@@ -6,8 +6,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/transcript/dtos/req"
-	_ "go-cover-parroto/internal/modules/transcript/dtos/res"
+	"go-cover-parroto/internal/modules/transcript/dtos/res"
 	"go-cover-parroto/internal/modules/transcript/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,9 +39,14 @@ func (ctrl *TranscriptAdminController) GetByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid id")))
 		return
 	}
-	result, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
+	transcript, appErr := ctrl.svc.GetByID(c.Request.Context(), uint(id))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.TranscriptRes
+	if err := utils.MapToDTO(transcript, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcript")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -64,9 +70,14 @@ func (ctrl *TranscriptAdminController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Create(c.Request.Context(), body)
+	transcript, appErr := ctrl.svc.Create(c.Request.Context(), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.TranscriptRes
+	if err := utils.MapToDTO(transcript, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcript")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -96,9 +107,14 @@ func (ctrl *TranscriptAdminController) BulkCreate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.BulkCreate(c.Request.Context(), uint(lessonID), body)
+	transcripts, appErr := ctrl.svc.BulkCreate(c.Request.Context(), uint(lessonID), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result []res.TranscriptRes
+	if err := utils.MapToDTOs(transcripts, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcripts")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -128,9 +144,14 @@ func (ctrl *TranscriptAdminController) ReplaceByLesson(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.ReplaceByLesson(c.Request.Context(), uint(lessonID), body)
+	transcripts, appErr := ctrl.svc.ReplaceByLesson(c.Request.Context(), uint(lessonID), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result []res.TranscriptRes
+	if err := utils.MapToDTOs(transcripts, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcripts")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -160,9 +181,14 @@ func (ctrl *TranscriptAdminController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.Update(c.Request.Context(), uint(id), body)
+	transcript, appErr := ctrl.svc.Update(c.Request.Context(), uint(id), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.TranscriptRes
+	if err := utils.MapToDTO(transcript, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcript")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))
@@ -213,9 +239,14 @@ func (ctrl *TranscriptAdminController) GetByLesson(c *gin.Context) {
 		return
 	}
 
-	result, appErr := ctrl.svc.GetByLesson(c.Request.Context(), uint(lessonID))
+	transcripts, appErr := ctrl.svc.GetByLesson(c.Request.Context(), uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result []res.TranscriptRes
+	if err := utils.MapToDTOs(transcripts, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map transcripts")))
 		return
 	}
 	c.JSON(http.StatusOK, response.Success(result))

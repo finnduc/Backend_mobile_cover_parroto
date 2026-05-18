@@ -9,9 +9,7 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
-	"go-cover-parroto/internal/modules/lesson/dtos/res"
 	db_repos "go-cover-parroto/internal/database/repositories"
-	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -20,10 +18,10 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ILessonService interface {
-	List(ctx context.Context, query req.ListLessonQuery) (*response.PaginatedResponse[res.LessonRes], *response.AppError)
-	Get(ctx context.Context, body req.GetLessonReq) (*res.LessonRes, *response.AppError)
-	Create(ctx context.Context, body req.CreateLessonReq) (*res.LessonRes, *response.AppError)
-	Update(ctx context.Context, id uint, body req.UpdateLessonReq) (*res.LessonRes, *response.AppError)
+	List(ctx context.Context, query req.ListLessonQuery) (*response.PaginatedResult[*models.Lesson], *response.AppError)
+	Get(ctx context.Context, body req.GetLessonReq) (*models.Lesson, *response.AppError)
+	Create(ctx context.Context, body req.CreateLessonReq) (*models.Lesson, *response.AppError)
+	Update(ctx context.Context, id uint, body req.UpdateLessonReq) (*models.Lesson, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
 }
 
@@ -35,7 +33,7 @@ func NewLessonService(repo db_repos.ILessonRepo) ILessonService {
 	return &lessonService{repo: repo}
 }
 
-func (s *lessonService) List(ctx context.Context, query req.ListLessonQuery) (*response.PaginatedResponse[res.LessonRes], *response.AppError) {
+func (s *lessonService) List(ctx context.Context, query req.ListLessonQuery) (*response.PaginatedResult[*models.Lesson], *response.AppError) {
 	log := sLog()
 	log.Infow("listing lessons")
 	result, err := s.repo.FindAll(ctx, query.ToQuery())
@@ -43,14 +41,10 @@ func (s *lessonService) List(ctx context.Context, query req.ListLessonQuery) (*r
 		log.Errorw("failed to list lessons", "error", err)
 		return nil, response.Internal("failed to list lessons")
 	}
-	var lessons []res.LessonRes
-	if err := utils.MapToDTOs(result.Data, &lessons); err != nil {
-		return nil, response.Internal("failed to map lessons")
-	}
-	return &response.PaginatedResponse[res.LessonRes]{Data: lessons, Meta: result.Meta}, nil
+	return result, nil
 }
 
-func (s *lessonService) Get(ctx context.Context, body req.GetLessonReq) (*res.LessonRes, *response.AppError) {
+func (s *lessonService) Get(ctx context.Context, body req.GetLessonReq) (*models.Lesson, *response.AppError) {
 	log := sLog().With("lessonId", body.ID)
 	log.Infow("getting lesson")
 	lesson, err := s.repo.FindByID(ctx, body.ID)
@@ -61,14 +55,10 @@ func (s *lessonService) Get(ctx context.Context, body req.GetLessonReq) (*res.Le
 		log.Errorw("failed to get lesson", "error", err)
 		return nil, response.Internal("failed to get lesson")
 	}
-	var result res.LessonRes
-	if err := utils.MapToDTO(lesson, &result); err != nil {
-		return nil, response.Internal("failed to map lesson")
-	}
-	return &result, nil
+	return lesson, nil
 }
 
-func (s *lessonService) Create(ctx context.Context, body req.CreateLessonReq) (*res.LessonRes, *response.AppError) {
+func (s *lessonService) Create(ctx context.Context, body req.CreateLessonReq) (*models.Lesson, *response.AppError) {
 	log := sLog()
 	log.Infow("creating lesson")
 	lesson := &models.Lesson{
@@ -85,14 +75,10 @@ func (s *lessonService) Create(ctx context.Context, body req.CreateLessonReq) (*
 		return nil, response.Internal("failed to create lesson")
 	}
 	log.Infow("lesson created", "lessonId", lesson.ID)
-	var result res.LessonRes
-	if err := utils.MapToDTO(lesson, &result); err != nil {
-		return nil, response.Internal("failed to map lesson")
-	}
-	return &result, nil
+	return lesson, nil
 }
 
-func (s *lessonService) Update(ctx context.Context, id uint, body req.UpdateLessonReq) (*res.LessonRes, *response.AppError) {
+func (s *lessonService) Update(ctx context.Context, id uint, body req.UpdateLessonReq) (*models.Lesson, *response.AppError) {
 	log := sLog().With("lessonId", id)
 	log.Infow("updating lesson")
 	lesson, err := s.repo.FindByID(ctx, id)
@@ -115,11 +101,7 @@ func (s *lessonService) Update(ctx context.Context, id uint, body req.UpdateLess
 		return nil, response.Internal("failed to update lesson")
 	}
 	log.Infow("lesson updated")
-	var result res.LessonRes
-	if err := utils.MapToDTO(lesson, &result); err != nil {
-		return nil, response.Internal("failed to map lesson")
-	}
-	return &result, nil
+	return lesson, nil
 }
 
 func (s *lessonService) Delete(ctx context.Context, id uint) *response.AppError {

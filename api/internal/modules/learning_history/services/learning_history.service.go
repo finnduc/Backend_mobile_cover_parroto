@@ -10,9 +10,7 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	lhreq "go-cover-parroto/internal/modules/learning_history/dtos/req"
-	lhres "go-cover-parroto/internal/modules/learning_history/dtos/res"
 	db_repos "go-cover-parroto/internal/database/repositories"
-	"go-cover-parroto/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -21,9 +19,9 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ILearningHistoryService interface {
-	Record(ctx context.Context, body lhreq.RecordHistoryReq) (*lhres.LearningHistoryRes, *response.AppError)
-	List(ctx context.Context, query lhreq.ListHistoryQuery) (*response.PaginatedResponse[lhres.LearningHistoryRes], *response.AppError)
-	GetByLesson(ctx context.Context, body lhreq.GetHistoryReq) (*lhres.LearningHistoryRes, *response.AppError)
+	Record(ctx context.Context, body lhreq.RecordHistoryReq) (*models.LearningHistory, *response.AppError)
+	List(ctx context.Context, query lhreq.ListHistoryQuery) (*response.PaginatedResult[*models.LearningHistory], *response.AppError)
+	GetByLesson(ctx context.Context, body lhreq.GetHistoryReq) (*models.LearningHistory, *response.AppError)
 }
 
 type learningHistoryService struct {
@@ -34,7 +32,7 @@ func NewLearningHistoryService(repo db_repos.ILearningHistoryRepo) ILearningHist
 	return &learningHistoryService{repo: repo}
 }
 
-func (s *learningHistoryService) Record(ctx context.Context, body lhreq.RecordHistoryReq) (*lhres.LearningHistoryRes, *response.AppError) {
+func (s *learningHistoryService) Record(ctx context.Context, body lhreq.RecordHistoryReq) (*models.LearningHistory, *response.AppError) {
 	userID, err := policy.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -53,14 +51,10 @@ func (s *learningHistoryService) Record(ctx context.Context, body lhreq.RecordHi
 		return nil, response.Internal("failed to record history")
 	}
 	log.Infow("learning history recorded")
-	var result lhres.LearningHistoryRes
-	if err := utils.MapToDTO(history, &result); err != nil {
-		return nil, response.Internal("failed to map history")
-	}
-	return &result, nil
+	return history, nil
 }
 
-func (s *learningHistoryService) List(ctx context.Context, query lhreq.ListHistoryQuery) (*response.PaginatedResponse[lhres.LearningHistoryRes], *response.AppError) {
+func (s *learningHistoryService) List(ctx context.Context, query lhreq.ListHistoryQuery) (*response.PaginatedResult[*models.LearningHistory], *response.AppError) {
 	log := sLog()
 	log.Infow("listing learning history")
 	if query.UserID != nil {
@@ -74,14 +68,10 @@ func (s *learningHistoryService) List(ctx context.Context, query lhreq.ListHisto
 		log.Errorw("failed to list history", "error", err)
 		return nil, response.Internal("failed to list history")
 	}
-	var histories []lhres.LearningHistoryRes
-	if err := utils.MapToDTOs(result.Data, &histories); err != nil {
-		return nil, response.Internal("failed to map history")
-	}
-	return &response.PaginatedResponse[lhres.LearningHistoryRes]{Data: histories, Meta: result.Meta}, nil
+	return result, nil
 }
 
-func (s *learningHistoryService) GetByLesson(ctx context.Context, body lhreq.GetHistoryReq) (*lhres.LearningHistoryRes, *response.AppError) {
+func (s *learningHistoryService) GetByLesson(ctx context.Context, body lhreq.GetHistoryReq) (*models.LearningHistory, *response.AppError) {
 	userID, err := policy.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -97,9 +87,5 @@ func (s *learningHistoryService) GetByLesson(ctx context.Context, body lhreq.Get
 		log.Errorw("failed to get history", "error", findErr)
 		return nil, response.Internal("failed to get history")
 	}
-	var result lhres.LearningHistoryRes
-	if err := utils.MapToDTO(history, &result); err != nil {
-		return nil, response.Internal("failed to map history")
-	}
-	return &result, nil
+	return history, nil
 }

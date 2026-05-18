@@ -44,6 +44,8 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 
 		handler.ServeHTTP(c.Writer, c.Request)
 
+		logger.Debugw("Auth header", "header", c.GetHeader("Authorization"))
+
 		if nextReq == nil {
 			logger.Warnw("Clerk rejected before inner handler",
 				"path", c.Request.URL.Path,

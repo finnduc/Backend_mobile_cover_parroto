@@ -5,8 +5,9 @@ import (
 
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/bookmark/dtos/req"
-	_ "go-cover-parroto/internal/modules/bookmark/dtos/res"
+	"go-cover-parroto/internal/modules/bookmark/dtos/res"
 	"go-cover-parroto/internal/modules/bookmark/services"
+	"go-cover-parroto/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +45,12 @@ func (ctrl *BookmarkController) List(c *gin.Context) {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(result.Data, result.Meta))
+	var bookmarks []res.BookmarkRes
+	if err := utils.MapToDTOs(result.Data, &bookmarks); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map bookmarks")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.BookmarkRes]{Data: bookmarks, Meta: result.Meta}, result.Meta))
 }
 
 // Add godoc
