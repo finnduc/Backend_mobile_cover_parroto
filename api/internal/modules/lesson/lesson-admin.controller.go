@@ -51,7 +51,7 @@ func (ctrl *LessonAdminController) List(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map lessons")))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.LessonRes]{Data: lessons, Meta: result.Meta}, result.Meta))
+	c.JSON(http.StatusOK, response.SuccessWithMeta(lessons, result.Meta))
 }
 
 // Get godoc

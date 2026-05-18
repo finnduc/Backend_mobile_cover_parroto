@@ -45,5 +45,5 @@ func (ctrl *CategoryController) List(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map categories")))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.CategoryRes]{Data: categories, Meta: result.Meta}, result.Meta))
+	c.JSON(http.StatusOK, response.SuccessWithMeta(categories, result.Meta))
 }

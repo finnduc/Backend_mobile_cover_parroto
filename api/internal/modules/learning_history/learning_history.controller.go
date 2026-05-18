@@ -79,7 +79,7 @@ func (ctrl *LearningHistoryController) List(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map history")))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.LearningHistoryRes]{Data: histories, Meta: result.Meta}, result.Meta))
+	c.JSON(http.StatusOK, response.SuccessWithMeta(histories, result.Meta))
 }
 
 // GetByLesson godoc

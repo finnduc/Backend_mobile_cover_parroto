@@ -50,7 +50,7 @@ func (ctrl *BookmarkController) List(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map bookmarks")))
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessWithMeta(response.PaginatedResponse[res.BookmarkRes]{Data: bookmarks, Meta: result.Meta}, result.Meta))
+	c.JSON(http.StatusOK, response.SuccessWithMeta(bookmarks, result.Meta))
 }
 
 // Add godoc
