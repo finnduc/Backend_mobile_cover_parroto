@@ -14,10 +14,11 @@ import { ROUTES } from "@/lib/routes"
 import type { LucideIcon } from "lucide-react"
 import {
   BookOpen,
+  Bookmark,
   BookText,
   MessageCircle,
   MessageSquare,
-  Users
+  Users,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -32,6 +33,7 @@ const mainNav: NavItem[] = [
   { label: "Bài học", href: ROUTES.USER.LESSONS.LIST, icon: BookText },
   { label: "Chủ đề", href: ROUTES.USER.CATEGORIES, icon: BookOpen },
   { label: "Từ vựng", href: "/vocabulary", icon: BookText },
+  { label: "Đã lưu", href: ROUTES.USER.BOOKMARKS, icon: Bookmark },
 ]
 
 const communityNav: NavItem[] = [

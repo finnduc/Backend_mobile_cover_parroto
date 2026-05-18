@@ -94,9 +94,9 @@ export async function apiFetch<T = any>(
     }
 
     const data = snakeToCamel<any>(rawData);
-    const resultData = data.data !== undefined ? data.data : data;
-    const resultMeta = data.pagination || data.meta
-      ? { pagination: data.pagination, ...data.meta }
+    const resultData = data.data !== undefined ? data.data : [];
+    const resultMeta = data.meta
+      ? { ...data.meta }
       : undefined;
 
     return {

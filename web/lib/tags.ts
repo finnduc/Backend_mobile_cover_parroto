@@ -7,4 +7,5 @@ export const CACHE_TAGS = {
   transcript: (id: number) => `transcript-${id}`,
   users: "users",
   user: (id: string) => `user-${id}`,
+  bookmarks: "bookmarks",
 } as const

@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE learning_history (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     duration_watched DOUBLE PRECISION,
     completed BOOLEAN DEFAULT true,
