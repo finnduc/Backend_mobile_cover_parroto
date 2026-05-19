@@ -1,14 +1,22 @@
 package com.example.app.data.remote.model.response.categories;
 
-public class CategoryResponse {
-    private String id;
-    private String name;
+import com.google.gson.annotations.SerializedName;
 
-    public String getId() {
+public class CategoryResponse {
+    private int id;
+    private String name;
+    @SerializedName("created_at")
+    private String createdAt;
+
+    public int getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 }

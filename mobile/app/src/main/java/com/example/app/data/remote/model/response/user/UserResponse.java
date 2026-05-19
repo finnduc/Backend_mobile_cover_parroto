@@ -3,25 +3,53 @@ package com.example.app.data.remote.model.response.user;
 import com.google.gson.annotations.SerializedName;
 
 public class UserResponse {
-    @SerializedName("avatar_url")
-    private String avatarUrl;
-    private String email;
-    private String id;
-    private String name;
+    private String message;
+    private User user;
 
-    public String getAvatar_url() {
-        return avatarUrl;
+    public String getMessage() {
+        return message;
     }
 
-    public String getEmail() {
-        return email;
+    public User getUser() {
+        return user;
     }
 
-    public String getId() {
-        return id;
-    }
+    public static class User{
+        private String uid;
+        private String email;
+        private String name;
 
-    public String getName() {
-        return name;
+        @SerializedName("user_role")
+        private String userRole;
+
+        @SerializedName("avatar_url")
+        private String avatarUrl;
+
+        @SerializedName("created_at")
+        private String createdAt;
+
+        public String getUid() {
+            return uid;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUserRole() {
+            return userRole;
+        }
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
     }
 }
