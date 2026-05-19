@@ -904,6 +904,618 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/vocabulary-categories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-categories"
+                ],
+                "summary": "List vocabulary categories (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-categories"
+                ],
+                "summary": "Create vocabulary category (admin)",
+                "parameters": [
+                    {
+                        "description": "Category data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_req.CreateVocabularyCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vocabulary-categories/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-categories"
+                ],
+                "summary": "Get vocabulary category by ID (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "404"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-categories"
+                ],
+                "summary": "Update vocabulary category (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_req.UpdateVocabularyCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-categories"
+                ],
+                "summary": "Delete vocabulary category (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vocabulary-decks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-decks"
+                ],
+                "summary": "List all vocabulary decks (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-decks"
+                ],
+                "summary": "Create system deck (admin)",
+                "parameters": [
+                    {
+                        "description": "Deck data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vocabulary-decks/{deckId}/items": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-items"
+                ],
+                "summary": "List items in a system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "deckId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-items"
+                ],
+                "summary": "Add item to system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "deckId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Item data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vocabulary-decks/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-decks"
+                ],
+                "summary": "Update system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Deck data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-decks"
+                ],
+                "summary": "Delete system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vocabulary-items/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-items"
+                ],
+                "summary": "Update item in system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Item data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-vocabulary-items"
+                ],
+                "summary": "Delete item from system deck (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/complete-signup": {
             "post": {
                 "security": [
@@ -1147,14 +1759,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/learning-history": {
+        "/dictation-status": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get the authenticated user's learning history",
                 "consumes": [
                     "application/json"
                 ],
@@ -1162,10 +1773,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "learning-history"
+                    "dictation-status"
                 ],
-                "summary": "List learning history",
+                "summary": "List dictation status",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filter by lesson ID",
+                        "name": "lesson_id",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "Page number",
@@ -1183,56 +1800,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Record or update a user's learning progress for a lesson",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "learning-history"
-                ],
-                "summary": "Record learning progress",
-                "parameters": [
-                    {
-                        "description": "Record request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes"
                         }
                     },
                     "401": {
@@ -1244,14 +1812,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/learning-history/{lessonId}": {
-            "get": {
+        "/dictation-status/{transcriptId}": {
+            "post": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get the user's learning history for a specific lesson",
                 "consumes": [
                     "application/json"
                 ],
@@ -1259,14 +1826,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "learning-history"
+                    "dictation-status"
                 ],
-                "summary": "Get history for a lesson",
+                "summary": "Mark transcript as dictation completed",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Lesson ID",
-                        "name": "lessonId",
+                        "description": "Transcript ID",
+                        "name": "transcriptId",
                         "in": "path",
                         "required": true
                     }
@@ -1275,7 +1842,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes"
                         }
                     },
                     "400": {
@@ -1286,12 +1853,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -1448,6 +2009,519 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/shadowing-status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shadowing-status"
+                ],
+                "summary": "List shadowing status",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filter by lesson ID",
+                        "name": "lesson_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/shadowing-status/{transcriptId}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shadowing-status"
+                ],
+                "summary": "Mark transcript as shadowing completed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transcript ID",
+                        "name": "transcriptId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/vocabulary-categories": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-categories"
+                ],
+                "summary": "List vocabulary categories",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/vocabulary-decks": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-decks"
+                ],
+                "summary": "List vocabulary decks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filter by category",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-decks"
+                ],
+                "summary": "Create user vocabulary deck",
+                "parameters": [
+                    {
+                        "description": "Deck data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/vocabulary-decks/{deckId}/items": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-items"
+                ],
+                "summary": "List items in a deck",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "deckId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-items"
+                ],
+                "summary": "Add item to user deck",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "deckId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Item data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
+        "/vocabulary-decks/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-decks"
+                ],
+                "summary": "Update user vocabulary deck",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Deck data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-decks"
+                ],
+                "summary": "Delete user vocabulary deck",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Deck ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
+        },
+        "/vocabulary-items/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-items"
+                ],
+                "summary": "Update user's item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Item data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-items"
+                ],
+                "summary": "Delete user's item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "401"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1520,11 +2594,11 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes"
                 },
                 "error": {},
                 "meta": {
@@ -1554,6 +2628,74 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
             "type": "object",
             "properties": {
@@ -1571,11 +2713,11 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes"
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes"
                 },
                 "error": {},
                 "meta": {
@@ -1605,11 +2747,79 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes": {
             "type": "object",
             "properties": {
                 "data": {
                     "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes"
                 },
                 "error": {},
                 "meta": {
@@ -1668,13 +2878,13 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes": {
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes"
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes"
                     }
                 },
                 "meta": {
@@ -1689,6 +2899,62 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes"
                     }
                 },
                 "meta": {
@@ -1766,41 +3032,16 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq": {
-            "type": "object",
-            "required": [
-                "duration_watched",
-                "lesson_id"
-            ],
-            "properties": {
-                "completed": {
-                    "type": "boolean"
-                },
-                "duration_watched": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "lesson_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes": {
+        "go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes": {
             "type": "object",
             "properties": {
-                "completed": {
-                    "type": "boolean"
-                },
-                "created_at": {
+                "completed_at": {
                     "type": "string"
                 },
-                "duration_watched": {
-                    "type": "number"
-                },
-                "id": {
+                "lesson_id": {
                     "type": "integer"
                 },
-                "lesson_id": {
+                "transcript_id": {
                     "type": "integer"
                 },
                 "user_id": {
@@ -1892,6 +3133,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "video_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes": {
+            "type": "object",
+            "properties": {
+                "completed_at": {
+                    "type": "string"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -2017,6 +3275,223 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_category_dtos_req.CreateVocabularyCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_category_dtos_req.UpdateVocabularyCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq": {
+            "type": "object",
+            "required": [
+                "meaning",
+                "normalized_phrase",
+                "phrase"
+            ],
+            "properties": {
+                "example_sentence": {
+                    "type": "string"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "meaning": {
+                    "type": "string"
+                },
+                "normalized_phrase": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq": {
+            "type": "object",
+            "required": [
+                "meaning",
+                "normalized_phrase",
+                "phrase"
+            ],
+            "properties": {
+                "example_sentence": {
+                    "type": "string"
+                },
+                "meaning": {
+                    "type": "string"
+                },
+                "normalized_phrase": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deck_id": {
+                    "type": "integer"
+                },
+                "example_sentence": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "meaning": {
+                    "type": "string"
+                },
+                "normalized_phrase": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

@@ -41,10 +41,10 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes
   : properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes'
       error: {}
       meta:
         allOf:
@@ -61,6 +61,46 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
     properties:
       data:
@@ -71,10 +111,10 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
-  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes
   : properties:
       data:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes'
+        $ref: '#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes'
       error: {}
       meta:
         allOf:
@@ -91,10 +131,50 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_dtos_res_TranscriptRes:
     properties:
       data:
         $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes'
       error: {}
       meta:
         allOf:
@@ -131,11 +211,11 @@ definitions:
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
     type: object
-  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes
   : properties:
       data:
         items:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes'
+          $ref: '#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes'
         type: array
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
@@ -145,6 +225,42 @@ definitions:
       data:
         items:
           $ref: '#/definitions/go-cover-parroto_internal_modules_lesson_dtos_res.LessonRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes'
+        type: array
+      meta:
+        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+    type: object
+  ? go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes'
         type: array
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
@@ -194,30 +310,13 @@ definitions:
       name:
         type: string
     type: object
-  go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq:
+  go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes:
     properties:
-      completed:
-        type: boolean
-      duration_watched:
-        minimum: 0
-        type: number
-      lesson_id:
-        type: integer
-    required:
-    - duration_watched
-    - lesson_id
-    type: object
-  go-cover-parroto_internal_modules_learning_history_dtos_res.LearningHistoryRes:
-    properties:
-      completed:
-        type: boolean
-      created_at:
+      completed_at:
         type: string
-      duration_watched:
-        type: number
-      id:
-        type: integer
       lesson_id:
+        type: integer
+      transcript_id:
         type: integer
       user_id:
         type: string
@@ -278,6 +377,17 @@ definitions:
       title:
         type: string
       video_url:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes:
+    properties:
+      completed_at:
+        type: string
+      lesson_id:
+        type: integer
+      transcript_id:
+        type: integer
+      user_id:
         type: string
     type: object
   go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptItem:
@@ -361,6 +471,149 @@ definitions:
       start_timestamp:
         type: number
       vietnamese:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_category_dtos_req.CreateVocabularyCategoryReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_category_dtos_req.UpdateVocabularyCategoryReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq:
+    properties:
+      description:
+        type: string
+      level:
+        type: string
+      name:
+        type: string
+      thumbnail_url:
+        type: string
+    required:
+    - name
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq:
+    properties:
+      description:
+        type: string
+      level:
+        type: string
+      name:
+        type: string
+      thumbnail_url:
+        type: string
+    required:
+    - name
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_default:
+        type: boolean
+      level:
+        type: string
+      name:
+        type: string
+      thumbnail_url:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq:
+    properties:
+      example_sentence:
+        type: string
+      lesson_id:
+        type: integer
+      meaning:
+        type: string
+      normalized_phrase:
+        type: string
+      note:
+        type: string
+      phrase:
+        type: string
+      transcript_id:
+        type: integer
+    required:
+    - meaning
+    - normalized_phrase
+    - phrase
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq:
+    properties:
+      example_sentence:
+        type: string
+      meaning:
+        type: string
+      normalized_phrase:
+        type: string
+      note:
+        type: string
+      phrase:
+        type: string
+    required:
+    - meaning
+    - normalized_phrase
+    - phrase
+    type: object
+  go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes:
+    properties:
+      created_at:
+        type: string
+      deck_id:
+        type: integer
+      example_sentence:
+        type: string
+      id:
+        type: integer
+      lesson_id:
+        type: integer
+      meaning:
+        type: string
+      normalized_phrase:
+        type: string
+      note:
+        type: string
+      phrase:
+        type: string
+      transcript_id:
+        type: integer
+      updated_at:
         type: string
     type: object
 externalDocs:
@@ -943,6 +1196,389 @@ paths:
       summary: Update transcript
       tags:
       - admin-transcripts
+  /admin/vocabulary-categories:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List vocabulary categories (admin)
+      tags:
+      - admin-vocabulary-categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_req.CreateVocabularyCategoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create vocabulary category (admin)
+      tags:
+      - admin-vocabulary-categories
+  /admin/vocabulary-categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete vocabulary category (admin)
+      tags:
+      - admin-vocabulary-categories
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "404"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get vocabulary category by ID (admin)
+      tags:
+      - admin-vocabulary-categories
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_category_dtos_req.UpdateVocabularyCategoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update vocabulary category (admin)
+      tags:
+      - admin-vocabulary-categories
+  /admin/vocabulary-decks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List all vocabulary decks (admin)
+      tags:
+      - admin-vocabulary-decks
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Create system deck (admin)
+      tags:
+      - admin-vocabulary-decks
+  /admin/vocabulary-decks/{deckId}/items:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: deckId
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+      security:
+      - BearerAuth: []
+      summary: List items in a system deck (admin)
+      tags:
+      - admin-vocabulary-items
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: deckId
+        required: true
+        type: integer
+      - description: Item data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Add item to system deck (admin)
+      tags:
+      - admin-vocabulary-items
+  /admin/vocabulary-decks/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Delete system deck (admin)
+      tags:
+      - admin-vocabulary-decks
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Deck data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Update system deck (admin)
+      tags:
+      - admin-vocabulary-decks
+  /admin/vocabulary-items/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Delete item from system deck (admin)
+      tags:
+      - admin-vocabulary-items
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Item data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Update item in system deck (admin)
+      tags:
+      - admin-vocabulary-items
   /auth/complete-signup:
     post:
       consumes:
@@ -1099,12 +1735,15 @@ paths:
       summary: List categories
       tags:
       - categories
-  /learning-history:
+  /dictation-status:
     get:
       consumes:
       - application/json
-      description: Get the authenticated user's learning history
       parameters:
+      - description: Filter by lesson ID
+        in: query
+        name: lesson_id
+        type: integer
       - description: Page number
         in: query
         name: page
@@ -1119,56 +1758,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
       security:
       - BearerAuth: []
-      summary: List learning history
+      summary: List dictation status
       tags:
-      - learning-history
+      - dictation-status
+  /dictation-status/{transcriptId}:
     post:
       consumes:
       - application/json
-      description: Record or update a user's learning progress for a lesson
       parameters:
-      - description: Record request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_learning_history_dtos_req.RecordHistoryReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Record learning progress
-      tags:
-      - learning-history
-  /learning-history/{lessonId}:
-    get:
-      consumes:
-      - application/json
-      description: Get the user's learning history for a specific lesson
-      parameters:
-      - description: Lesson ID
+      - description: Transcript ID
         in: path
-        name: lessonId
+        name: transcriptId
         required: true
         type: integer
       produces:
@@ -1177,7 +1784,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_learning_history_dtos_res_LearningHistoryRes'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_dictation_status_dtos_res_DictationStatusRes'
         "400":
           description: Bad Request
           schema:
@@ -1186,15 +1793,11 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
       security:
       - BearerAuth: []
-      summary: Get history for a lesson
+      summary: Mark transcript as dictation completed
       tags:
-      - learning-history
+      - dictation-status
   /lessons:
     get:
       consumes:
@@ -1293,6 +1896,330 @@ paths:
       summary: Get lesson transcripts
       tags:
       - transcripts
+  /shadowing-status:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by lesson ID
+        in: query
+        name: lesson_id
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List shadowing status
+      tags:
+      - shadowing-status
+  /shadowing-status/{transcriptId}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Transcript ID
+        in: path
+        name: transcriptId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingStatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Mark transcript as shadowing completed
+      tags:
+      - shadowing-status
+  /vocabulary-categories:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_category_dtos_res_VocabularyCategoryRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      summary: List vocabulary categories
+      tags:
+      - vocabulary-categories
+  /vocabulary-decks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by category
+        in: query
+        name: category_id
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+      summary: List vocabulary decks
+      tags:
+      - vocabulary-decks
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.CreateVocabularyDeckReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create user vocabulary deck
+      tags:
+      - vocabulary-decks
+  /vocabulary-decks/{deckId}/items:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: deckId
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+      summary: List items in a deck
+      tags:
+      - vocabulary-items
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: deckId
+        required: true
+        type: integer
+      - description: Item data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Add item to user deck
+      tags:
+      - vocabulary-items
+  /vocabulary-decks/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Delete user vocabulary deck
+      tags:
+      - vocabulary-decks
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deck ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Deck data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Update user vocabulary deck
+      tags:
+      - vocabulary-decks
+  /vocabulary-items/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Delete user's item
+      tags:
+      - vocabulary-items
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Item data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_vocabulary_item_dtos_res_VocabularyItemRes'
+        "400":
+          description: Bad Request
+          schema:
+            type: "401"
+      security:
+      - BearerAuth: []
+      summary: Update user's item
+      tags:
+      - vocabulary-items
 securityDefinitions:
   BearerAuth:
     in: header
