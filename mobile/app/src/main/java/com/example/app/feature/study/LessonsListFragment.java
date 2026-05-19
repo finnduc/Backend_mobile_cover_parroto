@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
 import com.example.app.adapter.study.ListLessonsAdapter;
+import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.repository.LessonsRepository;
 import com.example.app.diaglog.ChooseModeBottomSheet;
@@ -53,16 +54,19 @@ public class LessonsListFragment extends Fragment {
 
     public void fetchLessons(){
         if (currentCategoryId == -1) return;
-        repository.getLessons(100, 1, currentCategoryId, null,
-                new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>(){
+        repository.getLessons(100, 1,null, currentCategoryId, null,
+                new LessonsRepository.lessonsCallback<ApiResponse<List<LessonsResponse>>>(){
                     @Override
-                    public void onSuccess(ListLessonsResponse<LessonsResponse> data) {
+                    public void onSuccess(ApiResponse<List<LessonsResponse>> response) {
                         lessonsResponseList.clear();
-                        if (data != null && data.getData() != null) {
-                            lessonsResponseList.addAll(data.getData());
+                        if (response != null && response.getData() != null) {
+                            lessonsResponseList.addAll(response.getData());
                         }
                         adapter.notifyDataSetChanged();
-                        int totallessons = data.getMeta().getTotal();
+                        int totallessons = 0;
+                        if (response != null && response.getMeta() != null) {
+                            totallessons = response.getMeta().getTotal();
+                        }
                         int done = 0;
                         int learning = 0;
                         CountNotStarted.setText(String.valueOf(totallessons - done - learning));

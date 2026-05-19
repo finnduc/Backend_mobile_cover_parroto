@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.app.R;
 import com.example.app.data.local.TokenManager;
+import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.AuthRepository;
 
 
@@ -73,15 +74,13 @@ public class LoginFragment extends Fragment {
 
     private void Login(String email, String password) {
         authRepository = new AuthRepository(requireContext());
-        authRepository.login(email, password, new AuthRepository.authCallBack<String>() {
+        authRepository.login(email, password, new AuthRepository.authCallBack<UserResponse>() {
             @Override
-            public void onSuccess(String data) {
+            public void onSuccess(UserResponse data) {
                 Toast.makeText(requireContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView())
                         .navigate(R.id.action_LoginFragment_to_StudyFragment);
-
             }
-
             @Override
             public void onError(String message) {
                 Toast.makeText(requireContext(), "Lỗi đăng nhập "

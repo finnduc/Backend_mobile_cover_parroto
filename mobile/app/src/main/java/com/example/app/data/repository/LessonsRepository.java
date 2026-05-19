@@ -21,23 +21,23 @@ public class LessonsRepository {
         this.lessonsApi = RetrofitClient.getInstance(context).getLessonsApi();
     }
 
-    public interface lessonsCallback<T>{
+    public interface lessonsCallback<T> {
         void onSuccess(T data);
+
         void onError(String message);
     }
-    public void getLessons(int limit,int page,String search, int categoryId, String level, lessonsCallback<List<LessonsResponse>> callback){
-        lessonsApi.getLessons(limit,page,search,categoryId,level).enqueue(new Callback<ApiResponse<List<LessonsResponse>>>() {
+
+    public void getLessons(int limit, int page, String search, int categoryId, String level, lessonsCallback<ApiResponse<List<LessonsResponse>>> callback) {
+        lessonsApi.getLessons(limit, page, search, categoryId, level).enqueue(new Callback<ApiResponse<List<LessonsResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<LessonsResponse>>> call, Response<ApiResponse<List<LessonsResponse>>> response) {
-                if(response.isSuccessful() && response.body() != null ){
-                    List<LessonsResponse> lessonsData = response.body().getData();
-                    callback.onSuccess(lessonsData);
-                }
-                else {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
                     try {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError(errorDetail);
-                     } catch (Exception e){
+                    } catch (Exception e) {
                         callback.onError(e.getMessage());
                     }
                 }
@@ -50,31 +50,26 @@ public class LessonsRepository {
         });
     }
 
-    public void getLessonsDetail(int lessonId, lessonsCallback<LessonsResponse> callback){
-        lessonsApi.getLessonsDetail(lessonId).enqueue(new Callback<ApiResponse<LessonsResponse>>(){
+    public void getLessonsDetail(int lessonId, lessonsCallback<LessonsResponse> callback) {
+        lessonsApi.getLessonsDetail(lessonId).enqueue(new Callback<ApiResponse<LessonsResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LessonsResponse>> call, Response<ApiResponse<LessonsResponse>> response) {
-                if (response.isSuccessful() && response.body() != null ){
-                    LessonsResponse lessonsResponseData = response.body().getData();
-                    callback.onSuccess(lessonsResponseData);
-                }
-                else {
+                if (response.isSuccessful() && response.body() != null) {
+                    LessonsResponse lessonData = response.body().getData();
+                    callback.onSuccess(lessonData);
+                } else {
                     try {
                         String errorDetail = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
                         callback.onError(errorDetail);
                     } catch (Exception e){
                         callback.onError(e.getMessage());
                     }
-
                 }
             }
-
             @Override
             public void onFailure(Call<ApiResponse<LessonsResponse>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });
     }
-
-
 }
