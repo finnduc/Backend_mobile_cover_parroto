@@ -120,7 +120,7 @@ public class StudyFragment extends Fragment {
 
             @Override
             public void onError(String message) {
-
+                Toast.makeText(getContext(), "Lỗi tải danh mục: " + message, Toast.LENGTH_SHORT).show();
             }
         });
 
