@@ -11,6 +11,7 @@ import (
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
 	"go-cover-parroto/internal/modules/lesson"
+	"go-cover-parroto/internal/modules/shadowing_status"
 	"go-cover-parroto/internal/modules/transcript"
 
 	_ "go-cover-parroto/cmd/server/docs"
@@ -94,6 +95,7 @@ func main() {
 		category.RegisterRoutes(v1, db)
 		bookmark.RegisterRoutes(v1, db)
 		transcript.RegisterRoutes(v1, db)
+		shadowing_status.RegisterRoutes(v1, db)
 	}
 
 	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)
