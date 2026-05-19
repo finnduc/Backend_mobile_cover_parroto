@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.R;
 import com.example.app.adapter.study.ListLessonsAdapter;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
-import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.example.app.data.repository.LessonsRepository;
 import com.example.app.diaglog.ChooseModeBottomSheet;
 

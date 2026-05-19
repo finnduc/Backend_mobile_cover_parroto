@@ -16,7 +16,6 @@ import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.LessonsApi;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
-import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.google.gson.Gson;
 
 import retrofit2.Call;

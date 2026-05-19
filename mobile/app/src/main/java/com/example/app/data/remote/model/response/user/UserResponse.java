@@ -3,18 +3,6 @@ package com.example.app.data.remote.model.response.user;
 import com.google.gson.annotations.SerializedName;
 
 public class UserResponse {
-    private String message;
-    private User user;
-
-    public String getMessage() {
-        return message;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public static class User{
         private String uid;
         private String email;
         private String name;
@@ -51,5 +39,5 @@ public class UserResponse {
         public String getCreatedAt() {
             return createdAt;
         }
-    }
+
 }

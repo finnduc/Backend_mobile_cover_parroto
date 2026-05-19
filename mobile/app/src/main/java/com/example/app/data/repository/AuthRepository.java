@@ -53,25 +53,8 @@ public class AuthRepository {
                                     user.getIdToken(true).addOnCompleteListener(tokenTask -> {
                                         if (tokenTask.isSuccessful()) {
                                             String idToken = tokenTask.getResult().getToken();
-                                            // Lưu token vào local (Firebase SDK tự quản lý RefreshToken)
                                             tokenManager.saveToken(idToken, "");
-
-                                            // 4. Gọi Backend để đồng bộ user vào database
-                                            authApi.auth().enqueue(new Callback<ApiResponse<String>>() {
-                                                @Override
-                                                public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                                                    if (response.isSuccessful() && response.body() != null) {
-                                                        callback.onSuccess(response.body().getData());
-                                                    } else {
-                                                        callback.onError("Lỗi đồng bộ Backend. Code: " + response.code());
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                                                    callback.onError(t.getMessage());
-                                                }
-                                            });
+                                            callback.onSuccess("Đăng ký thành công");
                                         } else {
                                             callback.onError("Lỗi lấy Token sau đăng ký");
                                         }
@@ -88,7 +71,7 @@ public class AuthRepository {
                 });
     }
 
-    public void login(String email, String password, authCallBack<String> callback) {
+    public void login(String email, String password, authCallBack<UserResponse> callback) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         // 1. Đăng nhập bằng Firebase
@@ -103,27 +86,25 @@ public class AuthRepository {
                                     String idToken = tokenTask.getResult().getToken();
                                     tokenManager.saveToken(idToken, "");
 
-                                    // 3. Lấy Profile từ Backend
-                                    userApi.getProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
+                                    authApi.auth().enqueue(new Callback<ApiResponse<UserResponse>>() {
                                         @Override
                                         public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                                             if (response.isSuccessful() && response.body() != null) {
                                                 UserResponse userResponse = response.body().getData();
                                                 tokenManager.saveUserInfo(
-                                                        userResponse.getId(),
+                                                        userResponse.getUid(),
                                                         userResponse.getEmail(),
                                                         userResponse.getName(),
-                                                        userResponse.getAvatar_url()
+                                                        userResponse.getAvatarUrl()
                                                 );
-                                                callback.onSuccess("Đăng nhập thành công");
+                                                callback.onSuccess(userResponse);
                                             } else {
-                                                callback.onError("Lỗi lấy thông tin cá nhân: " + response.code());
+                                                callback.onError("Lỗi đồng bộ server: Code " + response.code());
                                             }
                                         }
-
                                         @Override
                                         public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
-                                            callback.onError(t.getMessage());
+                                            callback.onError("Lỗi đồng bộ server: Code " + t.getMessage());
                                         }
                                     });
 

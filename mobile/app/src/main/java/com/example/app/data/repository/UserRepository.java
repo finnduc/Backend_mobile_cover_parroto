@@ -29,7 +29,7 @@ public class UserRepository {
         userApi.getProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
-                 if (response.isSuccessful() && response.body() != null && response.body().issuccess()){
+                 if (response.isSuccessful() && response.body() != null ){
                      UserResponse userData = response.body().getData();
                      callback.onSuccess(userData);
                  }
@@ -42,7 +42,6 @@ public class UserRepository {
                      }
                  }
             }
-
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 callback.onError(t.getMessage());
