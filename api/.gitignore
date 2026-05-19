@@ -22,6 +22,9 @@ profile.cov
 
 # Go workspace file
 go.work
+
+# Compiled binary
+server
 go.work.sum
 
 

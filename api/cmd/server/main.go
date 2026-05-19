@@ -15,6 +15,8 @@ import (
 	"go-cover-parroto/internal/modules/shadowing_status"
 	"go-cover-parroto/internal/modules/transcript"
 	vocabcat "go-cover-parroto/internal/modules/vocabulary_category"
+	vocabdeck "go-cover-parroto/internal/modules/vocabulary_deck"
+	vocabitem "go-cover-parroto/internal/modules/vocabulary_item"
 
 	_ "go-cover-parroto/cmd/server/docs"
 
@@ -100,6 +102,8 @@ func main() {
 		shadowing_status.RegisterRoutes(v1, db)
 		dictation_status.RegisterRoutes(v1, db)
 		vocabcat.RegisterRoutes(v1, db)
+		vocabdeck.RegisterRoutes(v1, db)
+		vocabitem.RegisterRoutes(v1, db)
 	}
 
 	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)
