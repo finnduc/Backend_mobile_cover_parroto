@@ -10,7 +10,6 @@ import (
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
-	learninghistory "go-cover-parroto/internal/modules/learning_history"
 	"go-cover-parroto/internal/modules/lesson"
 	"go-cover-parroto/internal/modules/transcript"
 
@@ -94,7 +93,6 @@ func main() {
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
 		bookmark.RegisterRoutes(v1, db)
-		learninghistory.RegisterRoutes(v1, db)
 		transcript.RegisterRoutes(v1, db)
 	}
 

@@ -7,7 +7,6 @@ import (
 	authrepos "go-cover-parroto/internal/modules/auth/repositories"
 	bookmarkrepos "go-cover-parroto/internal/modules/bookmark/repositories"
 	categoryrepos "go-cover-parroto/internal/modules/category/repositories"
-	learninghistoryrepos "go-cover-parroto/internal/modules/learning_history/repositories"
 	lessonrepos "go-cover-parroto/internal/modules/lesson/repositories"
 	transcriptrepos "go-cover-parroto/internal/modules/transcript/repositories"
 )
@@ -16,7 +15,6 @@ type IProvider interface {
 	Auth() db_repos.IAuthRepo
 	Bookmark() db_repos.IBookmarkRepo
 	Category() db_repos.ICategoryRepo
-	LearningHistory() db_repos.ILearningHistoryRepo
 	Lesson() db_repos.ILessonRepo
 	Transcript() db_repos.ITranscriptRepo
 }
@@ -26,7 +24,6 @@ type gormProvider struct {
 	authRepo       db_repos.IAuthRepo
 	bookmarkRepo   db_repos.IBookmarkRepo
 	categoryRepo   db_repos.ICategoryRepo
-	historyRepo    db_repos.ILearningHistoryRepo
 	lessonRepo     db_repos.ILessonRepo
 	transcriptRepo db_repos.ITranscriptRepo
 }
@@ -54,13 +51,6 @@ func (p *gormProvider) Category() db_repos.ICategoryRepo {
 		p.categoryRepo = categoryrepos.NewCategoryRepo(p.tx)
 	}
 	return p.categoryRepo
-}
-
-func (p *gormProvider) LearningHistory() db_repos.ILearningHistoryRepo {
-	if p.historyRepo == nil {
-		p.historyRepo = learninghistoryrepos.NewLearningHistoryRepo(p.tx)
-	}
-	return p.historyRepo
 }
 
 func (p *gormProvider) Lesson() db_repos.ILessonRepo {

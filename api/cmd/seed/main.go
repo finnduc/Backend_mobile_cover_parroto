@@ -40,8 +40,6 @@ func main() {
 	seedLessons(db)
 	seedTranscripts(db)
 	seedBookmarks(db)
-	seedLearningHistory(db)
-
 	fmt.Println("✅ Seed completed!")
 }
 
@@ -235,25 +233,4 @@ func seedBookmarks(db *gorm.DB) {
 	}
 }
 
-// ─── Learning History ─────────────────────────────────────────
 
-func seedLearningHistory(db *gorm.DB) {
-	now := time.Now()
-	history := []models.LearningHistory{
-		{ID: 1, UserID: "2", LessonID: 1, DurationWatched: 180.0, Completed: true, CreatedAt: now},
-		{ID: 2, UserID: "2", LessonID: 2, DurationWatched: 120.0, Completed: false, CreatedAt: now},
-		{ID: 3, UserID: "2", LessonID: 3, DurationWatched: 360.0, Completed: true, CreatedAt: now},
-		{ID: 4, UserID: "3", LessonID: 1, DurationWatched: 90.0, Completed: false, CreatedAt: now},
-		{ID: 5, UserID: "3", LessonID: 2, DurationWatched: 240.0, Completed: true, CreatedAt: now},
-		{ID: 6, UserID: "4", LessonID: 4, DurationWatched: 200.0, Completed: true, CreatedAt: now},
-		{ID: 7, UserID: "5", LessonID: 3, DurationWatched: 180.0, Completed: false, CreatedAt: now},
-		{ID: 8, UserID: "5", LessonID: 5, DurationWatched: 420.0, Completed: true, CreatedAt: now},
-	}
-
-	result := db.CreateInBatches(&history, len(history))
-	if result.Error != nil {
-		log.Printf("⚠️  learning_history: %v", result.Error)
-	} else {
-		fmt.Printf("   learning_history: %d rows\n", result.RowsAffected)
-	}
-}
