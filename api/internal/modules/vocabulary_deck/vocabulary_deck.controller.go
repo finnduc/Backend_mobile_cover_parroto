@@ -12,7 +12,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type VocabularyDeckController struct{ svc services.IVocabularyDeckService }
+type VocabularyDeckController struct {
+	svc services.IVocabularyDeckService
+}
 
 func NewVocabularyDeckController(svc services.IVocabularyDeckService) *VocabularyDeckController {
 	return &VocabularyDeckController{svc: svc}
@@ -75,6 +77,27 @@ func (ctrl *VocabularyDeckController) ListByUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.SuccessWithMeta(decks, result.Meta))
+}
+
+func (ctrl *VocabularyDeckController) Get(c *gin.Context) {
+	var uri struct {
+		ID uint `uri:"id" binding:"required"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	deck, appErr := ctrl.svc.GetByID(c.Request.Context(), uri.ID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var result res.VocabularyDeckRes
+	if err := utils.MapToDTO(deck, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map deck")))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
 }
 
 // Create godoc

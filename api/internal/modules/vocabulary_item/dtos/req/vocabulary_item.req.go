@@ -17,9 +17,9 @@ func (q ListVocabularyItemQuery) ToQuery() *database.Query {
 }
 
 type CreateVocabularyItemReq struct {
-	Phrase           string `json:"phrase" binding:"required"`
-	NormalizedPhrase string `json:"normalized_phrase" binding:"required"`
-	Meaning          string `json:"meaning" binding:"required"`
+	Phrase           string `json:"phrase"`
+	NormalizedPhrase string `json:"normalized_phrase"`
+	Meaning          string `json:"meaning"`
 	ExampleSentence  string `json:"example_sentence"`
 	Note             string `json:"note"`
 	LessonID         *uint  `json:"lesson_id"`
@@ -27,10 +27,10 @@ type CreateVocabularyItemReq struct {
 }
 
 type CreateVocabularyItemFromDeckReq struct {
-	DeckID           uint   `uri:"deckId" binding:"required"`
-	Phrase           string `json:"phrase" binding:"required"`
-	NormalizedPhrase string `json:"normalized_phrase" binding:"required"`
-	Meaning          string `json:"meaning" binding:"required"`
+	DeckID           uint   `uri:"deckId"`
+	Phrase           string `json:"phrase"`
+	NormalizedPhrase string `json:"normalized_phrase"`
+	Meaning          string `json:"meaning"`
 	ExampleSentence  string `json:"example_sentence"`
 	Note             string `json:"note"`
 	LessonID         *uint  `json:"lesson_id"`
@@ -38,9 +38,9 @@ type CreateVocabularyItemFromDeckReq struct {
 }
 
 type UpdateVocabularyItemReq struct {
-	Phrase           string `json:"phrase" binding:"required"`
-	NormalizedPhrase string `json:"normalized_phrase" binding:"required"`
-	Meaning          string `json:"meaning" binding:"required"`
+	Phrase           string `json:"phrase"`
+	NormalizedPhrase string `json:"normalized_phrase"`
+	Meaning          string `json:"meaning"`
 	ExampleSentence  string `json:"example_sentence"`
 	Note             string `json:"note"`
 }

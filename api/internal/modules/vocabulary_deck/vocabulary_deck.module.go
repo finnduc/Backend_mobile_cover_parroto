@@ -22,6 +22,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	{
 		protected.GET("", ctrl.ListByUser)
 		protected.POST("", ctrl.Create)
+		protected.GET("/:id", ctrl.Get)
 		protected.PUT("/:id", ctrl.Update)
 		protected.DELETE("/:id", ctrl.Delete)
 	}

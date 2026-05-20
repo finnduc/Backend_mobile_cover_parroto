@@ -1,7 +1,7 @@
 'server-only'
 import type { BaseResponse } from "@/types/base-response";
-import { snakeToCamel, camelToSnake } from "./case";
 import { auth } from "@clerk/nextjs/server";
+import { camelToSnake, snakeToCamel } from "./case";
 
 type ApiFetchOptions = {
   baseUrl?: string;
@@ -59,7 +59,9 @@ export async function apiFetch<T = any>(
     let body = fetchOptions.body;
     if (body && typeof body === "object" && !(body instanceof FormData) && !(body instanceof Blob) && !(body instanceof URLSearchParams) && !(body instanceof ArrayBuffer) && !(body instanceof ReadableStream)) {
       headers["Content-Type"] = "application/json";
-      body = JSON.stringify(camelToSnake(body));
+      const payload = camelToSnake(body)
+      console.log("API payload:", payload)
+      body = JSON.stringify(payload)
     }
 
     const queryString = searchParams.toString();

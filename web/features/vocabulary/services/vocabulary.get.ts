@@ -40,7 +40,10 @@ export async function getUserVocabularyDecks(): Promise<BaseResponse<VocabularyD
 }
 
 export async function getVocabularyDeck(deckId: number): Promise<BaseResponse<VocabularyDeck>> {
-  return apiFetch<VocabularyDeck>(`/vocabulary-decks/${deckId}`)
+  return apiFetch<VocabularyDeck>(`/vocabulary-decks/${deckId}`, {
+    withCredentials: true,
+    tags: [CACHE_TAGS.vocabularyDeck(deckId)],
+  })
 }
 
 export async function getAdminVocabularyDecks(): Promise<BaseResponse<VocabularyDeck[]>> {

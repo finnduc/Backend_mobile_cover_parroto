@@ -26,10 +26,10 @@ export interface VocabularyItem {
   lessonId: number | null
   transcriptId: number | null
   phrase: string
-  normalizedPhrase: string
-  meaning: string
-  exampleSentence: string
-  note: string
-  createdAt: string
-  updatedAt: string
+  normalizedPhrase?: string
+  meaning?: string
+  exampleSentence?: string
+  note?: string
+  createdAt?: string
+  updatedAt?: string
 }

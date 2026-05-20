@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation"
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { MyDeckDetailContent } from "@/features/vocabulary/components/user/MyDeckDetailContent"
 import { getVocabularyDeck, getVocabularyItems } from "@/features/vocabulary/services/vocabulary.get"
 import { ROUTES } from "@/lib/routes"
+import { notFound } from "next/navigation"
 
 export default async function MyDeckDetailPage({
   params,

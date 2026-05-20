@@ -5,6 +5,7 @@ import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
 import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/lib/routes"
 
@@ -28,6 +29,9 @@ export default async function ShadowingPage({
   const bookmarksRes = await getBookmarks()
   const isBookmarked = (bookmarksRes.data ?? []).some((b) => b.lessionId === lesson.id)
 
+  const decksRes = await getUserVocabularyDecks()
+  const decks = decksRes.data ?? []
+
   return (
     <PageLayout
       title={lesson.title}
@@ -41,6 +45,8 @@ export default async function ShadowingPage({
         videoUrl={lesson.videoUrl}
         duration={lesson.duration}
         transcripts={transcripts}
+        lessonId={lesson.id}
+        decks={decks}
         exercise={ShadowingArea}
       />
       <div className="mt-6 rounded-lg border p-4">

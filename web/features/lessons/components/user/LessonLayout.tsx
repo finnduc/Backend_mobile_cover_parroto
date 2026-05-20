@@ -1,10 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { notFound } from "next/navigation"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
+import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
+import type { VocabularyDeck } from "@/types/vocabulary.models"
 import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
 import type { Transcript } from "@/types/lessons.models"
 import type { ComponentType } from "react"
@@ -14,11 +17,15 @@ export function LessonLayout({
   duration,
   videoUrl,
   transcripts,
+  lessonId,
+  decks = [],
 }: {
   exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
   videoUrl?: string
   transcripts?: Transcript[]
+  lessonId?: number
+  decks?: VocabularyDeck[]
 }) {
   const segments = transcripts ?? []
   const {
@@ -35,6 +42,11 @@ export function LessonLayout({
     handleNext,
     handlePrev,
   } = useLessonPlayer(segments)
+
+  const [addToDeckTarget, setAddToDeckTarget] = useState<{
+    transcriptId: number
+    text: string
+  } | null>(null)
 
   return (
     <div className="flex h-full gap-6">
@@ -71,13 +83,31 @@ export function LessonLayout({
                 key={seg.id}
                 text={seg.content}
                 active={i === highlightedIndex}
+                transcriptId={seg.id}
                 timestamp={`${Math.floor(seg.startTimestamp / 60)}:${(seg.startTimestamp % 60).toString().padStart(2, "0")}`}
                 onClick={() => handleTranscriptClick(i)}
+                onAddToDeck={(transcriptId, text) => {
+                  setAddToDeckTarget({ transcriptId, text })
+                }}
               />
             ))}
           </div>
         </div>
       </aside>
+
+      {addToDeckTarget && lessonId != null && (
+        <AddToDeckDialog
+          open={!!addToDeckTarget}
+          onOpenChange={(open) => {
+            if (!open) setAddToDeckTarget(null)
+
+          }}
+          phrase={addToDeckTarget.text}
+          lessonId={lessonId}
+          transcriptId={addToDeckTarget.transcriptId}
+          decks={decks}
+        />
+      )}
     </div>
   )
 }
