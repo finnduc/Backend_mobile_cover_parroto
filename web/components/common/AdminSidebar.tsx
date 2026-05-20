@@ -13,12 +13,14 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 import { ROUTES } from "@/lib/routes"
-import { Users, FolderOpen, BookOpen } from "lucide-react"
+import { Users, FolderOpen, BookOpen, LibraryBig } from "lucide-react"
 
 const adminNav = [
   { label: "Người dùng", href: ROUTES.ADMIN.USERS.LIST, icon: Users },
   { label: "Danh mục", href: ROUTES.ADMIN.CATEGORIES.LIST, icon: FolderOpen },
   { label: "Bài học", href: ROUTES.ADMIN.LESSONS.LIST, icon: BookOpen },
+  { label: "Vocab - Categories", href: ROUTES.ADMIN.VOCABULARY.CATEGORIES.LIST, icon: LibraryBig },
+  { label: "Vocab - Decks", href: ROUTES.ADMIN.VOCABULARY.DECKS.LIST, icon: LibraryBig },
 ]
 
 export function AdminSidebar() {

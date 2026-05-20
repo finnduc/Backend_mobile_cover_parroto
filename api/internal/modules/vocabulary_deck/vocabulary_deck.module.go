@@ -16,10 +16,11 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 	ctrl := NewVocabularyDeckController(svc)
 	adminCtrl := NewVocabularyDeckAdminController(svc)
 
-	r.GET("/vocabulary-decks", ctrl.List)
+	r.GET("/vocabulary-system-decks", ctrl.ListDefault)
 
 	protected := r.Group("/vocabulary-decks", middleware.ClerkAuthMiddleware())
 	{
+		protected.GET("", ctrl.ListByUser)
 		protected.POST("", ctrl.Create)
 		protected.PUT("/:id", ctrl.Update)
 		protected.DELETE("/:id", ctrl.Delete)

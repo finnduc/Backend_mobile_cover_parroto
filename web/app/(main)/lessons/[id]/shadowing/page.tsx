@@ -5,6 +5,7 @@ import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
 import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/lib/routes"
 
 export default async function ShadowingPage({
@@ -42,6 +43,15 @@ export default async function ShadowingPage({
         transcripts={transcripts}
         exercise={ShadowingArea}
       />
+      <div className="mt-6 rounded-lg border p-4">
+        <h3 className="mb-2 text-sm font-medium">Tiến độ Shadowing</h3>
+        <div className="flex items-center gap-3">
+          <div className="h-2 flex-1 rounded-full bg-muted">
+            <div className="h-2 w-3/5 rounded-full bg-primary" />
+          </div>
+          <Badge variant="secondary">3/{transcripts.length} câu đã hoàn thành</Badge>
+        </div>
+      </div>
     </PageLayout>
   )
 }

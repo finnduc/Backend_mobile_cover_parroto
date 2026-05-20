@@ -20,6 +20,8 @@ func sLog() *zap.SugaredLogger {
 
 type IVocabularyDeckService interface {
 	List(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
+	ListDefault(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
+	ListByUser(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
 	GetByID(ctx context.Context, id uint) (*models.VocabularyDeck, *response.AppError)
 	Create(ctx context.Context, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
 	Update(ctx context.Context, id uint, body req.UpdateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
@@ -44,6 +46,36 @@ func (s *vocabularyDeckService) List(ctx context.Context, query req.ListVocabula
 	if err != nil {
 		log.Errorw("failed to list decks", "error", err)
 		return nil, response.Internal("failed to list decks")
+	}
+	return result, nil
+}
+
+func (s *vocabularyDeckService) ListDefault(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError) {
+	log := sLog()
+	log.Infow("listing default vocabulary decks")
+	isDefault := true
+	query.IsDefault = &isDefault
+	result, err := s.repo.FindAll(ctx, query.ToQuery())
+	if err != nil {
+		log.Errorw("failed to list default decks", "error", err)
+		return nil, response.Internal("failed to list default decks")
+	}
+	return result, nil
+}
+
+func (s *vocabularyDeckService) ListByUser(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError) {
+	userID, appErr := policy.GetUserID(ctx)
+	if appErr != nil {
+		return nil, appErr
+	}
+	log := sLog().With("userId", userID)
+	log.Infow("listing user vocabulary decks")
+	dbQuery := query.ToQuery()
+	dbQuery.SetFilter("user_id", userID)
+	result, err := s.repo.FindAll(ctx, dbQuery)
+	if err != nil {
+		log.Errorw("failed to list user decks", "error", err)
+		return nil, response.Internal("failed to list user decks")
 	}
 	return result, nil
 }

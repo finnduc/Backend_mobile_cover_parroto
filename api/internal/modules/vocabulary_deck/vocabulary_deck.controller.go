@@ -18,23 +18,53 @@ func NewVocabularyDeckController(svc services.IVocabularyDeckService) *Vocabular
 	return &VocabularyDeckController{svc: svc}
 }
 
-// List godoc
-// @Summary List vocabulary decks
-// @Tags vocabulary-decks
+// ListDefault godoc
+// @Summary List default/system vocabulary decks
+// @Tags vocabulary-system-decks
 // @Accept json
 // @Produce json
 // @Param category_id query int false "Filter by category"
 // @Param page query int false "Page number"
 // @Param limit query int false "Items per page"
 // @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.VocabularyDeckRes]]
-// @Router /vocabulary-decks [get]
-func (ctrl *VocabularyDeckController) List(c *gin.Context) {
+// @Router /vocabulary-system-decks [get]
+func (ctrl *VocabularyDeckController) ListDefault(c *gin.Context) {
 	var q req.ListVocabularyDeckQuery
 	if err := c.ShouldBindQuery(&q); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.ListDefault(c.Request.Context(), q)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	var decks []res.VocabularyDeckRes
+	if err := utils.MapToDTOs(result.Data, &decks); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to map decks")))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessWithMeta(decks, result.Meta))
+}
+
+// ListByUser godoc
+// @Summary List current user's vocabulary decks
+// @Tags vocabulary-decks
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Success 200 {object} response.BaseResponse[response.PaginatedResponse[res.VocabularyDeckRes]]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Router /vocabulary-decks [get]
+// @Security BearerAuth
+func (ctrl *VocabularyDeckController) ListByUser(c *gin.Context) {
+	var q req.ListVocabularyDeckQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

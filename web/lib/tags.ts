@@ -8,4 +8,10 @@ export const CACHE_TAGS = {
   users: "users",
   user: (id: string) => `user-${id}`,
   bookmarks: "bookmarks",
+  vocabularyCategories: "vocabulary-categories",
+  vocabularyCategory: (id: number) => `vocabulary-category-${id}`,
+  vocabularyDecks: "vocabulary-decks",
+  vocabularyDeck: (id: number) => `vocabulary-deck-${id}`,
+  vocabularyItems: "vocabulary-items",
+  vocabularyItem: (id: number) => `vocabulary-item-${id}`,
 } as const

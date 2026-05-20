@@ -4,6 +4,12 @@ export const ROUTES = {
     PROFILE: "/profile",
     SETTINGS: "/settings",
     BOOKMARKS: "/bookmarks",
+    VOCABULARY: {
+      LIST: "/vocabulary",
+      DECK: (id: number) => `/vocabulary/decks/${id}`,
+      MY_DECKS: "/vocabulary/my-decks",
+      MY_DECK: (id: number) => `/vocabulary/my-decks/${id}`,
+    },
     LEARNING_HISTORY: "/learning-history",
     LESSONS: {
       LIST: "/lessons",
@@ -45,6 +51,15 @@ export const ROUTES = {
       // NO create/edit - system managed
       // View only, maybe delete modal
     },
+    VOCABULARY: {
+      CATEGORIES: {
+        LIST: "/admin/vocabulary-categories",
+      },
+      DECKS: {
+        LIST: "/admin/vocabulary-decks",
+        ITEMS: (deckId: number) => `/admin/vocabulary-decks/${deckId}/items`,
+      },
+    },
   }
 }
 
@@ -57,5 +72,14 @@ export const RESOURCES = {
   },
   LESSON: {
     LIST: "/lessons",
+  },
+  VOCABULARY_CATEGORY: {
+    LIST: "/vocabulary-categories",
+  },
+  VOCABULARY_DECK: {
+    LIST: "/vocabulary-decks",
+  },
+  VOCABULARY_ITEM: {
+    LIST: "/vocabulary-items",
   },
 }

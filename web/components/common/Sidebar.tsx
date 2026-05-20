@@ -32,7 +32,8 @@ interface NavItem {
 const mainNav: NavItem[] = [
   { label: "Bài học", href: ROUTES.USER.LESSONS.LIST, icon: BookText },
   { label: "Chủ đề", href: ROUTES.USER.CATEGORIES, icon: BookOpen },
-  { label: "Từ vựng", href: "/vocabulary", icon: BookText },
+  { label: "Từ điển", href: "/vocabulary", icon: BookText },
+  { label: "Từ vựng", href: "/vocabulary/my-decks", icon: BookText },
   { label: "Đã lưu", href: ROUTES.USER.BOOKMARKS, icon: Bookmark },
 ]
 
