@@ -34,7 +34,7 @@ func NewVocabularyItemAdminController(svc services.IVocabularyItemService) *Voca
 // @Security BearerAuth
 func (ctrl *VocabularyItemAdminController) List(c *gin.Context) {
 	var uri struct {
-		DeckID uint `uri:"deckId" binding:"required"`
+		DeckID uint `uri:"id" binding:"required"`
 	}
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
@@ -73,7 +73,7 @@ func (ctrl *VocabularyItemAdminController) List(c *gin.Context) {
 // @Security BearerAuth
 func (ctrl *VocabularyItemAdminController) Create(c *gin.Context) {
 	var uri struct {
-		DeckID uint `uri:"deckId" binding:"required"`
+		DeckID uint `uri:"id" binding:"required"`
 	}
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))

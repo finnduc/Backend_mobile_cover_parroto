@@ -27,7 +27,7 @@ type CreateVocabularyItemReq struct {
 }
 
 type CreateVocabularyItemFromDeckReq struct {
-	DeckID           uint   `uri:"deckId"`
+	DeckID           uint   `uri:"id"`
 	Phrase           string `json:"phrase"`
 	NormalizedPhrase string `json:"normalized_phrase"`
 	Meaning          string `json:"meaning"`

@@ -30,7 +30,7 @@ func NewVocabularyItemController(svc services.IVocabularyItemService) *Vocabular
 // @Router /vocabulary-decks/{deckId}/items [get]
 func (ctrl *VocabularyItemController) List(c *gin.Context) {
 	var uri struct {
-		DeckID uint `uri:"deckId" binding:"required"`
+		DeckID uint `uri:"id" binding:"required"`
 	}
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
