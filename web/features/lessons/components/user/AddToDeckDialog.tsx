@@ -17,7 +17,10 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { createVocabularyDeck, createVocabularyItem } from "@/features/vocabulary/services/vocabulary.action"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
@@ -37,24 +40,60 @@ export function AddToDeckDialog({
   transcriptId: number
   decks: VocabularyDeck[]
 }) {
-  const [selectedDeckId, setSelectedDeckId] = useState<string>("")
+  const tokens = phrase.trim().split(/\s+/).filter(Boolean)
+  const [selectedTokens, setSelectedTokens] = useState<Set<number>>(new Set(tokens.map((_, i) => i)))
+  const [customPhrase, setCustomPhrase] = useState(phrase)
+  const [meaning, setMeaning] = useState("")
+  const [exampleSentence, setExampleSentence] = useState(phrase)
   const [submitting, setSubmitting] = useState(false)
+  const [selectedDeckId, setSelectedDeckId] = useState<string>("")
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newDeckName, setNewDeckName] = useState("")
   const [newDeckLevel, setNewDeckLevel] = useState("beginner")
 
+  const toggleToken = (index: number) => {
+    setSelectedTokens((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) {
+        next.delete(index)
+      } else {
+        next.add(index)
+      }
+      const selected = tokens.filter((_, i) => next.has(i)).join(" ")
+      setCustomPhrase(selected)
+      return next
+    })
+  }
+
+  const resetForm = () => {
+    setSelectedTokens(new Set(tokens.map((_, i) => i)))
+    setCustomPhrase(phrase)
+    setExampleSentence(phrase)
+    setSelectedDeckId("")
+    setShowCreateForm(false)
+    setNewDeckName("")
+    setNewDeckLevel("beginner")
+  }
+
+  const handleDialogChange = (open: boolean) => {
+    if (!open) {
+      resetForm()
+    }
+    onOpenChange(open)
+  }
+
   const handleSubmit = async () => {
-    if (!selectedDeckId) return
+    if (!selectedDeckId || !customPhrase.trim()) return
     setSubmitting(true)
 
     const deckId = Number(selectedDeckId)
     const res = await createVocabularyItem(deckId, {
-      phrase,
+      phrase: customPhrase.trim(),
       lessonId,
       transcriptId,
-      normalizedPhrase: phrase,
-      meaning: "",
-      exampleSentence: "",
+      normalizedPhrase: customPhrase.trim().toLowerCase(),
+      meaning: meaning.trim(),
+      exampleSentence: exampleSentence.trim(),
       note: "",
     })
 
@@ -63,7 +102,7 @@ export function AddToDeckDialog({
     if (!res.error) {
       const deck = decks.find((d) => d.id === deckId)
       toast.success(`Đã thêm vào "${deck?.name ?? "bộ từ vựng"}"`)
-      onOpenChange(false)
+      handleDialogChange(false)
     } else {
       toast.error(res.error.message)
     }
@@ -90,18 +129,17 @@ export function AddToDeckDialog({
     setShowCreateForm(false)
     setSubmitting(false)
 
-    // Server action revalidates cache; dialog closes, user reopens to see new deck
     const newDeck = deckRes.data!
     toast.success(`Đã tạo "${newDeck.name}". Vui lòng chọn lại bộ từ vựng.`)
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Thêm vào danh sách từ vựng</DialogTitle>
           <DialogDescription>
-            Thêm &ldquo;{phrase}&rdquo; vào bộ từ vựng của bạn
+            Chọn từ trong transcript hoặc nhập từ tùy chỉnh
           </DialogDescription>
         </DialogHeader>
 
@@ -141,46 +179,104 @@ export function AddToDeckDialog({
             </div>
           ) : (
             <>
-              {decks.length === 0 ? (
-                <div className="space-y-3 rounded-lg border p-4 text-center">
-                  <p className="text-sm text-muted-foreground">Bạn chưa có bộ từ vựng nào</p>
-                  <Button onClick={() => setShowCreateForm(true)}>
-                    Tạo bộ từ vựng đầu tiên
-                  </Button>
+              <div className="space-y-2">
+                <Label>Chọn từ trong câu transcript</Label>
+                <div className="flex flex-wrap gap-1.5 rounded-lg border p-3">
+                  {tokens.map((token, i) => (
+                    <Badge
+                      key={i}
+                      variant={selectedTokens.has(i) ? "default" : "outline"}
+                      className={cn(
+                        "cursor-pointer select-none text-sm",
+                        !selectedTokens.has(i) && "hover:bg-muted"
+                      )}
+                      onClick={() => toggleToken(i)}
+                    >
+                      {token}
+                    </Badge>
+                  ))}
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  <Label htmlFor="deck-select">Chọn bộ từ vựng</Label>
-                  <Select value={selectedDeckId} onValueChange={setSelectedDeckId}>
-                    <SelectTrigger id="deck-select">
-                      <SelectValue placeholder="Chọn bộ từ vựng..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {decks.map((deck) => (
-                        <SelectItem key={deck.id} value={String(deck.id)}>
-                          {deck.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              </div>
 
-              {decks.length > 0 && (
-                <div className="flex items-center justify-between">
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="px-0"
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    + Tạo bộ từ vựng mới
-                  </Button>
-                  <Button onClick={handleSubmit} disabled={submitting || !selectedDeckId}>
-                    {submitting ? "Đang thêm..." : "Thêm"}
-                  </Button>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="add-custom-phrase">Từ / Cụm từ</Label>
+                <Input
+                  id="add-custom-phrase"
+                  value={customPhrase}
+                  onChange={(e) => {
+                    setCustomPhrase(e.target.value)
+                    setSelectedTokens(new Set())
+                  }}
+                  placeholder="Hoặc nhập từ tùy chỉnh"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="add-meaning">Ý nghĩa</Label>
+                <Textarea
+                  id="add-meaning"
+                  value={meaning}
+                  onChange={(e) => setMeaning(e.target.value)}
+                  rows={2}
+                  placeholder="Ý nghĩa của từ này"
+                />
+              </div>
+
+              <div className="space-y-2"></div>
+
+              <div className="space-y-2">
+                <Label htmlFor="add-example-sentence">Câu ví dụ</Label>
+                <Textarea
+                  id="add-example-sentence"
+                  value={exampleSentence}
+                  onChange={(e) => setExampleSentence(e.target.value)}
+                  rows={2}
+                  placeholder="Ví dụ câu chứa từ này"
+                />
+              </div>
+
+              <div className="border-t pt-4">
+                {decks.length === 0 ? (
+                  <div className="space-y-3 rounded-lg border p-4 text-center">
+                    <p className="text-sm text-muted-foreground">Bạn chưa có bộ từ vựng nào</p>
+                    <Button onClick={() => setShowCreateForm(true)}>
+                      Tạo bộ từ vựng đầu tiên
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-1">
+                      <Label htmlFor="deck-select">Bộ từ vựng</Label>
+                      <Select value={selectedDeckId} onValueChange={setSelectedDeckId}>
+                        <SelectTrigger id="deck-select">
+                          <SelectValue placeholder="Chọn bộ từ vựng..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {decks.map((deck) => (
+                            <SelectItem key={deck.id} value={String(deck.id)}>
+                              {deck.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="px-0"
+                        onClick={() => setShowCreateForm(true)}
+                      >
+                        + Tạo bộ từ vựng mới
+                      </Button>
+                      <Button onClick={handleSubmit} disabled={submitting || !selectedDeckId || !customPhrase.trim()}>
+                        {submitting ? "Đang thêm..." : "Thêm"}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           )}
         </div>

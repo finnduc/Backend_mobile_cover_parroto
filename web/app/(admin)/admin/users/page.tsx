@@ -1,10 +1,5 @@
-import { PaginationBar } from "@/components/common/PaginationBar"
-import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
-import { UsersPageContent } from "@/features/users/components/admin/UsersPageContent"
-import { getAdminUsers } from "@/features/users/services/users.get"
-import { ROUTES } from "@/lib/routes"
-
-const DEFAULT_LIMIT = 10
+import { UsersPageContent } from "@/features/users/components/admin/UsersPageContent";
+import { getAdminUsers } from "@/features/users/services/users.get";
 
 export default async function UsersPage({
   searchParams,
@@ -13,19 +8,17 @@ export default async function UsersPage({
 }) {
   const { page, limit } = await searchParams
   const pageNum = Math.max(1, Number(page) || 1)
-  const limitNum = Math.max(1, Number(limit) || DEFAULT_LIMIT)
+  const limitNum = Math.max(1, Number(limit) || 10)
   const offset = (pageNum - 1) * limitNum
+
   const { users, totalCount } = await getAdminUsers(limitNum, offset)
 
   return (
-    <AdminPageLayout title="Users">
-      <UsersPageContent users={users} />
-      <PaginationBar
-        currentPage={pageNum}
-        totalPages={Math.ceil(totalCount / limitNum)}
-        baseUrl={ROUTES.ADMIN.USERS.LIST}
-        searchParams={new URLSearchParams({ limit: String(limitNum) })}
-      />
-    </AdminPageLayout>
+    <UsersPageContent
+      users={users}
+      currentPage={pageNum}
+      totalPages={Math.ceil(totalCount / limitNum)}
+      limit={limitNum}
+    />
   )
 }

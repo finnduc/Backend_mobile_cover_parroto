@@ -3,10 +3,10 @@ package req
 import "go-cover-parroto/internal/database"
 
 type ListVocabularyDeckQuery struct {
-	CategoryID *uint   `form:"category_id"`
-	IsDefault  *bool   `form:"is_default"`
-	Page       int     `form:"page"`
-	Limit      int     `form:"limit"`
+	CategoryID *uint `form:"category_id"`
+	IsDefault  *bool `form:"is_default"`
+	Page       int   `form:"page"`
+	Limit      int   `form:"limit"`
 }
 
 func (q ListVocabularyDeckQuery) ToQuery() *database.Query {

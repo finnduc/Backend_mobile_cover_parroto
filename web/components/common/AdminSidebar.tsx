@@ -29,8 +29,8 @@ export function AdminSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-3">
-        <Link href={ROUTES.ADMIN.DASHBOARD} className="flex items-center gap-2 text-lg font-bold">
-          Admin
+        <Link href={ROUTES.ADMIN.USERS.LIST} className="flex items-center gap-2 text-lg font-bold">
+          Engflix Admin
         </Link>
       </SidebarHeader>
       <SidebarContent>

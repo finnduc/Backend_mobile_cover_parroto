@@ -9,8 +9,9 @@ import (
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
-	"go-cover-parroto/internal/modules/vocabulary_deck/dtos/req"
 	db_repos "go-cover-parroto/internal/database/repositories"
+	"go-cover-parroto/internal/modules/vocabulary_deck/dtos/req"
+
 	"go.uber.org/zap"
 )
 

@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import { ROUTES } from "@/lib/routes";
 
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
@@ -32,6 +33,8 @@ export default function RootLayout({
             <ClerkProvider
               signInUrl="/sign-in"
               signUpUrl="/sign-up"
+              afterSignOutUrl={ROUTES.USER.LESSONS.LIST}
+              signInFallbackRedirectUrl={ROUTES.USER.LESSONS.LIST}
             >
               {children}
               <Toaster />

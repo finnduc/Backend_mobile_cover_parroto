@@ -38,7 +38,7 @@ func (ctrl *VocabularyDeckAdminController) List(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.ListDefault(c.Request.Context(), q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

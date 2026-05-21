@@ -45,8 +45,14 @@ const communityNav: NavItem[] = [
 
 function NavItems({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
+
+  const activeHref = items
+    .filter((item) => pathname === item.href || pathname.startsWith(item.href + "/"))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href
+
   return items.map((item) => {
-    const active = pathname.startsWith(item.href)
+    const active = item.href === activeHref
+
     return (
       <SidebarMenuItem key={item.href}>
         <SidebarMenuButton asChild isActive={active} tooltip={item.label}>

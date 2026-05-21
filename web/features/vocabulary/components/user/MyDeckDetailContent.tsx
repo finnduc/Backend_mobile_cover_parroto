@@ -2,7 +2,9 @@
 
 import { useState } from "react"
 import { DeckItemList } from "@/features/vocabulary/components/user/DeckItemList"
-import { AddItemForm } from "@/features/vocabulary/components/user/AddItemForm"
+import { AddItemModal } from "@/features/vocabulary/components/user/AddItemModal"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import type { VocabularyItem } from "@/types/vocabulary.models"
 
 export function MyDeckDetailContent({
@@ -12,31 +14,25 @@ export function MyDeckDetailContent({
   initialItems: VocabularyItem[]
   deckId: number
 }) {
-  const [items, setItems] = useState<VocabularyItem[]>(initialItems)
-
-  const handleAddItem = (values: {
-    phrase: string
-    normalizedPhrase: string
-    meaning: string
-    exampleSentence: string
-    note: string
-  }) => {
-    const newItem: VocabularyItem = {
-      id: Date.now(),
-      deckId,
-      lessonId: null,
-      transcriptId: null,
-      ...values,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-    setItems((prev) => [...prev, newItem])
-  }
+  const [modalOpen, setModalOpen] = useState(false)
 
   return (
     <div className="space-y-6">
-      <AddItemForm onSubmit={handleAddItem} />
-      <DeckItemList items={items} />
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-muted-foreground">
+          {initialItems.length} từ vựng
+        </h2>
+        <Button onClick={() => setModalOpen(true)} size="sm">
+          <Plus className="size-4" />
+          Thêm từ vựng
+        </Button>
+      </div>
+      <DeckItemList items={initialItems} />
+      <AddItemModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        deckId={deckId}
+      />
     </div>
   )
 }
