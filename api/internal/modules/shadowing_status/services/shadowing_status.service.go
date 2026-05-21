@@ -53,6 +53,7 @@ func (s *shadowingStatusService) Create(ctx context.Context, body req.CreateShad
 	status := &models.ShadowingStatus{
 		UserID:       userID,
 		TranscriptID: body.TranscriptID,
+		LessonID:     body.LessonID,
 		CompletedAt:  time.Now(),
 	}
 

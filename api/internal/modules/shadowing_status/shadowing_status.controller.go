@@ -25,16 +25,16 @@ func NewShadowingStatusController(svc services.IShadowingStatusService) *Shadowi
 // @Tags shadowing-status
 // @Accept json
 // @Produce json
-// @Param transcriptId path int true "Transcript ID"
+// @Param body body req.CreateShadowingStatusReq true "Request body"
 // @Success 200 {object} response.BaseResponse[res.ShadowingStatusRes]
 // @Failure 400 {object} response.BaseResponse[any]
 // @Failure 401 {object} response.BaseResponse[any]
 // @Failure 409 {object} response.BaseResponse[any]
-// @Router /shadowing-status/{transcriptId} [post]
+// @Router /shadowing-status [post]
 // @Security BearerAuth
 func (ctrl *ShadowingStatusController) Create(c *gin.Context) {
 	var body req.CreateShadowingStatusReq
-	if err := c.ShouldBindUri(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}

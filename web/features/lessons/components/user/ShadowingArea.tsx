@@ -2,8 +2,10 @@
 
 import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
 import { Button } from "@/components/ui/button"
-import { Mic, Square, Play, Pause, SkipBack, SkipForward, RotateCcw } from "lucide-react"
-import { useState } from "react"
+import { Mic, Square, Play, Pause, SkipBack, SkipForward, RotateCcw, Check } from "lucide-react"
+import { useState, useTransition } from "react"
+import { postShadowingStatus } from "@/features/lessons/services/shadowing-status.action"
+import { toast } from "sonner"
 import type { Transcript } from "@/types/lessons.models"
 
 export interface ExerciseControlProps {
@@ -11,6 +13,8 @@ export interface ExerciseControlProps {
   activeIndex: number
   highlightedIndex: number
   paused: boolean
+  initialCompletedIds: number[]
+  lessonId: number
   onPlay: () => void
   onPause: () => void
   onNext: () => void
@@ -23,6 +27,8 @@ export function ShadowingArea({
   transcripts,
   activeIndex,
   paused,
+  initialCompletedIds,
+  lessonId,
   onPlay,
   onPause,
   onNext,
@@ -30,7 +36,8 @@ export function ShadowingArea({
   onReplay,
 }: Partial<ExerciseControlProps>) {
   const [recording, setRecording] = useState(false)
-  const [completed, setCompleted] = useState<number[]>([])
+  const [completed, setCompleted] = useState<number[]>(initialCompletedIds ?? [])
+  const [, startTransition] = useTransition()
 
   const lines = (transcripts ?? []).map((t) => t.content)
   const safeActiveIndex = (activeIndex ?? -1) >= 0 && (activeIndex ?? -1) < lines.length ? activeIndex! : 0
@@ -90,6 +97,15 @@ export function ShadowingArea({
             onClick={() => {
               if (!completed.includes(safeActiveIndex)) {
                 setCompleted([...completed, safeActiveIndex])
+                const seg = (transcripts ?? [])[safeActiveIndex]
+                if (seg) {
+                  startTransition(async () => {
+                    const res = await postShadowingStatus(seg.id, lessonId!)
+                    if (res.error) {
+                      toast.error(res.error.message)
+                    }
+                  })
+                }
               }
               onNext?.()
             }}
@@ -105,13 +121,16 @@ export function ShadowingArea({
       <div className="space-y-1">
         {(transcripts ?? []).map((seg, i) => {
           const isCompleted = completed.includes(i) && i !== safeActiveIndex
+          const isSaved = (initialCompletedIds ?? []).includes(i)
           return (
             <div
               key={seg.id}
-              className={`rounded px-3 py-1.5 text-sm ${
-                isCompleted ? "bg-transcript-complete text-muted-foreground" : ""
-              } ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
+              className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${
+                isSaved ? "bg-green-100 text-green-700 line-through" : ""
+              } ${isCompleted && !isSaved ? "bg-amber-50 text-amber-700" : ""} ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
             >
+              {isSaved && <Check className="size-3.5 shrink-0 text-green-600" />}
+              {isCompleted && !isSaved && <span className="size-3.5 shrink-0 rounded-full border border-amber-400" />}
               {seg.content}
             </div>
           )

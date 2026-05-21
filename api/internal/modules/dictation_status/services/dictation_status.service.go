@@ -42,6 +42,7 @@ func (s *dictationStatusService) Create(ctx context.Context, body req.CreateDict
 	status := &models.DictationStatus{
 		UserID:       userID,
 		TranscriptID: body.TranscriptID,
+		LessonID:     body.LessonID,
 		CompletedAt:  time.Now(),
 	}
 

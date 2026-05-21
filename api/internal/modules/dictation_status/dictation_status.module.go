@@ -16,7 +16,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 
 	protected := r.Group("/dictation-status", middleware.ClerkAuthMiddleware())
 	{
-		protected.POST("/:transcriptId", ctrl.Create)
+		protected.POST("", ctrl.Create)
 		protected.GET("", ctrl.List)
 	}
 }
