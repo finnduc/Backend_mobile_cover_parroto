@@ -5,6 +5,7 @@ import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
 import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+import { getShadowingStatus } from "@/features/lessons/services/shadowing-status.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function ShadowingPage({
@@ -24,6 +25,13 @@ export default async function ShadowingPage({
   const transcripts = (transcriptsRes.data ?? [])
     .sort((a, b) => a.sequence - b.sequence)
 
+  const statusRes = await getShadowingStatus(lesson.id)
+  const completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
+  const transcriptIdToIndex = new Map(transcripts.map((t, i) => [t.id, i]))
+  const initialCompletedIds = completedTranscriptIds
+    .map((tid) => transcriptIdToIndex.get(tid))
+    .filter((i): i is number => i !== undefined)
+
   const bookmarksRes = await getBookmarks()
   const isBookmarked = (bookmarksRes.data ?? []).some((b) => b.lessionId === lesson.id)
 
@@ -40,6 +48,8 @@ export default async function ShadowingPage({
         videoUrl={lesson.videoUrl}
         duration={lesson.duration}
         transcripts={transcripts}
+        initialCompletedIds={initialCompletedIds}
+        lessonId={lesson.id}
         exercise={ShadowingArea}
       />
     </PageLayout>

@@ -14,13 +14,19 @@ export function LessonLayout({
   duration,
   videoUrl,
   transcripts,
+  initialCompletedIds,
+  lessonId,
 }: {
   exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
   videoUrl?: string
   transcripts?: Transcript[]
+  initialCompletedIds?: number[]
+  lessonId?: number
 }) {
   const segments = transcripts ?? []
+  const completedSet = new Set(initialCompletedIds ?? [])
+  const initialActiveIndex = segments.findIndex((_, i) => !completedSet.has(i))
   const {
     playerRef,
     paused,
@@ -34,7 +40,7 @@ export function LessonLayout({
     handleReplay,
     handleNext,
     handlePrev,
-  } = useLessonPlayer(segments)
+  } = useLessonPlayer(segments, initialActiveIndex)
 
   return (
     <div className="flex h-full gap-6">
@@ -52,6 +58,8 @@ export function LessonLayout({
               activeIndex={activeIndex}
               highlightedIndex={highlightedIndex}
               paused={paused}
+              initialCompletedIds={initialCompletedIds ?? []}
+              lessonId={lessonId}
               onPlay={handlePlay}
               onPause={handlePause}
               onNext={handleNext}

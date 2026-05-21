@@ -8,4 +8,6 @@ export const CACHE_TAGS = {
   users: "users",
   user: (id: string) => `user-${id}`,
   bookmarks: "bookmarks",
+  shadowingStatus: "shadowing-status",
+  dictationStatus: "dictation-status",
 } as const
