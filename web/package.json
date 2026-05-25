@@ -9,7 +9,14 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "dotenv -e .env.test -- playwright test",
+    "test:e2e:ui": "dotenv -e .env.test -- playwright test --ui",
+    "test:e2e:headed": "dotenv -e .env.test -- playwright test --headed",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:user": "dotenv -e .env.test -- playwright test --project=user-chromium",
+    "test:e2e:admin": "dotenv -e .env.test -- playwright test --project=admin-chromium",
+    "test:e2e:public": "dotenv -e .env.test -- playwright test --project=public"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.3.3",
@@ -33,10 +40,12 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "16.1.7",
     "postcss": "^8",
