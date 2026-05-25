@@ -14,4 +14,6 @@ export const CACHE_TAGS = {
   vocabularyDeck: (id: number) => `vocabulary-deck-${id}`,
   vocabularyItems: "vocabulary-items",
   vocabularyItem: (id: number) => `vocabulary-item-${id}`,
+  shadowingStatus: "shadowing-status",
+  dictationStatus: "dictation-status",
 } as const

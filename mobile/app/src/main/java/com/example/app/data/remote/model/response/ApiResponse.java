@@ -5,28 +5,22 @@ import com.google.gson.annotations.SerializedName;
 public class ApiResponse<T> {
     @SerializedName("data")
     private T data;
-    @SerializedName("error")
-    private String error;
-    @SerializedName("meta")
-    private metaresponse meta;
-    public metaresponse getMeta(){
-        return meta;
-    }
+    private MetaResponse meta;
+    private ErrorResponse error;
 
-
-    public boolean issuccess(){
-        return data != null && error == null;
-    }
-
-
-    public T getData(){
+    public T getData() {
         return data;
     }
 
-    public String getError(){
+    public MetaResponse getMeta() {
+        return meta;
+    }
+
+    public ErrorResponse getError() {
         return error;
     }
-    public static class metaresponse{
+
+    public static class MetaResponse{
         private int limit;
         private int page;
         private int total;
@@ -36,18 +30,27 @@ public class ApiResponse<T> {
         public int getLimit() {
             return limit;
         }
-
         public int getPage() {
             return page;
         }
-
-        public int getTotal_pages() {
-            return totalPages;
-        }
-
         public int getTotal() {
             return total;
         }
+        public int getTotalPages() {
+            return totalPages;
+        }
     }
+    public static class ErrorResponse{
+        private String message;
+        private int code;
+
+        public String getMessage() {
+            return message;
+        }
+        public int getCode() {
+            return code;
+        }
+    }
+
 
 }

@@ -14,7 +14,6 @@ public class TokenManager {
 
     private static TokenManager instance;
     private final SharedPreferences prefs;
-
     private TokenManager(Context context) {
         prefs = context.getApplicationContext()
                 .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

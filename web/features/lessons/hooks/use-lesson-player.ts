@@ -5,14 +5,14 @@ import { useRef, useState, useEffect, useCallback } from "react"
 import { useMediaRemote, useMediaState, type MediaPlayerInstance } from "@vidstack/react"
 import type { Transcript } from "@/types/lessons.models"
 
-export function useLessonPlayer(transcripts: Transcript[]) {
+export function useLessonPlayer(transcripts: Transcript[], initialActiveIndex = -1) {
   const playerRef = useRef<MediaPlayerInstance>(null)
   const remote = useMediaRemote(playerRef)
   const currentTime = useMediaState("currentTime", playerRef)
   const paused = useMediaState("paused", playerRef)
 
   const [playerMode, setPlayerMode] = useState<"normal" | "transcript">("normal")
-  const [activeIndex, setActiveIndex] = useState(-1)
+  const [activeIndex, setActiveIndex] = useState(initialActiveIndex)
   const prevModeRef = useRef(playerMode)
 
   const highlightedIndex = transcripts.findIndex(

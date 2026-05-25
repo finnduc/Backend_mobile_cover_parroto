@@ -17,5 +17,6 @@ func (q ListDictationStatusQuery) ToQuery() *database.Query {
 }
 
 type CreateDictationStatusReq struct {
-	TranscriptID uint `uri:"transcriptId" binding:"required"`
+	TranscriptID uint `json:"transcript_id" binding:"required"`
+	LessonID     uint `json:"lesson_id" binding:"required"`
 }

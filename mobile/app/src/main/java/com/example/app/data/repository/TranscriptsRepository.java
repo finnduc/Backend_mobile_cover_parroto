@@ -33,7 +33,7 @@ public class TranscriptsRepository {
         transcriptsApi.getTranscripts(lessonId).enqueue(new Callback<ApiResponse<List<TranscriptsResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<TranscriptsResponse>>> call, Response<ApiResponse<List<TranscriptsResponse>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().issuccess() ){
+                if (response.isSuccessful() && response.body() != null  ){
                     List<TranscriptsResponse> transcriptsData = response.body().getData();
                     callback.onSuccess(transcriptsData);
                 }

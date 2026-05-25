@@ -8,5 +8,4 @@ public class Constants {
     public static final String FIREBASE_SIGNUP_URL =
             "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="
                     + FIREBASE_API_KEY;
-
 }

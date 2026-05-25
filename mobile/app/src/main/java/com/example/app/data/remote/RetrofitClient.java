@@ -57,7 +57,6 @@ public class RetrofitClient {
     public LessonsApi getLessonsApi() {
         return retrofit.create(LessonsApi.class);
     }
-
     public CategoryApi getCategoryApi() {
         return retrofit.create(CategoryApi.class);
     }

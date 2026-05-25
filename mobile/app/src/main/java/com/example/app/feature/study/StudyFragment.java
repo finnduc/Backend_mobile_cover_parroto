@@ -20,9 +20,7 @@ import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.api.UserApi;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.categories.CategoryResponse;
-import com.example.app.data.remote.model.response.categories.ListCategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
-import com.example.app.data.remote.model.response.lessons.ListLessonsResponse;
 import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
@@ -88,44 +86,35 @@ public class StudyFragment extends Fragment {
     private void loadDataFromApi() {
         CategoriesRepository categoryRepo = new CategoriesRepository(requireContext());
         LessonsRepository lessonsRepo = new LessonsRepository(requireContext());
-
-        categoryRepo.getCategory(10, 1,
-                new CategoriesRepository.categoryCallback<ListCategoryResponse<CategoryResponse>>() {
+        categoryRepo.getCategory(10,1, new CategoriesRepository.categoryCallback<List<CategoryResponse>>() {
             @Override
-            public void onSuccess(ListCategoryResponse<CategoryResponse> data) {
-                if (data != null && data.getData() != null) {
-                    List<CategoryResponse> categoryList = data.getData();
-
-                    for (CategoryResponse category : categoryList) {
-                        int categoryId = 0;
-                        try {
-                            categoryId = Integer.parseInt(category.getId());
-                        } catch (NumberFormatException e) {
-                            continue;
-                        }
-                        final int finalCategoryId = categoryId;
-                        lessonsRepo.getLessons(5, 1, categoryId, null,
-                                new LessonsRepository.lessonsCallback<ListLessonsResponse<LessonsResponse>>() {
+            public void onSuccess(List<CategoryResponse> response) {
+                if (response != null ) {
+                    for (CategoryResponse category : response) {
+                        int categoryId = category.getId();
+                        lessonsRepo.getLessons(10, 1, null, categoryId, null, new LessonsRepository.lessonsCallback<ApiResponse<List<LessonsResponse>>>() {
                             @Override
-                            public void onSuccess(ListLessonsResponse<LessonsResponse> lessonData) {
-                                if (lessonData != null && lessonData.getData() != null) {
+                            public void onSuccess(ApiResponse<List<LessonsResponse>> lessonResponse) {
+                                if (lessonResponse != null && lessonResponse.getData() != null) {
+                                    int totalLessons = lessonResponse.getMeta().getTotal();
                                     LessonSection newSection = new LessonSection(
-                                            finalCategoryId,
+                                            categoryId,
                                             category.getName(),
-                                            lessonData.getMeta().getTotal(),
-                                            lessonData.getData()
+                                            totalLessons,
+                                            lessonResponse.getData()
                                     );
-
-                                    // 5. Thêm vào danh sách tổng và báo Adapter cập nhật UI
                                     sectionList.add(newSection);
-                                            sectionAdapter.notifyDataSetChanged();
+                                    sectionAdapter.notifyDataSetChanged();
                                 }
                             }
                             @Override
                             public void onError(String message) {
+                                Toast.makeText(getContext(), "Lỗi tải danh mục: " + message, Toast.LENGTH_SHORT).show();
                             }
                         });
+
                     }
+
                 }
             }
 
@@ -134,6 +123,7 @@ public class StudyFragment extends Fragment {
                 Toast.makeText(getContext(), "Lỗi tải danh mục: " + message, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void showBottomSheet(LessonsResponse lesson){

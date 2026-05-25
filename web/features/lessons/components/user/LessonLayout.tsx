@@ -19,6 +19,7 @@ export function LessonLayout({
   transcripts,
   lessonId,
   decks = [],
+  initialCompletedIds,
 }: {
   exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
@@ -26,8 +27,11 @@ export function LessonLayout({
   transcripts?: Transcript[]
   lessonId?: number
   decks?: VocabularyDeck[]
+  initialCompletedIds?: number[]
 }) {
   const segments = transcripts ?? []
+  const completedSet = new Set(initialCompletedIds ?? [])
+  const initialActiveIndex = segments.findIndex((_, i) => !completedSet.has(i))
   const {
     playerRef,
     paused,
@@ -41,7 +45,7 @@ export function LessonLayout({
     handleReplay,
     handleNext,
     handlePrev,
-  } = useLessonPlayer(segments)
+  } = useLessonPlayer(segments, initialActiveIndex)
 
   const [addToDeckTarget, setAddToDeckTarget] = useState<{
     transcriptId: number
@@ -64,6 +68,8 @@ export function LessonLayout({
               activeIndex={activeIndex}
               highlightedIndex={highlightedIndex}
               paused={paused}
+              initialCompletedIds={initialCompletedIds ?? []}
+              lessonId={lessonId}
               onPlay={handlePlay}
               onPause={handlePause}
               onNext={handleNext}

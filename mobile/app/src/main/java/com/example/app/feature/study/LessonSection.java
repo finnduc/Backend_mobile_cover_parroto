@@ -6,7 +6,6 @@ import java.util.List;
 
 public class LessonSection {
     private int idCategory;
-
     private String categoryName;
     private int totalLessons;
     List<LessonsResponse> lesssons;

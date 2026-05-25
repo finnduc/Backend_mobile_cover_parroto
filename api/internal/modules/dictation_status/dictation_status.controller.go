@@ -25,15 +25,15 @@ func NewDictationStatusController(svc services.IDictationStatusService) *Dictati
 // @Tags dictation-status
 // @Accept json
 // @Produce json
-// @Param transcriptId path int true "Transcript ID"
+// @Param body body req.CreateDictationStatusReq true "Request body"
 // @Success 200 {object} response.BaseResponse[res.DictationStatusRes]
 // @Failure 400 {object} response.BaseResponse[any]
 // @Failure 401 {object} response.BaseResponse[any]
-// @Router /dictation-status/{transcriptId} [post]
+// @Router /dictation-status [post]
 // @Security BearerAuth
 func (ctrl *DictationStatusController) Create(c *gin.Context) {
 	var body req.CreateDictationStatusReq
-	if err := c.ShouldBindUri(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}

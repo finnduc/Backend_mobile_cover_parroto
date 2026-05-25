@@ -4,14 +4,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
 import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
-import { Lightbulb, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward, Square } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Lightbulb, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward, Square, Check } from "lucide-react"
+import { useState, useEffect, useTransition } from "react"
+import { postDictationStatus } from "@/features/lessons/services/dictation-status.action"
+import { toast } from "sonner"
 
 export function DictationArea({
   transcripts,
   activeIndex,
   highlightedIndex,
   paused,
+  initialCompletedIds,
+  lessonId,
   onPlay,
   onPause,
   onNext,
@@ -20,9 +24,13 @@ export function DictationArea({
   onTranscriptClick,
 }: Partial<ExerciseControlProps>) {
   const [recording, setRecording] = useState(false)
-  const [maxLine, setMaxLine] = useState(0)
+  const initialMaxLine = (initialCompletedIds ?? []).length > 0
+    ? Math.max(...(initialCompletedIds ?? [])) + 1
+    : 0
+  const [maxLine, setMaxLine] = useState(initialMaxLine)
   const [inputs, setInputs] = useState<string[]>((transcripts ?? []).map(() => ""))
   const [showHints, setShowHints] = useState(false)
+  const [, startTransition] = useTransition()
 
   // Sync current line with active playback position
   const currentLine =
@@ -41,7 +49,7 @@ export function DictationArea({
 
   return (
     <div className="space-y-4">
-      <LessonProgressBar completed={maxLine} total={(transcripts ?? []).length} />
+      <LessonProgressBar completed={(initialCompletedIds ?? []).length} total={(transcripts ?? []).length} />
 
       <div className="flex items-center justify-center gap-2 rounded-xl border bg-background px-3 py-2">
         <Button
@@ -82,6 +90,7 @@ export function DictationArea({
         {(transcripts ?? []).map((seg, i) => {
           const isComplete = i < maxLine
           const isCurrent = i === currentLine
+          const isSaved = (initialCompletedIds ?? []).includes(i)
           return (
             <div
               key={seg.id}
@@ -92,12 +101,19 @@ export function DictationArea({
               }}
               className={`rounded-lg p-3 transition-colors ${
                 isCurrent ? "border-2 border-primary/20 bg-transcript-active" : ""
-              } ${isComplete ? "bg-transcript-complete" : ""} ${
+              } ${isSaved ? "bg-green-100" : ""} ${isComplete && !isSaved && !isCurrent ? "bg-amber-50" : ""} ${
                 isComplete && !isCurrent ? "cursor-pointer hover:bg-transcript-active/50" : ""
               }`}
             >
               {isComplete && !isCurrent ? (
-                <p className="text-sm text-foreground">{seg.content}</p>
+                <div className="flex items-center gap-2">
+                  {isSaved ? (
+                    <Check className="size-4 shrink-0 text-green-600" />
+                  ) : (
+                    <span className="size-4 shrink-0 rounded-full border border-amber-400" />
+                  )}
+                  <p className="text-sm text-foreground">{seg.content}</p>
+                </div>
               ) : isCurrent ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -125,7 +141,19 @@ export function DictationArea({
                     <Button
                       size="xs"
                       onClick={() => {
-                        setMaxLine((prev) => Math.max(prev, currentLine + 1))
+                        const newMaxLine = Math.max(maxLine, currentLine + 1)
+                        setMaxLine(newMaxLine)
+                        const seg = (transcripts ?? [])[currentLine]
+                        const userInput = (inputs[currentLine] ?? "").trim().toLowerCase()
+                        const correctAnswer = seg?.content.trim().toLowerCase()
+                        if (seg && userInput === correctAnswer) {
+                          startTransition(async () => {
+                            const res = await postDictationStatus(seg.id, lessonId!)
+                            if (res.error) {
+                              toast.error(res.error.message)
+                            }
+                          })
+                        }
                         onNext?.()
                       }}
                     >
