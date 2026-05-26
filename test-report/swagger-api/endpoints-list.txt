@@ -1,0 +1,53 @@
+Total endpoints: 51
+
+  [GET   ] /api/v1/admin/categories                                     List categories
+  [POST  ] /api/v1/admin/categories                                     Create category
+  [GET   ] /api/v1/admin/categories/{id}                                Get category by ID
+  [PUT   ] /api/v1/admin/categories/{id}                                Update category
+  [DELETE] /api/v1/admin/categories/{id}                                Delete category
+  [GET   ] /api/v1/admin/lessons                                        List lessons
+  [POST  ] /api/v1/admin/lessons                                        Create lesson
+  [GET   ] /api/v1/admin/lessons/{id}                                   Get lesson by ID
+  [PUT   ] /api/v1/admin/lessons/{id}                                   Update lesson
+  [DELETE] /api/v1/admin/lessons/{id}                                   Delete lesson
+  [GET   ] /api/v1/admin/lessons/{lessonId}/transcripts                 Get lesson transcripts
+  [PUT   ] /api/v1/admin/lessons/{lessonId}/transcripts                 Replace all transcripts for a lesson
+  [POST  ] /api/v1/admin/lessons/{lessonId}/transcripts/bulk            Bulk create transcripts for a lesson
+  [POST  ] /api/v1/admin/transcripts                                    Create transcript
+  [GET   ] /api/v1/admin/transcripts/{id}                               Get transcript by ID
+  [PUT   ] /api/v1/admin/transcripts/{id}                               Update transcript
+  [DELETE] /api/v1/admin/transcripts/{id}                               Delete transcript
+  [GET   ] /api/v1/admin/vocabulary-categories                          List vocabulary categories (admin)
+  [POST  ] /api/v1/admin/vocabulary-categories                          Create vocabulary category (admin)
+  [GET   ] /api/v1/admin/vocabulary-categories/{id}                     Get vocabulary category by ID (admin)
+  [PUT   ] /api/v1/admin/vocabulary-categories/{id}                     Update vocabulary category (admin)
+  [DELETE] /api/v1/admin/vocabulary-categories/{id}                     Delete vocabulary category (admin)
+  [GET   ] /api/v1/admin/vocabulary-decks                               List all vocabulary decks (admin)
+  [POST  ] /api/v1/admin/vocabulary-decks                               Create system deck (admin)
+  [GET   ] /api/v1/admin/vocabulary-decks/{deckId}/items                List items in a system deck (admin)
+  [POST  ] /api/v1/admin/vocabulary-decks/{deckId}/items                Add item to system deck (admin)
+  [PUT   ] /api/v1/admin/vocabulary-decks/{id}                          Update system deck (admin)
+  [DELETE] /api/v1/admin/vocabulary-decks/{id}                          Delete system deck (admin)
+  [PUT   ] /api/v1/admin/vocabulary-items/{id}                          Update item in system deck (admin)
+  [DELETE] /api/v1/admin/vocabulary-items/{id}                          Delete item from system deck (admin)
+  [POST  ] /api/v1/auth/complete-signup                                 Finalize user registration
+  [GET   ] /api/v1/bookmarks                                            List user bookmarks
+  [POST  ] /api/v1/bookmarks/{lessonId}                                 Add bookmark
+  [DELETE] /api/v1/bookmarks/{lessonId}                                 Remove bookmark
+  [GET   ] /api/v1/categories                                           List categories
+  [GET   ] /api/v1/dictation-status                                     List dictation status
+  [POST  ] /api/v1/dictation-status/{transcriptId}                      Mark transcript as dictation completed
+  [GET   ] /api/v1/lessons                                              List lessons
+  [GET   ] /api/v1/lessons/{lessonId}                                   Get a lesson
+  [GET   ] /api/v1/lessons/{lessonId}/transcripts                       Get lesson transcripts
+  [GET   ] /api/v1/shadowing-status                                     List shadowing status
+  [POST  ] /api/v1/shadowing-status/{transcriptId}                      Mark transcript as shadowing completed
+  [GET   ] /api/v1/vocabulary-categories                                List vocabulary categories
+  [GET   ] /api/v1/vocabulary-decks                                     List vocabulary decks
+  [POST  ] /api/v1/vocabulary-decks                                     Create user vocabulary deck
+  [GET   ] /api/v1/vocabulary-decks/{deckId}/items                      List items in a deck
+  [POST  ] /api/v1/vocabulary-decks/{deckId}/items                      Add item to user deck
+  [PUT   ] /api/v1/vocabulary-decks/{id}                                Update user vocabulary deck
+  [DELETE] /api/v1/vocabulary-decks/{id}                                Delete user vocabulary deck
+  [PUT   ] /api/v1/vocabulary-items/{id}                                Update user's item
+  [DELETE] /api/v1/vocabulary-items/{id}                                Delete user's item

@@ -1,0 +1,10 @@
+ok  	go-cover-parroto/internal/core/policy	(cached)	coverage: 100.0% of statements
+ok  	go-cover-parroto/internal/modules/bookmark/services	(cached)	coverage: 90.6% of statements
+ok  	go-cover-parroto/internal/modules/category/services	(cached)	coverage: 95.5% of statements
+ok  	go-cover-parroto/internal/modules/dictation_status/services	(cached)	coverage: 100.0% of statements
+ok  	go-cover-parroto/internal/modules/lesson/services	(cached)	coverage: 92.5% of statements
+ok  	go-cover-parroto/internal/modules/shadowing_status/services	(cached)	coverage: 100.0% of statements
+ok  	go-cover-parroto/internal/modules/transcript/services	(cached)	coverage: 92.9% of statements
+ok  	go-cover-parroto/internal/modules/vocabulary_category/services	(cached)	coverage: 100.0% of statements
+ok  	go-cover-parroto/internal/modules/vocabulary_deck/services	(cached)	coverage: 76.7% of statements
+ok  	go-cover-parroto/internal/modules/vocabulary_item/services	(cached)	coverage: 93.1% of statements

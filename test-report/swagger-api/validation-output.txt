@@ -1,0 +1,111 @@
+npm warn deprecated @apidevtools/swagger-cli@4.0.4: This package has been abandoned. Please switch to using the actively maintained @redocly/cli
+Swagger schema validation failed.
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-categories~1{id}/get/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks/post/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-decks/post/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-decks/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks/post/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks/post/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-decks/post/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks/post/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks/post/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{deckId}~1items/post/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{id}/put/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-decks~1{id}/delete/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-items~1{id}/put/responses/400 must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400/schema/type must be array
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400 must have required property '$ref'
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1admin~1vocabulary-items~1{id}/delete/responses/400 must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be array
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400 must have required property '$ref'
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{deckId}~1items/post/responses/400 must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400/schema/type must be array
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400 must have required property '$ref'
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{id}/put/responses/400 must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be array
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400 must have required property '$ref'
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-decks~1{id}/delete/responses/400 must match exactly one schema in oneOf
+  #/paths/~1vocabulary-items~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-items~1{id}/put/responses/400/schema/type must be array
+  #/paths/~1vocabulary-items~1{id}/put/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1vocabulary-items~1{id}/put/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-items~1{id}/put/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1vocabulary-items~1{id}/put/responses/400 must have required property '$ref'
+  #/paths/~1vocabulary-items~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-items~1{id}/put/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-items~1{id}/put/responses/400 must match exactly one schema in oneOf
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400/schema/type must be array
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400/schema/type must match a schema in anyOf
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400/schema/type must be equal to one of the allowed values
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400/schema must match exactly one schema in oneOf
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400 must have required property '$ref'
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400 must NOT have additional properties
+  #/paths/~1vocabulary-items~1{id}/delete/responses/400 must match exactly one schema in oneOf
+
