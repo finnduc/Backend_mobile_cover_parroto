@@ -1,24 +1,23 @@
-go run ./cmd/server/main.go
-
 # Engflix API
 
-Backend REST API cho nền tảng học tiếng Anh qua video — xây dựng bằng Go, Gin, GORM, Firebase Auth.
+Backend REST API cho nền tảng học tiếng Anh qua video — xây dựng bằng Go, Gin, GORM, Clerk Authentication.
 
 ## Tech Stack
 
 | | |
 |---|---|
-| **Language** | Go 1.25.3 |
+| **Ngôn ngữ** | Go 1.25.3 |
 | **Framework** | Gin |
 | **ORM** | GORM (PostgreSQL) |
-| **Auth** | Firebase Authentication |
+| **Auth** | Clerk |
 | **Migration** | Goose |
-| **Docs** | Swagger / OpenAPI |
+| **Logging** | Zap |
+| **Tài liệu** | Swagger / OpenAPI |
 | **Hot reload** | Air |
 
 ---
 
-## Project Structure
+## Cấu trúc dự án
 
 ```
 api/
@@ -28,44 +27,54 @@ api/
 ├── internal/
 │   ├── configs/             # Load env config
 │   ├── core/
-│   │   ├── database/        # Query builder
-│   │   ├── errors/          # Custom errors
+│   │   ├── constants.go     # Hằng số toàn app
 │   │   ├── enums/           # UserRole enum
+│   │   ├── errors/          # Custom AppError types
+│   │   ├── logger/          # Zap logger setup
+│   │   ├── policy/          # Authorization policies
 │   │   └── response/        # Base response, pagination, AppError
 │   ├── database/
+│   │   ├── database.go      # Kết nối DB
 │   │   ├── models/          # GORM models
-│   │   └── migrations/      # Goose SQL migrations
-│   ├── firebase/            # Firebase Auth client
-│   ├── middleware/          # FirebaseAuth middleware
+│   │   ├── migrations/      # Goose SQL migrations
+│   │   ├── query.go         # Common query helpers
+│   │   ├── repositories/    # Generic repository layer
+│   │   └── transaction/     # Transaction support
+│   ├── middleware/           # Auth middleware (Clerk)
 │   ├── modules/
-│   │   ├── auth/            # POST 
-│   │   ├── user/            # GET /user/profile
-│   │   ├── lesson/          # GET /lessons, GET /lessons/:lessonId
-│   │   ├── category/        # GET /categories
+│   │   ├── auth/            # POST /auth/complete-signup
 │   │   ├── bookmark/        # GET/POST/DELETE /bookmarks
-│   │   ├── learning_history/# POST/GET /learning-history
-│   │   └── transcript/      # GET /lessons/:lessonId/transcripts
-│   └── utils/               # DTO mapper
+│   │   ├── category/        # GET /categories
+│   │   ├── dictation_status/# POST/GET /dictation-status
+│   │   ├── lesson/          # GET /lessons, GET /lessons/:lessonId
+│   │   ├── shadowing_status/# POST/GET /shadowing-status
+│   │   ├── transcript/      # GET /lessons/:lessonId/transcripts
+│   │   ├── vocabulary_category/ # CRUD /vocabulary-categories
+│   │   ├── vocabulary_deck/     # CRUD /vocabulary-decks
+│   │   └── vocabulary_item/     # CRUD /vocabulary-decks/:deckId/items
+│   └── utils/               # DTO mapper (copier)
 ├── docker/
 │   └── docker-compose.yaml
 ├── .env.example
+├── API.md                   # Tài liệu API cho frontend
 ├── Makefile
 └── server.air.toml
 ```
 
 ---
 
-## Prerequisites
+## Yêu cầu
 
 - [Go 1.25+](https://golang.org/dl/)
 - [Docker](https://www.docker.com/)
 - [goose](https://github.com/pressly/goose) — `go install github.com/pressly/goose/v3/cmd/goose@latest`
 - [swag](https://github.com/swaggo/swag) — `go install github.com/swaggo/swag/cmd/swag@latest`
-- Firebase project (xem hướng dẫn bên dưới)
+- [Air](https://github.com/air-verse/air) (tùy chọn, dùng cho hot reload)
+- Tài khoản Clerk (xem hướng dẫn bên dưới)
 
 ---
 
-## Getting Started
+## Bắt đầu
 
 ### 1. Clone & cài dependencies
 
@@ -91,21 +100,18 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_DB=parroto
+POSTGRES_DB=engflix
 POSTGRES_SSLMODE=disable
 
-FIREBASE_CREDENTIALS_FILE=/đường/dẫn/tới/serviceAccountKey.json
-FIREBASE_PROJECT_ID=your-firebase-project-id
-FIREBASE_WEB_API_KEY=your-firebase-web-api-key
+CLERK_SECRET_KEY=sk_test_...
+CLERK_PUBLISHABLE_KEY=pk_test_...
 ```
 
-### 3. Setup Firebase
+### 3. Setup Clerk
 
-1. Vào [Firebase Console](https://console.firebase.google.com) → tạo project
-2. **Authentication** → **Sign-in method** → bật **Email/Password**
-3. **Project Settings → Service accounts** → **Generate new private key** → tải file JSON → đặt đường dẫn vào `FIREBASE_CREDENTIALS_FILE`
-4. **Project Settings → General** → copy **Web API Key** → điền vào `FIREBASE_WEB_API_KEY`
-5. **Project Settings → General** → copy **Project ID** → điền vào `FIREBASE_PROJECT_ID`
+1. Vào [Clerk Dashboard](https://dashboard.clerk.com) → tạo application
+2. **Configure** → **API Keys** → copy **Secret Key** và **Publishable Key**
+3. Điền `CLERK_SECRET_KEY` và `CLERK_PUBLISHABLE_KEY` vào `.env`
 
 ### 4. Khởi động PostgreSQL
 
@@ -115,7 +121,7 @@ make up
 
 > Nếu đã có PostgreSQL đang chạy ở port 5432, tạo database thủ công:
 > ```bash
-> psql -U postgres -c "CREATE DATABASE parroto;"
+> psql -U postgres -c "CREATE DATABASE engflix;"
 > ```
 
 ### 5. Chạy migrations
@@ -142,19 +148,31 @@ Server chạy tại: `http://localhost:3001`
 
 **Base URL:** `http://localhost:3001/api/v1`
 
+Xem [API.md](./API.md) để biết chi tiết request/response.
+
 | Method | Endpoint | Auth | Mô tả |
 |--------|----------|------|-------|
-| GET | `/lessons` | ❌ | Danh sách bài học (filter: `category_id`, `level`) |
+| GET | `/lessons` | ❌ | Danh sách bài học (filter: `category_id`, `level`, `search`) |
 | GET | `/lessons/:lessonId` | ❌ | Chi tiết bài học |
 | GET | `/categories` | ❌ | Danh sách category |
 | GET | `/lessons/:lessonId/transcripts` | ❌ | Transcript của bài học |
-| GET | `/user/profile` | ✅ | Lấy profile user hiện tại |
 | GET | `/bookmarks` | ✅ | Danh sách bookmark của user |
 | POST | `/bookmarks/:lessonId` | ✅ | Thêm bookmark |
 | DELETE | `/bookmarks/:lessonId` | ✅ | Xóa bookmark |
-| POST | `/learning-history` | ✅ | Ghi lại tiến độ học (upsert) |
-| GET | `/learning-history` | ✅ | Lịch sử học của user |
-| GET | `/learning-history/:lessonId` | ✅ | Tiến độ học 1 bài cụ thể |
+| POST | `/shadowing-status/:transcriptId` | ✅ | Đánh dấu đã hoàn thành shadowing |
+| GET | `/shadowing-status?lesson_id=` | ✅ | Danh sách transcript đã shadowing |
+| POST | `/dictation-status/:transcriptId` | ✅ | Đánh dấu đã hoàn thành dictation |
+| GET | `/dictation-status?lesson_id=` | ✅ | Danh sách transcript đã dictation |
+| GET | `/vocabulary-categories` | ❌ | Danh sách vocabulary categories |
+| GET | `/vocabulary-decks?category_id=` | ❌ | Danh sách vocabulary decks |
+| GET | `/vocabulary-decks/:deckId/items` | ❌ | Danh sách từ vựng trong deck |
+| POST | `/vocabulary-decks` | ✅ | Tạo deck cá nhân |
+| PUT | `/vocabulary-decks/:id` | ✅ | Sửa deck của mình |
+| DELETE | `/vocabulary-decks/:id` | ✅ | Xóa deck của mình |
+| POST | `/vocabulary-decks/:deckId/items` | ✅ | Thêm từ vào deck của mình |
+| PUT | `/vocabulary-items/:id` | ✅ | Sửa từ của mình |
+| DELETE | `/vocabulary-items/:id` | ✅ | Xóa từ của mình |
+| POST | `/auth/complete-signup` | ✅ | Hoàn tất đăng ký user |
 
 ---
 
@@ -164,10 +182,9 @@ Truy cập: `http://localhost:3001/swagger/index.html`
 
 **Cách lấy token để test trên Swagger:**
 
-1. Gọi `POST /auth/token` với `email` + `password`
-2. Copy `id_token` từ response
-3. Click **Authorize** 🔒 → nhập `Bearer <id_token>` → Authorize
-4. Tất cả endpoint có 🔒 sẽ tự động đính kèm token
+1. Đăng nhập qua Clerk trên frontend, lấy JWT session token
+2. Click **Authorize** → nhập `Bearer <session_token>` → Authorize
+3. Tất cả endpoint có khóa sẽ tự động đính kèm token
 
 **Regenerate Swagger docs** (sau khi thay đổi annotation):
 
@@ -192,10 +209,53 @@ make migrate-down
 
 ---
 
-## Chạy Unit Tests
+## Chạy test
+
+### Chạy tất cả test
 
 ```bash
-go test ./internal/modules/.../services/... -v
+go test ./... -v
+```
+
+### Chạy test trong một module cụ thể
+
+```bash
+go test ./internal/modules/<module-name>/services/... -v
+```
+
+Ví dụ:
+
+```bash
+go test ./internal/modules/bookmark/services/... -v
+go test ./internal/modules/category/services/... -v
+go test ./internal/modules/lesson/services/... -v
+go test ./internal/modules/vocabulary_deck/services/... -v
+go test ./internal/modules/vocabulary_item/services/... -v
+```
+
+### Chạy test với coverage
+
+```bash
+go test ./... -cover
+```
+
+### Chạy test và xuất coverage report (HTML)
+
+```bash
+go test ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
+
+### Chạy test với flag race condition
+
+```bash
+go test ./... -race -v
+```
+
+### Chỉ chạy một test function cụ thể
+
+```bash
+go test ./internal/modules/<module-name>/services/... -run TestFunctionName -v
 ```
 
 ---
@@ -212,7 +272,7 @@ make clean     # Xóa containers + volumes (⚠️ mất data)
 
 ---
 
-## Environment Variables
+## Biến môi trường
 
 | Biến | Mô tả | Default |
 |------|-------|---------|
@@ -222,12 +282,26 @@ make clean     # Xóa containers + volumes (⚠️ mất data)
 | `POSTGRES_PORT` | Port PostgreSQL | `5432` |
 | `POSTGRES_USER` | User PostgreSQL | `postgres` |
 | `POSTGRES_PASSWORD` | Password PostgreSQL | |
-| `POSTGRES_DB` | Tên database | `parroto` |
+| `POSTGRES_DB` | Tên database | `engflix` |
 | `POSTGRES_SSLMODE` | SSL mode | `disable` |
-| `FIREBASE_CREDENTIALS_FILE` | Đường dẫn file service account JSON | |
-| `FIREBASE_PROJECT_ID` | Firebase Project ID | |
-| `FIREBASE_WEB_API_KEY` | Firebase Web API Key | |
+| `CLERK_SECRET_KEY` | Clerk Secret Key | |
+| `CLERK_PUBLISHABLE_KEY` | Clerk Publishable Key | |
 
-docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
-goose -dir internal/database/migrations postgres "postgres://postgres:postgres@localhost:5432/parroto?sslmode=disable" up
-go run ./cmd/seed 
+---
+
+## Kiến trúc module
+
+Mỗi module theo pattern `controller → service → repository`:
+
+```
+internal/modules/<module-name>/
+├── <module-name>.module.go        # Route registration + DI wiring
+├── <module-name>.controller.go    # HTTP handlers với Swagger docs
+├── dtos/
+│   ├── req/                       # Request DTOs
+│   └── res/                       # Response DTOs
+├── services/                      # Business logic + interface
+└── repositories/                  # Data access + interface
+```
+
+Xem [MODULE_GUIDE.md](./internal/modules/MODULE_GUIDE.md) để biết chi tiết.
