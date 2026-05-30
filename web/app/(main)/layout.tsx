@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/common/Sidebar"
 import { Topbar } from "@/components/common/Topbar"
+import { ChatWidget } from "@/features/chat"
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
       </main>
+      <ChatWidget />
     </SidebarProvider>
   )
 }
