@@ -1,21 +1,24 @@
+import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { BookmarksPageContent } from "@/features/bookmarks/components/BookmarksPageContent"
-import { getBookmarks } from "@/features/bookmarks/services/bookmarks.get"
-import { ROUTES } from "@/lib/routes"
 
 export default async function BookmarksPage() {
-  const res = await getBookmarks()
-  const bookmarks = res.data ?? []
-  console.log(res)
+  const { userId } = await auth()
+  if (!userId) return null
+
   return (
     <PageLayout
-      title="Bài học đã lưu"
+      title="Bai hoc da luu"
       breadcrumbs={[
-        { label: "Bài học", href: ROUTES.USER.LESSONS.LIST },
-        { label: "Đã lưu" },
+        { label: "Bai hoc", href: "/lessons" },
+        { label: "Da luu" },
       ]}
     >
-      <BookmarksPageContent bookmarks={bookmarks} />
+      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+        <p className="text-lg font-medium">Chon mot bai hoc de xem bookmark</p>
+        <p className="text-sm">
+          Tim transcript bookmark trong trang chi tiet bai hoc
+        </p>
+      </div>
     </PageLayout>
   )
 }

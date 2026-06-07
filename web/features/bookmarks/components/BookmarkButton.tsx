@@ -4,33 +4,53 @@ import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Bookmark } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { addBookmark, removeBookmark } from "@/features/bookmarks/services/bookmarks.action"
+import {
+  createTranscriptBookmark,
+  deleteTranscriptBookmark,
+} from "@/features/bookmarks/services/bookmarks.action"
 import { toast } from "sonner"
 
 export function BookmarkButton({
-  lessonId,
+  transcriptId,
+  bookmarkId: initialBookmarkId,
   isBookmarked,
   className,
 }: {
-  lessonId: number
+  transcriptId: number
+  bookmarkId?: number | null
   isBookmarked: boolean
   className?: string
 }) {
   const [bookmarked, setBookmarked] = useState(isBookmarked)
+  const [currentBookmarkId, setCurrentBookmarkId] = useState<number | null>(
+    initialBookmarkId ?? null
+  )
   const [isPending, startTransition] = useTransition()
 
   const handleToggle = () => {
     startTransition(async () => {
       const next = !bookmarked
       setBookmarked(next)
-      const res = next
-        ? await addBookmark(lessonId)
-        : await removeBookmark(lessonId)
-      if (res.error) {
-        setBookmarked(!next)
-        toast.error(res.error.message)
+
+      if (next) {
+        const res = await createTranscriptBookmark(transcriptId, "")
+        if (res.error) {
+          setBookmarked(!next)
+          toast.error(res.error.message)
+        } else {
+          if (res.data) setCurrentBookmarkId(res.data.id)
+          toast.success("Da luu bai hoc")
+        }
       } else {
-        toast.success(next ? "Đã lưu bài học" : "Đã bỏ lưu bài học")
+        if (!currentBookmarkId) return
+        const res = await deleteTranscriptBookmark(currentBookmarkId)
+        if (res.error) {
+          setBookmarked(!next)
+          toast.error(res.error.message)
+        } else {
+          setCurrentBookmarkId(null)
+          toast.success("Da bo luu bai hoc")
+        }
       }
     })
   }
@@ -45,9 +65,11 @@ export function BookmarkButton({
         e.stopPropagation()
         handleToggle()
       }}
-      aria-label={bookmarked ? "Bỏ lưu bài học" : "Lưu bài học"}
+      aria-label={bookmarked ? "Bo luu bai hoc" : "Luu bai hoc"}
     >
-      <Bookmark className={cn("size-4", bookmarked && "fill-current text-yellow-500")} />
+      <Bookmark
+        className={cn("size-4", bookmarked && "fill-current text-yellow-500")}
+      />
     </Button>
   )
 }
