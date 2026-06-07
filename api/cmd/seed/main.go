@@ -12,7 +12,6 @@ import (
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/database/models"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -62,31 +61,19 @@ func seedCategories(db *gorm.DB) {
 
 // ─── Users ────────────────────────────────────────────────────
 
-func hashPassword(plain string) string {
-	b, err := bcrypt.GenerateFromPassword([]byte(plain), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatalf("bcrypt error: %v", err)
-	}
-	return string(b)
-}
-
 func seedUsers(db *gorm.DB) {
-	hash := hashPassword("Password123!")
-
 	users := []models.User{
 		{
 			ID:       "1",
 			Email:    "admin@parroto.com",
 			Name:     "Admin",
 			UserRole: enums.UserRole("admin"),
-			Password: hash,
 		},
 		{
 			ID:        "2",
 			Email:     "alice@example.com",
 			Name:      "Alice Nguyen",
 			UserRole:  enums.UserRole("user"),
-			Password:  hash,
 			AvatarURL: "https://api.dicebear.com/7.x/thumbs/svg?seed=alice",
 			CreatedAt: time.Now(),
 		},
@@ -95,7 +82,6 @@ func seedUsers(db *gorm.DB) {
 			Email:     "bob@example.com",
 			Name:      "Bob Tran",
 			UserRole:  enums.UserRole("user"),
-			Password:  hash,
 			AvatarURL: "https://api.dicebear.com/7.x/thumbs/svg?seed=bob",
 			CreatedAt: time.Now(),
 		},
@@ -104,7 +90,6 @@ func seedUsers(db *gorm.DB) {
 			Email:     "carol@example.com",
 			Name:      "Carol Le",
 			UserRole:  enums.UserRole("user"),
-			Password:  hash,
 			AvatarURL: "https://api.dicebear.com/7.x/thumbs/svg?seed=carol",
 			CreatedAt: time.Now(),
 		},
@@ -113,7 +98,6 @@ func seedUsers(db *gorm.DB) {
 			Email:     "david@example.com",
 			Name:      "David Pham",
 			UserRole:  enums.UserRole("user"),
-			Password:  hash,
 			AvatarURL: "https://api.dicebear.com/7.x/thumbs/svg?seed=david",
 			CreatedAt: time.Now(),
 		},

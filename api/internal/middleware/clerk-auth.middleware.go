@@ -36,6 +36,14 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var nextReq *http.Request
 
+		// Browsers cannot set Authorization header on native WebSocket
+		// connections, so allow the token to be passed via ?token= query.
+		if c.GetHeader("Authorization") == "" {
+			if token := c.Query("token"); token != "" {
+				c.Request.Header.Set("Authorization", "Bearer "+token)
+			}
+		}
+
 		handler := clerkhttp.WithHeaderAuthorization(withCustomClaims)(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				nextReq = r

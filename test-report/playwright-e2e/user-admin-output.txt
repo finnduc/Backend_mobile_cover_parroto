@@ -1,0 +1,50 @@
+[2m[WebServer] [22m}
+
+Running 34 tests using 8 workers
+
+  ✘   1 [admin-setup] › tests/e2e/auth/admin.setup.ts:8:1 › authenticate as admin (153ms)
+  ✘   2 [user-setup] › tests/e2e/auth/user.setup.ts:8:1 › authenticate as user (140ms)
+
+
+  1) [admin-setup] › tests/e2e/auth/admin.setup.ts:8:1 › authenticate as admin ─────────────────────
+
+    Error: TEST_ADMIN_EMAIL and TEST_ADMIN_PASSWORD must be set in .env.test
+
+      11 |
+      12 |   if (!email || !password) {
+    > 13 |     throw new Error('TEST_ADMIN_EMAIL and TEST_ADMIN_PASSWORD must be set in .env.test')
+         |           ^
+      14 |   }
+      15 |
+      16 |   await page.goto('/sign-in')
+        at /home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/web/tests/e2e/auth/admin.setup.ts:13:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth-admin.setup.ts-authenticate-as-admin-admin-setup/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/auth-admin.setup.ts-authenticate-as-admin-admin-setup/error-context.md
+
+  2) [user-setup] › tests/e2e/auth/user.setup.ts:8:1 › authenticate as user ────────────────────────
+
+    Error: TEST_USER_EMAIL and TEST_USER_PASSWORD must be set in .env.test
+
+      11 |
+      12 |   if (!email || !password) {
+    > 13 |     throw new Error('TEST_USER_EMAIL and TEST_USER_PASSWORD must be set in .env.test')
+         |           ^
+      14 |   }
+      15 |
+      16 |   await page.goto('/sign-in')
+        at /home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/web/tests/e2e/auth/user.setup.ts:13:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth-user.setup.ts-authenticate-as-user-user-setup/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/auth-user.setup.ts-authenticate-as-user-user-setup/error-context.md
+
+  2 failed
+    [admin-setup] › tests/e2e/auth/admin.setup.ts:8:1 › authenticate as admin ──────────────────────
+    [user-setup] › tests/e2e/auth/user.setup.ts:8:1 › authenticate as user ─────────────────────────
+  32 did not run

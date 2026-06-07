@@ -1,0 +1,68 @@
+--- PASS: TestAllow_AdminPass (0.00s)
+--- PASS: TestAllow_OwnerPass (0.00s)
+--- PASS: TestAllow_NotOwnerForbidden (0.00s)
+--- PASS: TestAllow_NoUserID (0.00s)
+--- PASS: TestGetUserID_Success (0.00s)
+--- PASS: TestGetUserID_Missing (0.00s)
+coverage: 1.0% of statements in ./internal/...
+ok  	go-cover-parroto/internal/core/policy	0.046s	coverage: 1.0% of statements in ./internal/...
+--- PASS: TestBookmarkService_AddBookmark (0.00s)
+--- PASS: TestBookmarkService_RemoveBookmark (0.00s)
+--- PASS: TestBookmarkService_List (0.00s)
+coverage: 4.0% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/bookmark/services	0.017s	coverage: 4.0% of statements in ./internal/...
+--- PASS: TestCategoryService_List (0.00s)
+--- PASS: TestCategoryService_GetByID (0.00s)
+--- PASS: TestCategoryService_Create (0.00s)
+--- PASS: TestCategoryService_Update (0.00s)
+--- PASS: TestCategoryService_Delete (0.00s)
+coverage: 4.6% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/category/services	0.034s	coverage: 4.6% of statements in ./internal/...
+--- PASS: TestDictationStatusService_Create (0.00s)
+--- PASS: TestDictationStatusService_List (0.00s)
+coverage: 3.5% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/dictation_status/services	0.029s	coverage: 3.5% of statements in ./internal/...
+--- PASS: TestLessonService_List (0.00s)
+--- PASS: TestLessonService_Get (0.00s)
+--- PASS: TestLessonService_Create (0.00s)
+--- PASS: TestLessonService_Update (0.00s)
+--- PASS: TestLessonService_Delete (0.00s)
+coverage: 5.2% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/lesson/services	0.030s	coverage: 5.2% of statements in ./internal/...
+--- PASS: TestShadowingStatusService_Create (0.00s)
+--- PASS: TestShadowingStatusService_List (0.00s)
+coverage: 4.1% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/shadowing_status/services	0.034s	coverage: 4.1% of statements in ./internal/...
+--- PASS: TestTranscriptService_GetByLesson (0.00s)
+--- PASS: TestTranscriptService_ReplaceByLesson (0.00s)
+--- PASS: TestTranscriptService_GetByID (0.00s)
+--- PASS: TestTranscriptService_Create (0.00s)
+--- PASS: TestTranscriptService_BulkCreate (0.00s)
+--- PASS: TestTranscriptService_Update (0.00s)
+--- PASS: TestTranscriptService_Delete (0.00s)
+coverage: 6.0% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/transcript/services	0.031s	coverage: 6.0% of statements in ./internal/...
+--- PASS: TestVocabularyCategoryService_List (0.00s)
+--- PASS: TestVocabularyCategoryService_GetByID (0.00s)
+--- PASS: TestVocabularyCategoryService_Create (0.00s)
+--- PASS: TestVocabularyCategoryService_Update (0.00s)
+--- PASS: TestVocabularyCategoryService_Delete (0.00s)
+coverage: 4.8% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/vocabulary_category/services	0.017s	coverage: 4.8% of statements in ./internal/...
+--- PASS: TestVocabularyDeckService_ListDefault (0.00s)
+--- PASS: TestVocabularyDeckService_ListByUser (0.00s)
+--- PASS: TestVocabularyDeckService_GetByID (0.00s)
+--- PASS: TestVocabularyDeckService_Create (0.00s)
+--- PASS: TestVocabularyDeckService_Update (0.00s)
+--- PASS: TestVocabularyDeckService_Delete (0.00s)
+--- PASS: TestVocabularyDeckService_CreateAsSystem (0.00s)
+--- PASS: TestVocabularyDeckService_DeleteAsSystem (0.00s)
+coverage: 8.3% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/vocabulary_deck/services	0.025s	coverage: 8.3% of statements in ./internal/...
+--- PASS: TestVocabularyItemService_List (0.00s)
+--- PASS: TestVocabularyItemService_GetByID (0.00s)
+--- PASS: TestVocabularyItemService_Create (0.00s)
+--- PASS: TestVocabularyItemService_Update (0.00s)
+--- PASS: TestVocabularyItemService_Delete (0.00s)
+coverage: 7.2% of statements in ./internal/...
+ok  	go-cover-parroto/internal/modules/vocabulary_item/services	0.035s	coverage: 7.2% of statements in ./internal/...

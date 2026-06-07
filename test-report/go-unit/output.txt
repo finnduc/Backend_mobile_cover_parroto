@@ -1,0 +1,830 @@
+?   	go-cover-parroto/cmd/seed	[no test files]
+?   	go-cover-parroto/cmd/server	[no test files]
+?   	go-cover-parroto/cmd/server/docs	[no test files]
+?   	go-cover-parroto/internal/configs	[no test files]
+?   	go-cover-parroto/internal/core	[no test files]
+?   	go-cover-parroto/internal/core/enums	[no test files]
+?   	go-cover-parroto/internal/core/errors	[no test files]
+?   	go-cover-parroto/internal/core/logger	[no test files]
+=== RUN   TestAllow_AdminPass
+--- PASS: TestAllow_AdminPass (0.00s)
+=== RUN   TestAllow_OwnerPass
+--- PASS: TestAllow_OwnerPass (0.00s)
+=== RUN   TestAllow_NotOwnerForbidden
+--- PASS: TestAllow_NotOwnerForbidden (0.00s)
+=== RUN   TestAllow_NoUserID
+--- PASS: TestAllow_NoUserID (0.00s)
+=== RUN   TestGetUserID_Success
+--- PASS: TestGetUserID_Success (0.00s)
+=== RUN   TestGetUserID_Missing
+--- PASS: TestGetUserID_Missing (0.00s)
+PASS
+ok  	go-cover-parroto/internal/core/policy	0.006s
+?   	go-cover-parroto/internal/core/response	[no test files]
+?   	go-cover-parroto/internal/database	[no test files]
+?   	go-cover-parroto/internal/database/models	[no test files]
+?   	go-cover-parroto/internal/database/repositories	[no test files]
+?   	go-cover-parroto/internal/database/transaction	[no test files]
+?   	go-cover-parroto/internal/middleware	[no test files]
+?   	go-cover-parroto/internal/modules/auth	[no test files]
+?   	go-cover-parroto/internal/modules/auth/repositories	[no test files]
+?   	go-cover-parroto/internal/modules/auth/services	[no test files]
+?   	go-cover-parroto/internal/modules/bookmark	[no test files]
+?   	go-cover-parroto/internal/modules/bookmark/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/bookmark/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/bookmark/repositories	[no test files]
+=== RUN   TestBookmarkService_AddBookmark
+=== RUN   TestBookmarkService_AddBookmark/success
+2026-05-26T22:39:14.338+0700	INFO	services/bookmark.service.go:40	adding bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10}
+2026-05-26T22:39:14.338+0700	INFO	services/bookmark.service.go:45	bookmark added	{"service": "bookmark", "userId": "1", "lessonId": 10}
+=== RUN   TestBookmarkService_AddBookmark/unauthenticated_returns_401
+=== RUN   TestBookmarkService_AddBookmark/db_error_returns_500
+2026-05-26T22:39:14.338+0700	INFO	services/bookmark.service.go:40	adding bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10}
+2026-05-26T22:39:14.338+0700	ERROR	services/bookmark.service.go:42	failed to add bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10, "error": "db error"}
+go-cover-parroto/internal/modules/bookmark/services.(*bookmarkService).AddBookmark
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service.go:42
+go-cover-parroto/internal/modules/bookmark/services.TestBookmarkService_AddBookmark.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service_test.go:68
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestBookmarkService_AddBookmark (0.00s)
+    --- PASS: TestBookmarkService_AddBookmark/success (0.00s)
+    --- PASS: TestBookmarkService_AddBookmark/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestBookmarkService_AddBookmark/db_error_returns_500 (0.00s)
+=== RUN   TestBookmarkService_RemoveBookmark
+=== RUN   TestBookmarkService_RemoveBookmark/success
+2026-05-26T22:39:14.339+0700	INFO	services/bookmark.service.go:56	removing bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10}
+2026-05-26T22:39:14.339+0700	INFO	services/bookmark.service.go:61	bookmark removed	{"service": "bookmark", "userId": "1", "lessonId": 10}
+=== RUN   TestBookmarkService_RemoveBookmark/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/bookmark.service.go:56	removing bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10}
+2026-05-26T22:39:14.339+0700	ERROR	services/bookmark.service.go:58	failed to remove bookmark	{"service": "bookmark", "userId": "1", "lessonId": 10, "error": "db error"}
+go-cover-parroto/internal/modules/bookmark/services.(*bookmarkService).RemoveBookmark
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service.go:58
+go-cover-parroto/internal/modules/bookmark/services.TestBookmarkService_RemoveBookmark.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service_test.go:116
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestBookmarkService_RemoveBookmark (0.00s)
+    --- PASS: TestBookmarkService_RemoveBookmark/success (0.00s)
+    --- PASS: TestBookmarkService_RemoveBookmark/db_error_returns_500 (0.00s)
+=== RUN   TestBookmarkService_List
+=== RUN   TestBookmarkService_List/success
+2026-05-26T22:39:14.339+0700	INFO	services/bookmark.service.go:67	listing bookmarks	{"service": "bookmark"}
+=== RUN   TestBookmarkService_List/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/bookmark.service.go:67	listing bookmarks	{"service": "bookmark"}
+2026-05-26T22:39:14.339+0700	ERROR	services/bookmark.service.go:76	failed to list bookmarks	{"service": "bookmark", "error": "db error"}
+go-cover-parroto/internal/modules/bookmark/services.(*bookmarkService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service.go:76
+go-cover-parroto/internal/modules/bookmark/services.TestBookmarkService_List.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/bookmark/services/bookmark.service_test.go:172
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestBookmarkService_List (0.00s)
+    --- PASS: TestBookmarkService_List/success (0.00s)
+    --- PASS: TestBookmarkService_List/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/bookmark/services	0.009s
+?   	go-cover-parroto/internal/modules/category	[no test files]
+?   	go-cover-parroto/internal/modules/category/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/category/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/category/repositories	[no test files]
+=== RUN   TestCategoryService_List
+=== RUN   TestCategoryService_List/success
+2026-05-26T22:39:14.339+0700	INFO	services/category.service.go:91	listing categories	{"service": "category"}
+=== RUN   TestCategoryService_List/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/category.service.go:91	listing categories	{"service": "category"}
+2026-05-26T22:39:14.339+0700	ERROR	services/category.service.go:94	failed to list categories	{"service": "category", "error": "db error"}
+go-cover-parroto/internal/modules/category/services.(*categoryService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service.go:94
+go-cover-parroto/internal/modules/category/services.TestCategoryService_List.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service_test.go:56
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestCategoryService_List (0.00s)
+    --- PASS: TestCategoryService_List/success (0.00s)
+    --- PASS: TestCategoryService_List/db_error_returns_500 (0.00s)
+=== RUN   TestCategoryService_GetByID
+=== RUN   TestCategoryService_GetByID/success
+2026-05-26T22:39:14.339+0700	INFO	services/category.service.go:38	getting category by id	{"service": "category", "categoryId": 1}
+=== RUN   TestCategoryService_GetByID/not_found_returns_404
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:38	getting category by id	{"service": "category", "categoryId": 999}
+--- PASS: TestCategoryService_GetByID (0.00s)
+    --- PASS: TestCategoryService_GetByID/success (0.00s)
+    --- PASS: TestCategoryService_GetByID/not_found_returns_404 (0.00s)
+=== RUN   TestCategoryService_Create
+=== RUN   TestCategoryService_Create/success
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:52	creating category	{"service": "category"}
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:58	category created	{"service": "category", "categoryId": 0}
+=== RUN   TestCategoryService_Create/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:52	creating category	{"service": "category"}
+2026-05-26T22:39:14.340+0700	ERROR	services/category.service.go:55	failed to create category	{"service": "category", "error": "db error"}
+go-cover-parroto/internal/modules/category/services.(*categoryService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service.go:55
+go-cover-parroto/internal/modules/category/services.TestCategoryService_Create.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service_test.go:157
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestCategoryService_Create (0.00s)
+    --- PASS: TestCategoryService_Create/success (0.00s)
+    --- PASS: TestCategoryService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestCategoryService_Update
+=== RUN   TestCategoryService_Update/success
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:64	updating category	{"service": "category", "categoryId": 1}
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:74	category updated	{"service": "category", "categoryId": 1}
+=== RUN   TestCategoryService_Update/not_found_returns_404
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:64	updating category	{"service": "category", "categoryId": 999}
+=== RUN   TestCategoryService_Update/update_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/category.service.go:64	updating category	{"service": "category", "categoryId": 1}
+2026-05-26T22:39:14.341+0700	ERROR	services/category.service.go:71	failed to update category	{"service": "category", "categoryId": 1, "error": "db error"}
+go-cover-parroto/internal/modules/category/services.(*categoryService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service.go:71
+go-cover-parroto/internal/modules/category/services.TestCategoryService_Update.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service_test.go:224
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestCategoryService_Update (0.00s)
+    --- PASS: TestCategoryService_Update/success (0.00s)
+    --- PASS: TestCategoryService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestCategoryService_Update/update_error_returns_500 (0.00s)
+=== RUN   TestCategoryService_Delete
+=== RUN   TestCategoryService_Delete/success
+2026-05-26T22:39:14.341+0700	INFO	services/category.service.go:80	deleting category	{"service": "category", "categoryId": 1}
+2026-05-26T22:39:14.341+0700	INFO	services/category.service.go:85	category deleted	{"service": "category", "categoryId": 1}
+=== RUN   TestCategoryService_Delete/db_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/category.service.go:80	deleting category	{"service": "category", "categoryId": 2}
+2026-05-26T22:39:14.341+0700	ERROR	services/category.service.go:82	failed to delete category	{"service": "category", "categoryId": 2, "error": "db error"}
+go-cover-parroto/internal/modules/category/services.(*categoryService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service.go:82
+go-cover-parroto/internal/modules/category/services.TestCategoryService_Delete.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/category/services/category.service_test.go:271
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestCategoryService_Delete (0.00s)
+    --- PASS: TestCategoryService_Delete/success (0.00s)
+    --- PASS: TestCategoryService_Delete/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/category/services	0.010s
+?   	go-cover-parroto/internal/modules/dictation_status	[no test files]
+?   	go-cover-parroto/internal/modules/dictation_status/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/dictation_status/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/dictation_status/repositories	[no test files]
+=== RUN   TestDictationStatusService_Create
+=== RUN   TestDictationStatusService_Create/success
+2026-05-26T22:39:14.338+0700	INFO	services/dictation_status.service.go:40	creating dictation status	{"service": "dictation_status", "userId": "user1", "transcriptId": 7}
+2026-05-26T22:39:14.338+0700	INFO	services/dictation_status.service.go:53	dictation status created	{"service": "dictation_status", "userId": "user1", "transcriptId": 7}
+=== RUN   TestDictationStatusService_Create/unauthenticated_returns_401
+=== RUN   TestDictationStatusService_Create/duplicate_transcript_is_silently_ignored
+2026-05-26T22:39:14.338+0700	INFO	services/dictation_status.service.go:40	creating dictation status	{"service": "dictation_status", "userId": "user1", "transcriptId": 7}
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:53	dictation status created	{"service": "dictation_status", "userId": "user1", "transcriptId": 7}
+=== RUN   TestDictationStatusService_Create/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:40	creating dictation status	{"service": "dictation_status", "userId": "user1", "transcriptId": 7}
+2026-05-26T22:39:14.339+0700	ERROR	services/dictation_status.service.go:49	failed to create dictation status	{"service": "dictation_status", "userId": "user1", "transcriptId": 7, "error": "db error"}
+go-cover-parroto/internal/modules/dictation_status/services.(*dictationStatusService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/dictation_status/services/dictation_status.service.go:49
+go-cover-parroto/internal/modules/dictation_status/services.TestDictationStatusService_Create.func5
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/dictation_status/services/dictation_status.service_test.go:74
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestDictationStatusService_Create (0.00s)
+    --- PASS: TestDictationStatusService_Create/success (0.00s)
+    --- PASS: TestDictationStatusService_Create/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestDictationStatusService_Create/duplicate_transcript_is_silently_ignored (0.00s)
+    --- PASS: TestDictationStatusService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestDictationStatusService_List
+=== RUN   TestDictationStatusService_List/success_without_filter
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:59	listing dictation status	{"service": "dictation_status"}
+=== RUN   TestDictationStatusService_List/success_with_lesson_id_filter
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:59	listing dictation status	{"service": "dictation_status"}
+=== RUN   TestDictationStatusService_List/empty_result
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:59	listing dictation status	{"service": "dictation_status"}
+=== RUN   TestDictationStatusService_List/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/dictation_status.service.go:59	listing dictation status	{"service": "dictation_status"}
+2026-05-26T22:39:14.339+0700	ERROR	services/dictation_status.service.go:63	failed to list dictation status	{"service": "dictation_status", "error": "db error"}
+go-cover-parroto/internal/modules/dictation_status/services.(*dictationStatusService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/dictation_status/services/dictation_status.service.go:63
+go-cover-parroto/internal/modules/dictation_status/services.TestDictationStatusService_List.func5
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/dictation_status/services/dictation_status.service_test.go:167
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestDictationStatusService_List (0.00s)
+    --- PASS: TestDictationStatusService_List/success_without_filter (0.00s)
+    --- PASS: TestDictationStatusService_List/success_with_lesson_id_filter (0.00s)
+    --- PASS: TestDictationStatusService_List/empty_result (0.00s)
+    --- PASS: TestDictationStatusService_List/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/dictation_status/services	0.009s
+?   	go-cover-parroto/internal/modules/lesson	[no test files]
+?   	go-cover-parroto/internal/modules/lesson/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/lesson/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/lesson/repositories	[no test files]
+=== RUN   TestLessonService_List
+=== RUN   TestLessonService_List/success
+2026-05-26T22:39:14.337+0700	INFO	services/lesson.service.go:38	listing lessons	{"service": "lesson"}
+=== RUN   TestLessonService_List/db_error_returns_500
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:38	listing lessons	{"service": "lesson"}
+2026-05-26T22:39:14.338+0700	ERROR	services/lesson.service.go:41	failed to list lessons	{"service": "lesson", "error": "db error"}
+go-cover-parroto/internal/modules/lesson/services.(*lessonService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service.go:41
+go-cover-parroto/internal/modules/lesson/services.TestLessonService_List.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service_test.go:57
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestLessonService_List (0.00s)
+    --- PASS: TestLessonService_List/success (0.00s)
+    --- PASS: TestLessonService_List/db_error_returns_500 (0.00s)
+=== RUN   TestLessonService_Get
+=== RUN   TestLessonService_Get/success
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:49	getting lesson	{"service": "lesson", "lessonId": 1}
+=== RUN   TestLessonService_Get/not_found_returns_404
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:49	getting lesson	{"service": "lesson", "lessonId": 999}
+--- PASS: TestLessonService_Get (0.00s)
+    --- PASS: TestLessonService_Get/success (0.00s)
+    --- PASS: TestLessonService_Get/not_found_returns_404 (0.00s)
+=== RUN   TestLessonService_Create
+=== RUN   TestLessonService_Create/success
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:63	creating lesson	{"service": "lesson"}
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:77	lesson created	{"service": "lesson", "lessonId": 1}
+=== RUN   TestLessonService_Create/db_error_returns_500
+2026-05-26T22:39:14.338+0700	INFO	services/lesson.service.go:63	creating lesson	{"service": "lesson"}
+2026-05-26T22:39:14.338+0700	ERROR	services/lesson.service.go:74	failed to create lesson	{"service": "lesson", "error": "db error"}
+go-cover-parroto/internal/modules/lesson/services.(*lessonService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service.go:74
+go-cover-parroto/internal/modules/lesson/services.TestLessonService_Create.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service_test.go:157
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestLessonService_Create (0.00s)
+    --- PASS: TestLessonService_Create/success (0.00s)
+    --- PASS: TestLessonService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestLessonService_Update
+=== RUN   TestLessonService_Update/success
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:83	updating lesson	{"service": "lesson", "lessonId": 1}
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:103	lesson updated	{"service": "lesson", "lessonId": 1}
+=== RUN   TestLessonService_Update/not_found_returns_404
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:83	updating lesson	{"service": "lesson", "lessonId": 999}
+=== RUN   TestLessonService_Update/update_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:83	updating lesson	{"service": "lesson", "lessonId": 1}
+2026-05-26T22:39:14.339+0700	ERROR	services/lesson.service.go:100	failed to update lesson	{"service": "lesson", "lessonId": 1, "error": "db error"}
+go-cover-parroto/internal/modules/lesson/services.(*lessonService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service.go:100
+go-cover-parroto/internal/modules/lesson/services.TestLessonService_Update.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service_test.go:224
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestLessonService_Update (0.00s)
+    --- PASS: TestLessonService_Update/success (0.00s)
+    --- PASS: TestLessonService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestLessonService_Update/update_error_returns_500 (0.00s)
+=== RUN   TestLessonService_Delete
+=== RUN   TestLessonService_Delete/success
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:109	deleting lesson	{"service": "lesson", "lessonId": 1}
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:114	lesson deleted	{"service": "lesson", "lessonId": 1}
+=== RUN   TestLessonService_Delete/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/lesson.service.go:109	deleting lesson	{"service": "lesson", "lessonId": 2}
+2026-05-26T22:39:14.339+0700	ERROR	services/lesson.service.go:111	failed to delete lesson	{"service": "lesson", "lessonId": 2, "error": "db error"}
+go-cover-parroto/internal/modules/lesson/services.(*lessonService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service.go:111
+go-cover-parroto/internal/modules/lesson/services.TestLessonService_Delete.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/lesson/services/lesson.service_test.go:271
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestLessonService_Delete (0.00s)
+    --- PASS: TestLessonService_Delete/success (0.00s)
+    --- PASS: TestLessonService_Delete/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/lesson/services	0.010s
+?   	go-cover-parroto/internal/modules/shadowing_status	[no test files]
+?   	go-cover-parroto/internal/modules/shadowing_status/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/shadowing_status/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/shadowing_status/repositories	[no test files]
+=== RUN   TestShadowingStatusService_Create
+=== RUN   TestShadowingStatusService_Create/success
+2026-05-26T22:39:14.339+0700	INFO	services/shadowing_status.service.go:42	creating shadowing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5}
+2026-05-26T22:39:14.340+0700	INFO	services/shadowing_status.service.go:64	shadowing status created	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5}
+=== RUN   TestShadowingStatusService_Create/unauthenticated_returns_401
+=== RUN   TestShadowingStatusService_Create/duplicate_transcript_returns_409
+2026-05-26T22:39:14.340+0700	INFO	services/shadowing_status.service.go:42	creating shadowing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5}
+=== RUN   TestShadowingStatusService_Create/find_db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/shadowing_status.service.go:42	creating shadowing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5}
+2026-05-26T22:39:14.340+0700	ERROR	services/shadowing_status.service.go:46	failed to check existing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5, "error": "db error"}
+go-cover-parroto/internal/modules/shadowing_status/services.(*shadowingStatusService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service.go:46
+go-cover-parroto/internal/modules/shadowing_status/services.TestShadowingStatusService_Create.func6
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service_test.go:93
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+=== RUN   TestShadowingStatusService_Create/create_db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/shadowing_status.service.go:42	creating shadowing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5}
+2026-05-26T22:39:14.340+0700	ERROR	services/shadowing_status.service.go:60	failed to create shadowing status	{"service": "shadowing_status", "userId": "user1", "transcriptId": 5, "error": "db error"}
+go-cover-parroto/internal/modules/shadowing_status/services.(*shadowingStatusService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service.go:60
+go-cover-parroto/internal/modules/shadowing_status/services.TestShadowingStatusService_Create.func6
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service_test.go:93
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestShadowingStatusService_Create (0.00s)
+    --- PASS: TestShadowingStatusService_Create/success (0.00s)
+    --- PASS: TestShadowingStatusService_Create/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestShadowingStatusService_Create/duplicate_transcript_returns_409 (0.00s)
+    --- PASS: TestShadowingStatusService_Create/find_db_error_returns_500 (0.00s)
+    --- PASS: TestShadowingStatusService_Create/create_db_error_returns_500 (0.00s)
+=== RUN   TestShadowingStatusService_List
+=== RUN   TestShadowingStatusService_List/success_without_filter
+2026-05-26T22:39:14.340+0700	INFO	services/shadowing_status.service.go:70	listing shadowing status	{"service": "shadowing_status"}
+=== RUN   TestShadowingStatusService_List/success_with_lesson_id_filter
+2026-05-26T22:39:14.341+0700	INFO	services/shadowing_status.service.go:70	listing shadowing status	{"service": "shadowing_status"}
+=== RUN   TestShadowingStatusService_List/empty_result
+2026-05-26T22:39:14.341+0700	INFO	services/shadowing_status.service.go:70	listing shadowing status	{"service": "shadowing_status"}
+=== RUN   TestShadowingStatusService_List/db_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/shadowing_status.service.go:70	listing shadowing status	{"service": "shadowing_status"}
+2026-05-26T22:39:14.341+0700	ERROR	services/shadowing_status.service.go:74	failed to list shadowing status	{"service": "shadowing_status", "error": "db error"}
+go-cover-parroto/internal/modules/shadowing_status/services.(*shadowingStatusService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service.go:74
+go-cover-parroto/internal/modules/shadowing_status/services.TestShadowingStatusService_List.func5
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/shadowing_status/services/shadowing_status.service_test.go:186
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestShadowingStatusService_List (0.00s)
+    --- PASS: TestShadowingStatusService_List/success_without_filter (0.00s)
+    --- PASS: TestShadowingStatusService_List/success_with_lesson_id_filter (0.00s)
+    --- PASS: TestShadowingStatusService_List/empty_result (0.00s)
+    --- PASS: TestShadowingStatusService_List/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/shadowing_status/services	0.011s
+?   	go-cover-parroto/internal/modules/transcript	[no test files]
+?   	go-cover-parroto/internal/modules/transcript/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/transcript/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/transcript/repositories	[no test files]
+=== RUN   TestTranscriptService_GetByLesson
+=== RUN   TestTranscriptService_GetByLesson/success
+2026-05-26T22:39:14.338+0700	INFO	services/transcript.service.go:56	getting transcripts by lesson	{"service": "transcript", "lessonId": 2}
+=== RUN   TestTranscriptService_GetByLesson/empty_result
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:56	getting transcripts by lesson	{"service": "transcript", "lessonId": 1}
+=== RUN   TestTranscriptService_GetByLesson/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:56	getting transcripts by lesson	{"service": "transcript", "lessonId": 99}
+2026-05-26T22:39:14.339+0700	ERROR	services/transcript.service.go:59	failed to get transcripts by lesson	{"service": "transcript", "lessonId": 99, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).GetByLesson
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:59
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_GetByLesson.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:83
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_GetByLesson (0.00s)
+    --- PASS: TestTranscriptService_GetByLesson/success (0.00s)
+    --- PASS: TestTranscriptService_GetByLesson/empty_result (0.00s)
+    --- PASS: TestTranscriptService_GetByLesson/db_error_returns_500 (0.00s)
+=== RUN   TestTranscriptService_ReplaceByLesson
+=== RUN   TestTranscriptService_ReplaceByLesson/success
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:113	replacing transcripts	{"service": "transcript", "lessonId": 5, "count": 2}
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:149	transcripts replaced	{"service": "transcript", "lessonId": 5, "count": 2}
+=== RUN   TestTranscriptService_ReplaceByLesson/delete_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:113	replacing transcripts	{"service": "transcript", "lessonId": 5, "count": 1}
+2026-05-26T22:39:14.339+0700	ERROR	services/transcript.service.go:145	failed to replace transcripts	{"service": "transcript", "lessonId": 5, "count": 1, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).ReplaceByLesson
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:145
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_ReplaceByLesson.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:161
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+=== RUN   TestTranscriptService_ReplaceByLesson/bulk_create_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:113	replacing transcripts	{"service": "transcript", "lessonId": 5, "count": 1}
+2026-05-26T22:39:14.339+0700	ERROR	services/transcript.service.go:145	failed to replace transcripts	{"service": "transcript", "lessonId": 5, "count": 1, "error": "bulk create failed"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).ReplaceByLesson
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:145
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_ReplaceByLesson.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:161
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_ReplaceByLesson (0.00s)
+    --- PASS: TestTranscriptService_ReplaceByLesson/success (0.00s)
+    --- PASS: TestTranscriptService_ReplaceByLesson/delete_error_returns_500 (0.00s)
+    --- PASS: TestTranscriptService_ReplaceByLesson/bulk_create_error_returns_500 (0.00s)
+=== RUN   TestTranscriptService_GetByID
+=== RUN   TestTranscriptService_GetByID/success
+2026-05-26T22:39:14.339+0700	INFO	services/transcript.service.go:42	getting transcript by id	{"service": "transcript", "transcriptId": 1}
+=== RUN   TestTranscriptService_GetByID/not_found_returns_404
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:42	getting transcript by id	{"service": "transcript", "transcriptId": 999}
+--- PASS: TestTranscriptService_GetByID (0.00s)
+    --- PASS: TestTranscriptService_GetByID/success (0.00s)
+    --- PASS: TestTranscriptService_GetByID/not_found_returns_404 (0.00s)
+=== RUN   TestTranscriptService_Create
+=== RUN   TestTranscriptService_Create/success
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:67	creating transcript	{"service": "transcript", "lessonId": 1}
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:81	transcript created	{"service": "transcript", "lessonId": 1, "transcriptId": 0}
+=== RUN   TestTranscriptService_Create/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:67	creating transcript	{"service": "transcript", "lessonId": 1}
+2026-05-26T22:39:14.340+0700	ERROR	services/transcript.service.go:78	failed to create transcript	{"service": "transcript", "lessonId": 1, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:78
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_Create.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:261
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_Create (0.00s)
+    --- PASS: TestTranscriptService_Create/success (0.00s)
+    --- PASS: TestTranscriptService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestTranscriptService_BulkCreate
+=== RUN   TestTranscriptService_BulkCreate/success
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:87	bulk creating transcripts	{"service": "transcript", "lessonId": 1, "count": 2}
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:107	transcripts created	{"service": "transcript", "lessonId": 1, "count": 2, "count": 2}
+=== RUN   TestTranscriptService_BulkCreate/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:87	bulk creating transcripts	{"service": "transcript", "lessonId": 1, "count": 1}
+2026-05-26T22:39:14.340+0700	ERROR	services/transcript.service.go:103	failed to bulk create transcripts	{"service": "transcript", "lessonId": 1, "count": 1, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).BulkCreate
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:103
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_BulkCreate.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:322
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_BulkCreate (0.00s)
+    --- PASS: TestTranscriptService_BulkCreate/success (0.00s)
+    --- PASS: TestTranscriptService_BulkCreate/db_error_returns_500 (0.00s)
+=== RUN   TestTranscriptService_Update
+=== RUN   TestTranscriptService_Update/success
+2026-05-26T22:39:14.340+0700	INFO	services/transcript.service.go:155	updating transcript	{"service": "transcript", "transcriptId": 1}
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:182	transcript updated	{"service": "transcript", "transcriptId": 1}
+=== RUN   TestTranscriptService_Update/not_found_returns_404
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:155	updating transcript	{"service": "transcript", "transcriptId": 999}
+=== RUN   TestTranscriptService_Update/update_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:155	updating transcript	{"service": "transcript", "transcriptId": 1}
+2026-05-26T22:39:14.341+0700	ERROR	services/transcript.service.go:179	failed to update transcript	{"service": "transcript", "transcriptId": 1, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:179
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_Update.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:391
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_Update (0.00s)
+    --- PASS: TestTranscriptService_Update/success (0.00s)
+    --- PASS: TestTranscriptService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestTranscriptService_Update/update_error_returns_500 (0.00s)
+=== RUN   TestTranscriptService_Delete
+=== RUN   TestTranscriptService_Delete/success
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:188	deleting transcript	{"service": "transcript", "transcriptId": 1}
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:193	transcript deleted	{"service": "transcript", "transcriptId": 1}
+=== RUN   TestTranscriptService_Delete/db_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/transcript.service.go:188	deleting transcript	{"service": "transcript", "transcriptId": 2}
+2026-05-26T22:39:14.341+0700	ERROR	services/transcript.service.go:190	failed to delete transcript	{"service": "transcript", "transcriptId": 2, "error": "db error"}
+go-cover-parroto/internal/modules/transcript/services.(*transcriptService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service.go:190
+go-cover-parroto/internal/modules/transcript/services.TestTranscriptService_Delete.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/transcript/services/transcript.service_test.go:438
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestTranscriptService_Delete (0.00s)
+    --- PASS: TestTranscriptService_Delete/success (0.00s)
+    --- PASS: TestTranscriptService_Delete/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/transcript/services	0.011s
+?   	go-cover-parroto/internal/modules/user	[no test files]
+?   	go-cover-parroto/internal/modules/user/repositories	[no test files]
+?   	go-cover-parroto/internal/modules/user/services	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_category	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_category/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_category/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_category/repositories	[no test files]
+=== RUN   TestVocabularyCategoryService_List
+=== RUN   TestVocabularyCategoryService_List/success_—_returns_all_categories
+2026-05-26T22:39:14.338+0700	INFO	services/vocabulary_category.service.go:38	listing vocabulary categories	{"service": "vocabulary_category"}
+=== RUN   TestVocabularyCategoryService_List/success_—_empty_list
+2026-05-26T22:39:14.338+0700	INFO	services/vocabulary_category.service.go:38	listing vocabulary categories	{"service": "vocabulary_category"}
+=== RUN   TestVocabularyCategoryService_List/db_error_returns_500
+2026-05-26T22:39:14.338+0700	INFO	services/vocabulary_category.service.go:38	listing vocabulary categories	{"service": "vocabulary_category"}
+2026-05-26T22:39:14.339+0700	ERROR	services/vocabulary_category.service.go:41	failed to list vocabulary categories	{"service": "vocabulary_category", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_category/services.(*vocabularyCategoryService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service.go:41
+go-cover-parroto/internal/modules/vocabulary_category/services.TestVocabularyCategoryService_List.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service_test.go:72
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyCategoryService_List (0.00s)
+    --- PASS: TestVocabularyCategoryService_List/success_—_returns_all_categories (0.00s)
+    --- PASS: TestVocabularyCategoryService_List/success_—_empty_list (0.00s)
+    --- PASS: TestVocabularyCategoryService_List/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyCategoryService_GetByID
+=== RUN   TestVocabularyCategoryService_GetByID/success
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:49	getting vocabulary category	{"service": "vocabulary_category", "id": 1}
+=== RUN   TestVocabularyCategoryService_GetByID/not_found_returns_404
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:49	getting vocabulary category	{"service": "vocabulary_category", "id": 999}
+=== RUN   TestVocabularyCategoryService_GetByID/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:49	getting vocabulary category	{"service": "vocabulary_category", "id": 1}
+2026-05-26T22:39:14.339+0700	ERROR	services/vocabulary_category.service.go:55	failed to get category	{"service": "vocabulary_category", "id": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_category/services.(*vocabularyCategoryService).GetByID
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service.go:55
+go-cover-parroto/internal/modules/vocabulary_category/services.TestVocabularyCategoryService_GetByID.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service_test.go:131
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyCategoryService_GetByID (0.00s)
+    --- PASS: TestVocabularyCategoryService_GetByID/success (0.00s)
+    --- PASS: TestVocabularyCategoryService_GetByID/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyCategoryService_GetByID/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyCategoryService_Create
+=== RUN   TestVocabularyCategoryService_Create/success
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:63	creating vocabulary category	{"service": "vocabulary_category"}
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:69	category created	{"service": "vocabulary_category", "id": 5}
+=== RUN   TestVocabularyCategoryService_Create/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:63	creating vocabulary category	{"service": "vocabulary_category"}
+2026-05-26T22:39:14.339+0700	ERROR	services/vocabulary_category.service.go:66	failed to create category	{"service": "vocabulary_category", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_category/services.(*vocabularyCategoryService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service.go:66
+go-cover-parroto/internal/modules/vocabulary_category/services.TestVocabularyCategoryService_Create.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service_test.go:184
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyCategoryService_Create (0.00s)
+    --- PASS: TestVocabularyCategoryService_Create/success (0.00s)
+    --- PASS: TestVocabularyCategoryService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyCategoryService_Update
+=== RUN   TestVocabularyCategoryService_Update/success
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:75	updating vocabulary category	{"service": "vocabulary_category", "id": 1}
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:86	category updated	{"service": "vocabulary_category", "id": 1}
+=== RUN   TestVocabularyCategoryService_Update/not_found_returns_404
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_category.service.go:75	updating vocabulary category	{"service": "vocabulary_category", "id": 999}
+=== RUN   TestVocabularyCategoryService_Update/update_db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_category.service.go:75	updating vocabulary category	{"service": "vocabulary_category", "id": 1}
+2026-05-26T22:39:14.340+0700	ERROR	services/vocabulary_category.service.go:83	failed to update category	{"service": "vocabulary_category", "id": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_category/services.(*vocabularyCategoryService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service.go:83
+go-cover-parroto/internal/modules/vocabulary_category/services.TestVocabularyCategoryService_Update.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service_test.go:252
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyCategoryService_Update (0.00s)
+    --- PASS: TestVocabularyCategoryService_Update/success (0.00s)
+    --- PASS: TestVocabularyCategoryService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyCategoryService_Update/update_db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyCategoryService_Delete
+=== RUN   TestVocabularyCategoryService_Delete/success
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_category.service.go:92	deleting vocabulary category	{"service": "vocabulary_category", "id": 1}
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_category.service.go:97	category deleted	{"service": "vocabulary_category", "id": 1}
+=== RUN   TestVocabularyCategoryService_Delete/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_category.service.go:92	deleting vocabulary category	{"service": "vocabulary_category", "id": 2}
+2026-05-26T22:39:14.340+0700	ERROR	services/vocabulary_category.service.go:94	failed to delete category	{"service": "vocabulary_category", "id": 2, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_category/services.(*vocabularyCategoryService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service.go:94
+go-cover-parroto/internal/modules/vocabulary_category/services.TestVocabularyCategoryService_Delete.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_category/services/vocabulary_category.service_test.go:299
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyCategoryService_Delete (0.00s)
+    --- PASS: TestVocabularyCategoryService_Delete/success (0.00s)
+    --- PASS: TestVocabularyCategoryService_Delete/db_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/vocabulary_category/services	0.010s
+?   	go-cover-parroto/internal/modules/vocabulary_deck	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_deck/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_deck/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_deck/repositories	[no test files]
+=== RUN   TestVocabularyDeckService_ListDefault
+=== RUN   TestVocabularyDeckService_ListDefault/success_—_returns_default_decks
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_deck.service.go:55	listing default vocabulary decks	{"service": "vocabulary_deck"}
+=== RUN   TestVocabularyDeckService_ListDefault/db_error_returns_500
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_deck.service.go:55	listing default vocabulary decks	{"service": "vocabulary_deck"}
+2026-05-26T22:39:14.339+0700	ERROR	services/vocabulary_deck.service.go:60	failed to list default decks	{"service": "vocabulary_deck", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).ListDefault
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:60
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_ListDefault.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:72
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_ListDefault (0.00s)
+    --- PASS: TestVocabularyDeckService_ListDefault/success_—_returns_default_decks (0.00s)
+    --- PASS: TestVocabularyDeckService_ListDefault/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_ListByUser
+=== RUN   TestVocabularyDeckService_ListByUser/success_—_returns_user_decks
+2026-05-26T22:39:14.339+0700	INFO	services/vocabulary_deck.service.go:72	listing user vocabulary decks	{"service": "vocabulary_deck", "userId": "user1"}
+=== RUN   TestVocabularyDeckService_ListByUser/unauthenticated_returns_401
+=== RUN   TestVocabularyDeckService_ListByUser/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:72	listing user vocabulary decks	{"service": "vocabulary_deck", "userId": "user1"}
+2026-05-26T22:39:14.340+0700	ERROR	services/vocabulary_deck.service.go:77	failed to list user decks	{"service": "vocabulary_deck", "userId": "user1", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).ListByUser
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:77
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_ListByUser.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:133
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_ListByUser (0.00s)
+    --- PASS: TestVocabularyDeckService_ListByUser/success_—_returns_user_decks (0.00s)
+    --- PASS: TestVocabularyDeckService_ListByUser/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestVocabularyDeckService_ListByUser/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_GetByID
+=== RUN   TestVocabularyDeckService_GetByID/success
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:85	getting vocabulary deck	{"service": "vocabulary_deck", "id": 1}
+=== RUN   TestVocabularyDeckService_GetByID/not_found_returns_404
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:85	getting vocabulary deck	{"service": "vocabulary_deck", "id": 999}
+=== RUN   TestVocabularyDeckService_GetByID/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:85	getting vocabulary deck	{"service": "vocabulary_deck", "id": 1}
+2026-05-26T22:39:14.340+0700	ERROR	services/vocabulary_deck.service.go:91	failed to get deck	{"service": "vocabulary_deck", "id": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).GetByID
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:91
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_GetByID.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:191
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_GetByID (0.00s)
+    --- PASS: TestVocabularyDeckService_GetByID/success (0.00s)
+    --- PASS: TestVocabularyDeckService_GetByID/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyDeckService_GetByID/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_Create
+=== RUN   TestVocabularyDeckService_Create/success_—_creates_user_deck
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:104	creating user vocabulary deck	{"service": "vocabulary_deck", "userId": "user1"}
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:116	deck created	{"service": "vocabulary_deck", "userId": "user1", "id": 4}
+=== RUN   TestVocabularyDeckService_Create/unauthenticated_returns_401
+=== RUN   TestVocabularyDeckService_Create/db_error_returns_500
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:104	creating user vocabulary deck	{"service": "vocabulary_deck", "userId": "user1"}
+2026-05-26T22:39:14.340+0700	ERROR	services/vocabulary_deck.service.go:113	failed to create deck	{"service": "vocabulary_deck", "userId": "user1", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:113
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_Create.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:254
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_Create (0.00s)
+    --- PASS: TestVocabularyDeckService_Create/success_—_creates_user_deck (0.00s)
+    --- PASS: TestVocabularyDeckService_Create/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestVocabularyDeckService_Create/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_Update
+=== RUN   TestVocabularyDeckService_Update/success_—_owner_updates_deck
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:122	updating user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:145	deck updated	{"service": "vocabulary_deck", "id": 4}
+=== RUN   TestVocabularyDeckService_Update/forbidden_—_non-owner_returns_403
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:122	updating user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+=== RUN   TestVocabularyDeckService_Update/not_found_returns_404
+2026-05-26T22:39:14.340+0700	INFO	services/vocabulary_deck.service.go:122	updating user vocabulary deck	{"service": "vocabulary_deck", "id": 999}
+=== RUN   TestVocabularyDeckService_Update/update_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:122	updating user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+2026-05-26T22:39:14.341+0700	ERROR	services/vocabulary_deck.service.go:142	failed to update deck	{"service": "vocabulary_deck", "id": 4, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:142
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_Update.func5
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:338
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_Update (0.00s)
+    --- PASS: TestVocabularyDeckService_Update/success_—_owner_updates_deck (0.00s)
+    --- PASS: TestVocabularyDeckService_Update/forbidden_—_non-owner_returns_403 (0.00s)
+    --- PASS: TestVocabularyDeckService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyDeckService_Update/update_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_Delete
+=== RUN   TestVocabularyDeckService_Delete/success_—_owner_deletes_deck
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:151	deleting user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:170	deck deleted	{"service": "vocabulary_deck", "id": 4}
+=== RUN   TestVocabularyDeckService_Delete/forbidden_—_non-owner_returns_403
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:151	deleting user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+=== RUN   TestVocabularyDeckService_Delete/not_found_returns_404
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:151	deleting user vocabulary deck	{"service": "vocabulary_deck", "id": 999}
+=== RUN   TestVocabularyDeckService_Delete/delete_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:151	deleting user vocabulary deck	{"service": "vocabulary_deck", "id": 4}
+2026-05-26T22:39:14.341+0700	ERROR	services/vocabulary_deck.service.go:167	failed to delete deck	{"service": "vocabulary_deck", "id": 4, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:167
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_Delete.func5
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:412
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_Delete (0.00s)
+    --- PASS: TestVocabularyDeckService_Delete/success_—_owner_deletes_deck (0.00s)
+    --- PASS: TestVocabularyDeckService_Delete/forbidden_—_non-owner_returns_403 (0.00s)
+    --- PASS: TestVocabularyDeckService_Delete/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyDeckService_Delete/delete_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_CreateAsSystem
+=== RUN   TestVocabularyDeckService_CreateAsSystem/success_—_system_deck_has_no_user_and_is_default=true
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:176	creating system vocabulary deck	{"service": "vocabulary_deck"}
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:188	system deck created	{"service": "vocabulary_deck", "id": 10}
+=== RUN   TestVocabularyDeckService_CreateAsSystem/db_error_returns_500
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:176	creating system vocabulary deck	{"service": "vocabulary_deck"}
+2026-05-26T22:39:14.341+0700	ERROR	services/vocabulary_deck.service.go:185	failed to create system deck	{"service": "vocabulary_deck", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_deck/services.(*vocabularyDeckService).CreateAsSystem
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service.go:185
+go-cover-parroto/internal/modules/vocabulary_deck/services.TestVocabularyDeckService_CreateAsSystem.func3
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_deck/services/vocabulary_deck.service_test.go:463
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyDeckService_CreateAsSystem (0.00s)
+    --- PASS: TestVocabularyDeckService_CreateAsSystem/success_—_system_deck_has_no_user_and_is_default=true (0.00s)
+    --- PASS: TestVocabularyDeckService_CreateAsSystem/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyDeckService_DeleteAsSystem
+=== RUN   TestVocabularyDeckService_DeleteAsSystem/success
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:217	deleting system vocabulary deck	{"service": "vocabulary_deck", "id": 1}
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:229	deck deleted	{"service": "vocabulary_deck", "id": 1}
+=== RUN   TestVocabularyDeckService_DeleteAsSystem/not_found_returns_404
+2026-05-26T22:39:14.341+0700	INFO	services/vocabulary_deck.service.go:217	deleting system vocabulary deck	{"service": "vocabulary_deck", "id": 999}
+--- PASS: TestVocabularyDeckService_DeleteAsSystem (0.00s)
+    --- PASS: TestVocabularyDeckService_DeleteAsSystem/success (0.00s)
+    --- PASS: TestVocabularyDeckService_DeleteAsSystem/not_found_returns_404 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/vocabulary_deck/services	0.011s
+?   	go-cover-parroto/internal/modules/vocabulary_item	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_item/dtos/req	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_item/dtos/res	[no test files]
+?   	go-cover-parroto/internal/modules/vocabulary_item/repositories	[no test files]
+=== RUN   TestVocabularyItemService_List
+=== RUN   TestVocabularyItemService_List/success_—_returns_items_for_deck
+2026-05-26T22:39:14.342+0700	INFO	services/vocabulary_item.service.go:40	listing vocabulary items	{"service": "vocabulary_item"}
+=== RUN   TestVocabularyItemService_List/success_—_empty_deck_returns_empty_list
+2026-05-26T22:39:14.342+0700	INFO	services/vocabulary_item.service.go:40	listing vocabulary items	{"service": "vocabulary_item"}
+=== RUN   TestVocabularyItemService_List/db_error_returns_500
+2026-05-26T22:39:14.342+0700	INFO	services/vocabulary_item.service.go:40	listing vocabulary items	{"service": "vocabulary_item"}
+2026-05-26T22:39:14.342+0700	ERROR	services/vocabulary_item.service.go:43	failed to list items	{"service": "vocabulary_item", "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_item/services.(*vocabularyItemService).List
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service.go:43
+go-cover-parroto/internal/modules/vocabulary_item/services.TestVocabularyItemService_List.func4
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service_test.go:83
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyItemService_List (0.00s)
+    --- PASS: TestVocabularyItemService_List/success_—_returns_items_for_deck (0.00s)
+    --- PASS: TestVocabularyItemService_List/success_—_empty_deck_returns_empty_list (0.00s)
+    --- PASS: TestVocabularyItemService_List/db_error_returns_500 (0.00s)
+=== RUN   TestVocabularyItemService_GetByID
+=== RUN   TestVocabularyItemService_GetByID/success
+2026-05-26T22:39:14.342+0700	INFO	services/vocabulary_item.service.go:51	getting vocabulary item	{"service": "vocabulary_item", "id": 1}
+=== RUN   TestVocabularyItemService_GetByID/not_found_returns_404
+2026-05-26T22:39:14.342+0700	INFO	services/vocabulary_item.service.go:51	getting vocabulary item	{"service": "vocabulary_item", "id": 999}
+--- PASS: TestVocabularyItemService_GetByID (0.00s)
+    --- PASS: TestVocabularyItemService_GetByID/success (0.00s)
+    --- PASS: TestVocabularyItemService_GetByID/not_found_returns_404 (0.00s)
+=== RUN   TestVocabularyItemService_Create
+=== RUN   TestVocabularyItemService_Create/success_—_owner_adds_item_to_own_deck
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:70	creating vocabulary item in user deck	{"service": "vocabulary_item", "userId": "user1", "deckId": 1}
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:100	item created	{"service": "vocabulary_item", "userId": "user1", "deckId": 1, "id": 9}
+=== RUN   TestVocabularyItemService_Create/success_—_user_adds_item_to_system_deck
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:70	creating vocabulary item in user deck	{"service": "vocabulary_item", "userId": "user1", "deckId": 2}
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:100	item created	{"service": "vocabulary_item", "userId": "user1", "deckId": 2, "id": 0}
+=== RUN   TestVocabularyItemService_Create/unauthenticated_returns_401
+=== RUN   TestVocabularyItemService_Create/deck_not_found_returns_404
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:70	creating vocabulary item in user deck	{"service": "vocabulary_item", "userId": "user1", "deckId": 999}
+=== RUN   TestVocabularyItemService_Create/forbidden_—_non-owner_adds_to_user_deck_returns_403
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:70	creating vocabulary item in user deck	{"service": "vocabulary_item", "userId": "other_user", "deckId": 1}
+=== RUN   TestVocabularyItemService_Create/db_error_on_create_returns_500
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:70	creating vocabulary item in user deck	{"service": "vocabulary_item", "userId": "user1", "deckId": 1}
+2026-05-26T22:39:14.343+0700	ERROR	services/vocabulary_item.service.go:97	failed to create item	{"service": "vocabulary_item", "userId": "user1", "deckId": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_item/services.(*vocabularyItemService).Create
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service.go:97
+go-cover-parroto/internal/modules/vocabulary_item/services.TestVocabularyItemService_Create.func7
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service_test.go:230
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyItemService_Create (0.00s)
+    --- PASS: TestVocabularyItemService_Create/success_—_owner_adds_item_to_own_deck (0.00s)
+    --- PASS: TestVocabularyItemService_Create/success_—_user_adds_item_to_system_deck (0.00s)
+    --- PASS: TestVocabularyItemService_Create/unauthenticated_returns_401 (0.00s)
+    --- PASS: TestVocabularyItemService_Create/deck_not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyItemService_Create/forbidden_—_non-owner_adds_to_user_deck_returns_403 (0.00s)
+    --- PASS: TestVocabularyItemService_Create/db_error_on_create_returns_500 (0.00s)
+=== RUN   TestVocabularyItemService_Update
+=== RUN   TestVocabularyItemService_Update/success_—_owner_updates_own_deck_item
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:106	updating vocabulary item	{"service": "vocabulary_item", "id": 1}
+2026-05-26T22:39:14.343+0700	INFO	services/vocabulary_item.service.go:131	item updated	{"service": "vocabulary_item", "id": 1}
+=== RUN   TestVocabularyItemService_Update/success_—_any_user_updates_system_deck_item
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:106	updating vocabulary item	{"service": "vocabulary_item", "id": 2}
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:131	item updated	{"service": "vocabulary_item", "id": 2}
+=== RUN   TestVocabularyItemService_Update/forbidden_—_non-owner_updates_user_deck_item
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:106	updating vocabulary item	{"service": "vocabulary_item", "id": 1}
+=== RUN   TestVocabularyItemService_Update/not_found_returns_404
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:106	updating vocabulary item	{"service": "vocabulary_item", "id": 999}
+=== RUN   TestVocabularyItemService_Update/db_update_error_returns_500
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:106	updating vocabulary item	{"service": "vocabulary_item", "id": 1}
+2026-05-26T22:39:14.344+0700	ERROR	services/vocabulary_item.service.go:128	failed to update item	{"service": "vocabulary_item", "id": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_item/services.(*vocabularyItemService).Update
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service.go:128
+go-cover-parroto/internal/modules/vocabulary_item/services.TestVocabularyItemService_Update.func6
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service_test.go:338
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyItemService_Update (0.00s)
+    --- PASS: TestVocabularyItemService_Update/success_—_owner_updates_own_deck_item (0.00s)
+    --- PASS: TestVocabularyItemService_Update/success_—_any_user_updates_system_deck_item (0.00s)
+    --- PASS: TestVocabularyItemService_Update/forbidden_—_non-owner_updates_user_deck_item (0.00s)
+    --- PASS: TestVocabularyItemService_Update/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyItemService_Update/db_update_error_returns_500 (0.00s)
+=== RUN   TestVocabularyItemService_Delete
+=== RUN   TestVocabularyItemService_Delete/success_—_owner_deletes_own_deck_item
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:137	deleting vocabulary item	{"service": "vocabulary_item", "id": 1}
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:157	item deleted	{"service": "vocabulary_item", "id": 1}
+=== RUN   TestVocabularyItemService_Delete/success_—_deletes_system_deck_item
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:137	deleting vocabulary item	{"service": "vocabulary_item", "id": 2}
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:157	item deleted	{"service": "vocabulary_item", "id": 2}
+=== RUN   TestVocabularyItemService_Delete/forbidden_—_non-owner_returns_403
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:137	deleting vocabulary item	{"service": "vocabulary_item", "id": 1}
+=== RUN   TestVocabularyItemService_Delete/not_found_returns_404
+2026-05-26T22:39:14.344+0700	INFO	services/vocabulary_item.service.go:137	deleting vocabulary item	{"service": "vocabulary_item", "id": 999}
+=== RUN   TestVocabularyItemService_Delete/delete_error_returns_500
+2026-05-26T22:39:14.345+0700	INFO	services/vocabulary_item.service.go:137	deleting vocabulary item	{"service": "vocabulary_item", "id": 1}
+2026-05-26T22:39:14.345+0700	ERROR	services/vocabulary_item.service.go:154	failed to delete item	{"service": "vocabulary_item", "id": 1, "error": "db error"}
+go-cover-parroto/internal/modules/vocabulary_item/services.(*vocabularyItemService).Delete
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service.go:154
+go-cover-parroto/internal/modules/vocabulary_item/services.TestVocabularyItemService_Delete.func6
+	/home/nguyenvanduc/Development/Backend_Mobile_KTHT/BACKEND/api/internal/modules/vocabulary_item/services/vocabulary_item.service_test.go:429
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2036
+--- PASS: TestVocabularyItemService_Delete (0.00s)
+    --- PASS: TestVocabularyItemService_Delete/success_—_owner_deletes_own_deck_item (0.00s)
+    --- PASS: TestVocabularyItemService_Delete/success_—_deletes_system_deck_item (0.00s)
+    --- PASS: TestVocabularyItemService_Delete/forbidden_—_non-owner_returns_403 (0.00s)
+    --- PASS: TestVocabularyItemService_Delete/not_found_returns_404 (0.00s)
+    --- PASS: TestVocabularyItemService_Delete/delete_error_returns_500 (0.00s)
+PASS
+ok  	go-cover-parroto/internal/modules/vocabulary_item/services	0.012s
+?   	go-cover-parroto/internal/utils	[no test files]

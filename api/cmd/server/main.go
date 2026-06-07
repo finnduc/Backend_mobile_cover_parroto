@@ -10,6 +10,7 @@ import (
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
 	"go-cover-parroto/internal/modules/category"
+	"go-cover-parroto/internal/modules/chat"
 	"go-cover-parroto/internal/modules/lesson"
 	"go-cover-parroto/internal/modules/dictation_status"
 	"go-cover-parroto/internal/modules/shadowing_status"
@@ -104,6 +105,7 @@ func main() {
 		vocabcat.RegisterRoutes(v1, db)
 		vocabdeck.RegisterRoutes(v1, db)
 		vocabitem.RegisterRoutes(v1, db)
+		chat.RegisterRoutes(v1, db)
 	}
 
 	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)
