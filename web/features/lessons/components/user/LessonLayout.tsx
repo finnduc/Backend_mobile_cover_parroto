@@ -5,10 +5,12 @@ import { notFound } from "next/navigation"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
+import { PlaybackSpeed } from "@/features/lessons/components/user/PlaybackSpeed"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
 import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
 import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
+import type { PronunciationAttempt } from "@/types/pronunciation.models"
 import type { Transcript } from "@/types/lessons.models"
 import type { ComponentType } from "react"
 
@@ -20,6 +22,7 @@ export function LessonLayout({
   lessonId,
   decks = [],
   initialCompletedIds,
+  pronunciationScores,
 }: {
   exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
@@ -28,10 +31,12 @@ export function LessonLayout({
   lessonId?: number
   decks?: VocabularyDeck[]
   initialCompletedIds?: number[]
+  pronunciationScores?: Map<number, PronunciationAttempt>
 }) {
   const segments = transcripts ?? []
   const completedSet = new Set(initialCompletedIds ?? [])
   const initialActiveIndex = segments.findIndex((_, i) => !completedSet.has(i))
+  const [speed, setSpeed] = useState(1)
   const {
     playerRef,
     paused,
@@ -60,7 +65,15 @@ export function LessonLayout({
         ) : (
           notFound()
         )}
-        <ModeToggle mode={playerMode} onChange={setPlayerMode} />
+        <div className="flex items-center gap-2">
+          <ModeToggle mode={playerMode} onChange={setPlayerMode} />
+          <PlaybackSpeed value={speed} onChange={(s) => {
+            setSpeed(s)
+            if (playerRef.current) {
+              playerRef.current.playbackRate = s
+            }
+          }} />
+        </div>
         <div className="flex-1">
           {ExerciseComponent != null ? (
             <ExerciseComponent
@@ -70,6 +83,7 @@ export function LessonLayout({
               paused={paused}
               initialCompletedIds={initialCompletedIds ?? []}
               lessonId={lessonId}
+              pronunciationScores={pronunciationScores}
               onPlay={handlePlay}
               onPause={handlePause}
               onNext={handleNext}

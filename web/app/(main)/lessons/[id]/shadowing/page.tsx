@@ -6,9 +6,11 @@ import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 import { getShadowingStatus } from "@/features/lessons/services/shadowing-status.get"
+import { getPronunciationProgress } from "@/features/pronunciation/services/pronunciation.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/lib/routes"
+import type { PronunciationAttempt } from "@/types/pronunciation.models"
 
 export default async function ShadowingPage({
   params,
@@ -42,6 +44,28 @@ export default async function ShadowingPage({
   )
   const isBookmarked = bookmarks.length > 0
 
+  const progressRes = await getPronunciationProgress(lesson.id)
+  const pronunciationScores = new Map<number, PronunciationAttempt>()
+  ;(progressRes.data ?? []).forEach((p) => {
+    const idx = transcriptIdToIndex.get(p.transcriptId)
+    if (idx !== undefined) {
+      pronunciationScores.set(idx, {
+        text: transcripts[idx]?.content ?? "",
+        overallScore: p.bestScore ?? 0,
+        scores: { accuracy: 0, fluency: 0, completeness: 0, prosody: 0 },
+        feedback: p.feedback ?? "",
+        words: [],
+        attempt: {
+          id: p.bestAttemptId ?? 0,
+          userId: p.userId,
+          lessonId: p.lessonId,
+          transcriptId: p.transcriptId,
+          createdAt: p.createdAt,
+        },
+      })
+    }
+  })
+
   const decksRes = await getUserVocabularyDecks()
   const decks = decksRes.data ?? []
 
@@ -69,6 +93,7 @@ export default async function ShadowingPage({
         lessonId={lesson.id}
         decks={decks}
         initialCompletedIds={initialCompletedIds}
+        pronunciationScores={pronunciationScores}
         exercise={ShadowingArea}
       />
       <div className="mt-6 rounded-lg border p-4">
