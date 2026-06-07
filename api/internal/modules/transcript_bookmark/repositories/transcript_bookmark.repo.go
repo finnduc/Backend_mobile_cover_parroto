@@ -38,6 +38,13 @@ func (r *transcriptBookmarkRepo) FindAll(ctx context.Context, query *database.Qu
 
 	base := r.db.WithContext(ctx).Model(&models.TranscriptBookmark{}).Preload("Transcript")
 
+	if _, ok := query.Filters["lesson_id"]; ok {
+		lessonID := query.Filters["lesson_id"]
+		delete(query.Filters, "lesson_id")
+		base = base.Joins("JOIN transcripts ON transcripts.id = transcript_bookmarks.transcript_id").
+			Where("transcripts.lesson_id = ?", lessonID)
+	}
+
 	var total int64
 	query.Count(base).Count(&total)
 

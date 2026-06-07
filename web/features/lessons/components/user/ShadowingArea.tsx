@@ -252,7 +252,7 @@ export function ShadowingArea({
               disabled={assessingIndex !== null}
             >
               <Send className="mr-1 size-3" />
-              Submit
+              Get Score
             </Button>
           </div>
         )}
