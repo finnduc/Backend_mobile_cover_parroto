@@ -9,6 +9,7 @@ import (
 	"go-cover-parroto/internal/database"
 	"go-cover-parroto/internal/modules/auth"
 	"go-cover-parroto/internal/modules/bookmark"
+	"go-cover-parroto/internal/modules/user"
 	"go-cover-parroto/internal/modules/category"
 	"go-cover-parroto/internal/modules/lesson"
 	"go-cover-parroto/internal/modules/dictation_status"
@@ -95,6 +96,7 @@ func main() {
 		v1 := api.Group("/v1")
 		db := database.DB
 		auth.RegisterRoutes(v1)
+		user.RegisterRoutes(v1)
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
 		bookmark.RegisterRoutes(v1, db)

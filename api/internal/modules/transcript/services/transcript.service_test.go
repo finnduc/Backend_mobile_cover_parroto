@@ -29,7 +29,6 @@ type mockProvider struct {
 	transcriptRepo db_repos.ITranscriptRepo
 }
 
-func (m *mockProvider) Auth() db_repos.IAuthRepo                       { panic("not implemented") }
 func (m *mockProvider) Bookmark() db_repos.IBookmarkRepo               { panic("not implemented") }
 func (m *mockProvider) Category() db_repos.ICategoryRepo               { panic("not implemented") }
 func (m *mockProvider) Lesson() db_repos.ILessonRepo                   { panic("not implemented") }

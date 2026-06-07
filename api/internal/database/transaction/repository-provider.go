@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	db_repos "go-cover-parroto/internal/database/repositories"
-	authrepos "go-cover-parroto/internal/modules/auth/repositories"
 	bookmarkrepos "go-cover-parroto/internal/modules/bookmark/repositories"
 	categoryrepos "go-cover-parroto/internal/modules/category/repositories"
 	lessonrepos "go-cover-parroto/internal/modules/lesson/repositories"
@@ -12,7 +11,6 @@ import (
 )
 
 type IProvider interface {
-	Auth() db_repos.IAuthRepo
 	Bookmark() db_repos.IBookmarkRepo
 	Category() db_repos.ICategoryRepo
 	Lesson() db_repos.ILessonRepo
@@ -21,7 +19,6 @@ type IProvider interface {
 
 type gormProvider struct {
 	tx             *gorm.DB
-	authRepo       db_repos.IAuthRepo
 	bookmarkRepo   db_repos.IBookmarkRepo
 	categoryRepo   db_repos.ICategoryRepo
 	lessonRepo     db_repos.ILessonRepo
@@ -30,13 +27,6 @@ type gormProvider struct {
 
 func NewGormProvider(tx *gorm.DB) *gormProvider {
 	return &gormProvider{tx: tx}
-}
-
-func (p *gormProvider) Auth() db_repos.IAuthRepo {
-	if p.authRepo == nil {
-		p.authRepo = authrepos.NewAuthRepo(p.tx)
-	}
-	return p.authRepo
 }
 
 func (p *gormProvider) Bookmark() db_repos.IBookmarkRepo {
