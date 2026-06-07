@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"strings"
+	"time"
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
@@ -44,10 +46,14 @@ func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
 	roleMeta := map[string]interface{}{
 		"role": string(enums.UserRoleUser),
 	}
-	metaJSON, _ := json.Marshal(roleMeta)
+	metaJSON, err := json.Marshal(roleMeta)
+	if err != nil {
+		log.Errorw("failed to marshal role metadata", "error", err)
+		return response.Internal("failed to process role metadata")
+	}
 	meta := json.RawMessage(metaJSON)
 
-	_, err := clerkusersdk.Update(ctx, userID, &clerkusersdk.UpdateParams{
+	_, err = clerkusersdk.Update(ctx, userID, &clerkusersdk.UpdateParams{
 		PublicMetadata: &meta,
 	})
 	if err != nil {
@@ -82,8 +88,8 @@ func (s *authService) getUserFromClerk(ctx context.Context) (*res.AuthUserRes, *
 	if clerkUser.LastName != nil {
 		lastName = *clerkUser.LastName
 	}
-	name := firstName + " " + lastName
-	if name == " " {
+	name := strings.TrimSpace(firstName + " " + lastName)
+	if name == "" {
 		name = "User"
 	}
 
@@ -103,7 +109,7 @@ func (s *authService) getUserFromClerk(ctx context.Context) (*res.AuthUserRes, *
 		Name:      name,
 		UserRole:  role,
 		AvatarURL: avatarURL,
-		CreatedAt: "",
+		CreatedAt: time.UnixMilli(clerkUser.CreatedAt).Format(time.RFC3339),
 	}, nil
 }
 
