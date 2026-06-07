@@ -4,11 +4,13 @@ import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
 import { BookmarkButton } from "@/features/bookmarks/components/BookmarkButton"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
-import { getBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 import { getShadowingStatus } from "@/features/lessons/services/shadowing-status.get"
+import { getPronunciationProgress } from "@/features/pronunciation/services/pronunciation.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/lib/routes"
+import type { PronunciationAttempt } from "@/types/pronunciation.models"
 
 export default async function ShadowingPage({
   params,
@@ -34,8 +36,35 @@ export default async function ShadowingPage({
     .map((tid) => transcriptIdToIndex.get(tid))
     .filter((i): i is number => i !== undefined)
 
-  const bookmarksRes = await getBookmarks()
-  const isBookmarked = (bookmarksRes.data ?? []).some((b) => b.lessionId === lesson.id)
+  const bookmarksRes = await getTranscriptBookmarks(lesson.id)
+  const bookmarks = bookmarksRes.data ?? []
+  const firstTranscript = transcripts[0]
+  const firstBookmark = bookmarks.find(
+    (b) => firstTranscript && b.transcriptId === firstTranscript.id
+  )
+  const isBookmarked = bookmarks.length > 0
+
+  const progressRes = await getPronunciationProgress(lesson.id)
+  const pronunciationScores = new Map<number, PronunciationAttempt>()
+  ;(progressRes.data ?? []).forEach((p) => {
+    const idx = transcriptIdToIndex.get(p.transcriptId)
+    if (idx !== undefined) {
+      pronunciationScores.set(idx, {
+        text: transcripts[idx]?.content ?? "",
+        overallScore: p.bestScore ?? 0,
+        scores: { accuracy: 0, fluency: 0, completeness: 0, prosody: 0 },
+        feedback: p.feedback ?? "",
+        words: [],
+        attempt: {
+          id: p.bestAttemptId ?? 0,
+          userId: p.userId,
+          lessonId: p.lessonId,
+          transcriptId: p.transcriptId,
+          createdAt: p.createdAt,
+        },
+      })
+    }
+  })
 
   const decksRes = await getUserVocabularyDecks()
   const decks = decksRes.data ?? []
@@ -44,10 +73,18 @@ export default async function ShadowingPage({
     <PageLayout
       title={lesson.title}
       breadcrumbs={[
-        { label: "Chủ đề", href: ROUTES.USER.CATEGORIES },
-        { label: "Bài học Shadowing" },
+        { label: "Chu de", href: ROUTES.USER.CATEGORIES },
+        { label: "Bai hoc Shadowing" },
       ]}
-      actions={<BookmarkButton lessonId={lesson.id} isBookmarked={isBookmarked} />}
+      actions={
+        firstTranscript ? (
+          <BookmarkButton
+            transcriptId={firstTranscript.id}
+            bookmarkId={firstBookmark?.id ?? null}
+            isBookmarked={isBookmarked}
+          />
+        ) : undefined
+      }
     >
       <LessonLayout
         videoUrl={lesson.videoUrl}
@@ -56,15 +93,16 @@ export default async function ShadowingPage({
         lessonId={lesson.id}
         decks={decks}
         initialCompletedIds={initialCompletedIds}
+        pronunciationScores={pronunciationScores}
         exercise={ShadowingArea}
       />
       <div className="mt-6 rounded-lg border p-4">
-        <h3 className="mb-2 text-sm font-medium">Tiến độ Shadowing</h3>
+        <h3 className="mb-2 text-sm font-medium">Tien do Shadowing</h3>
         <div className="flex items-center gap-3">
           <div className="h-2 flex-1 rounded-full bg-muted">
             <div className="h-2 w-3/5 rounded-full bg-primary" />
           </div>
-          <Badge variant="secondary">3/{transcripts.length} câu đã hoàn thành</Badge>
+          <Badge variant="secondary">3/{transcripts.length} cau da hoan thanh</Badge>
         </div>
       </div>
     </PageLayout>

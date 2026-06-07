@@ -9,6 +9,7 @@ import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
 import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
 import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
+import type { PronunciationAttempt } from "@/types/pronunciation.models"
 import type { Transcript } from "@/types/lessons.models"
 import type { ComponentType } from "react"
 
@@ -20,6 +21,7 @@ export function LessonLayout({
   lessonId,
   decks = [],
   initialCompletedIds,
+  pronunciationScores,
 }: {
   exercise?: ComponentType<Partial<ExerciseControlProps>>
   duration?: number
@@ -28,6 +30,7 @@ export function LessonLayout({
   lessonId?: number
   decks?: VocabularyDeck[]
   initialCompletedIds?: number[]
+  pronunciationScores?: Map<number, PronunciationAttempt>
 }) {
   const segments = transcripts ?? []
   const completedSet = new Set(initialCompletedIds ?? [])
@@ -70,6 +73,7 @@ export function LessonLayout({
               paused={paused}
               initialCompletedIds={initialCompletedIds ?? []}
               lessonId={lessonId}
+              pronunciationScores={pronunciationScores}
               onPlay={handlePlay}
               onPause={handlePause}
               onNext={handleNext}

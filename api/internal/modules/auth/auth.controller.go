@@ -39,3 +39,18 @@ func (ctrl *AuthController) Complete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.Success("User profile finalized successfully"))
 }
+
+// Sync godoc
+// @Summary Sync/get current Clerk user
+// @Tags auth
+// @Success 200 {object} response.BaseResponse[res.AuthUserRes]
+// @Router /auth/sync [post]
+// @Security BearerAuth
+func (ctrl *AuthController) Sync(c *gin.Context) {
+	user, appErr := ctrl.svc.SyncUser(c.Request.Context())
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(user))
+}

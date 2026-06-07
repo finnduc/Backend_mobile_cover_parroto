@@ -7,15 +7,18 @@ type Config struct {
 	Postgres  PostgresConfig
 	ClerkAuth ClerkConfig
 	Logger    LoggerConfig
+	Azure     AzureConfig
 }
 
 func Load() Config {
 	_ = godotenv.Load()
 
-	return Config{
+	cfg := Config{
 		Server:    loadServerConfig(),
 		Postgres:  loadPostgresConfig(),
 		ClerkAuth: loadFirebaseConfig(),
 		Logger:    loadLoggerConfig(),
 	}
+	cfg.Azure = LoadAzureConfig()
+	return cfg
 }

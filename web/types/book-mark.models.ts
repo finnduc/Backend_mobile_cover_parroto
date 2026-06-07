@@ -1,13 +1,7 @@
-export interface Bookmark {
-  lessionId: number
-  userId: string
-  createdAt: string
-  lesson: LessonInfo
-}
-export interface LessonInfo {
+export interface TranscriptBookmark {
   id: number
-  title: string
-  thumbnailUrl: string
-  level: string
-  duration: number
+  userId: string
+  transcriptId: number
+  note: string
+  createdAt: string
 }

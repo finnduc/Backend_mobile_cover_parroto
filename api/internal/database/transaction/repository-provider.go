@@ -4,26 +4,23 @@ import (
 	"gorm.io/gorm"
 
 	db_repos "go-cover-parroto/internal/database/repositories"
-	authrepos "go-cover-parroto/internal/modules/auth/repositories"
-	bookmarkrepos "go-cover-parroto/internal/modules/bookmark/repositories"
 	categoryrepos "go-cover-parroto/internal/modules/category/repositories"
 	lessonrepos "go-cover-parroto/internal/modules/lesson/repositories"
 	transcriptrepos "go-cover-parroto/internal/modules/transcript/repositories"
+	transcriptbookmarkrepos "go-cover-parroto/internal/modules/transcript_bookmark/repositories"
 )
 
 type IProvider interface {
-	Auth() db_repos.IAuthRepo
-	Bookmark() db_repos.IBookmarkRepo
+	TranscriptBookmark() db_repos.ITranscriptBookmarkRepo
 	Category() db_repos.ICategoryRepo
 	Lesson() db_repos.ILessonRepo
 	Transcript() db_repos.ITranscriptRepo
 }
 
 type gormProvider struct {
-	tx             *gorm.DB
-	authRepo       db_repos.IAuthRepo
-	bookmarkRepo   db_repos.IBookmarkRepo
-	categoryRepo   db_repos.ICategoryRepo
+	tx                    *gorm.DB
+	transcriptBookmarkRepo db_repos.ITranscriptBookmarkRepo
+	categoryRepo          db_repos.ICategoryRepo
 	lessonRepo     db_repos.ILessonRepo
 	transcriptRepo db_repos.ITranscriptRepo
 }
@@ -32,18 +29,11 @@ func NewGormProvider(tx *gorm.DB) *gormProvider {
 	return &gormProvider{tx: tx}
 }
 
-func (p *gormProvider) Auth() db_repos.IAuthRepo {
-	if p.authRepo == nil {
-		p.authRepo = authrepos.NewAuthRepo(p.tx)
+func (p *gormProvider) TranscriptBookmark() db_repos.ITranscriptBookmarkRepo {
+	if p.transcriptBookmarkRepo == nil {
+		p.transcriptBookmarkRepo = transcriptbookmarkrepos.NewTranscriptBookmarkRepo(p.tx)
 	}
-	return p.authRepo
-}
-
-func (p *gormProvider) Bookmark() db_repos.IBookmarkRepo {
-	if p.bookmarkRepo == nil {
-		p.bookmarkRepo = bookmarkrepos.NewBookmarkRepo(p.tx)
-	}
-	return p.bookmarkRepo
+	return p.transcriptBookmarkRepo
 }
 
 func (p *gormProvider) Category() db_repos.ICategoryRepo {
