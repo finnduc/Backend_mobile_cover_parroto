@@ -5,7 +5,6 @@ import { notFound } from "next/navigation"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
-import { PlaybackSpeed } from "@/features/lessons/components/user/PlaybackSpeed"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
 import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
@@ -36,7 +35,6 @@ export function LessonLayout({
   const segments = transcripts ?? []
   const completedSet = new Set(initialCompletedIds ?? [])
   const initialActiveIndex = segments.findIndex((_, i) => !completedSet.has(i))
-  const [speed, setSpeed] = useState(1)
   const {
     playerRef,
     paused,
@@ -65,15 +63,7 @@ export function LessonLayout({
         ) : (
           notFound()
         )}
-        <div className="flex items-center gap-2">
-          <ModeToggle mode={playerMode} onChange={setPlayerMode} />
-          <PlaybackSpeed value={speed} onChange={(s) => {
-            setSpeed(s)
-            if (playerRef.current) {
-              playerRef.current.playbackRate = s
-            }
-          }} />
-        </div>
+        <ModeToggle mode={playerMode} onChange={setPlayerMode} />
         <div className="flex-1">
           {ExerciseComponent != null ? (
             <ExerciseComponent
