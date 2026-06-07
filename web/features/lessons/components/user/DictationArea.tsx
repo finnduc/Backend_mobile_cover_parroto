@@ -2,9 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
 import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
 import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
-import { Lightbulb, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward, Square, Check } from "lucide-react"
+import { Lightbulb, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward, Check } from "lucide-react"
 import { useState, useEffect, useTransition } from "react"
 import { postDictationStatus } from "@/features/lessons/services/dictation-status.action"
 import { toast } from "sonner"
@@ -23,16 +24,15 @@ export function DictationArea({
   onReplay,
   onTranscriptClick,
 }: Partial<ExerciseControlProps>) {
-  const [recording, setRecording] = useState(false)
   const initialMaxLine = (initialCompletedIds ?? []).length > 0
     ? Math.max(...(initialCompletedIds ?? [])) + 1
     : 0
   const [maxLine, setMaxLine] = useState(initialMaxLine)
   const [inputs, setInputs] = useState<string[]>((transcripts ?? []).map(() => ""))
   const [showHints, setShowHints] = useState(false)
+  const [revealedWords, setRevealedWords] = useState<Set<number>>(new Set())
   const [, startTransition] = useTransition()
 
-  // Sync current line with active playback position
   const currentLine =
     (activeIndex ?? -1) >= 0
       ? activeIndex!
@@ -40,7 +40,6 @@ export function DictationArea({
         ? highlightedIndex!
         : 0
 
-  // Update max progress when activeIndex advances explicitly
   useEffect(() => {
     if ((activeIndex ?? -1) >= 0) {
       setMaxLine((prev) => Math.max(prev, activeIndex! + 1))
@@ -52,13 +51,8 @@ export function DictationArea({
       <LessonProgressBar completed={(initialCompletedIds ?? []).length} total={(transcripts ?? []).length} />
 
       <div className="flex items-center justify-center gap-2 rounded-xl border bg-background px-3 py-2">
-        <Button
-          size="lg"
-          variant={recording ? "destructive" : "default"}
-          className="size-12 rounded-full"
-          onClick={() => setRecording(!recording)}
-        >
-          {recording ? <Square className="size-5" /> : <Mic className="size-5" />}
+        <Button size="lg" variant="default" className="size-12 rounded-full" disabled>
+          <Mic className="size-5" />
         </Button>
         <Button size="icon" variant="outline" onClick={onPrev ?? (() => {})} disabled={(activeIndex ?? -1) <= 0 && (highlightedIndex ?? -1) <= 0}>
           <SkipBack className="size-4" />
@@ -106,13 +100,37 @@ export function DictationArea({
               }`}
             >
               {isComplete && !isCurrent ? (
-                <div className="flex items-center gap-2">
-                  {isSaved ? (
-                    <Check className="size-4 shrink-0 text-green-600" />
-                  ) : (
-                    <span className="size-4 shrink-0 rounded-full border border-amber-400" />
-                  )}
-                  <p className="text-sm text-foreground">{seg.content}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {isSaved ? (
+                      <Check className="size-4 shrink-0 text-green-600" />
+                    ) : (
+                      <span className="size-4 shrink-0 rounded-full border border-amber-400" />
+                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {seg.content.split(" ").map((word, wi) => {
+                        const revealed = revealedWords.has(i * 1000 + wi)
+                        return (
+                          <Card
+                            key={wi}
+                            className={`cursor-pointer px-1.5 py-0.5 text-sm transition-all ${
+                              revealed ? "bg-background" : "bg-muted blur-[3px] hover:blur-0"
+                            }`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setRevealedWords((prev) => {
+                                const next = new Set(prev)
+                                next.add(i * 1000 + wi)
+                                return next
+                              })
+                            }}
+                          >
+                            {word}
+                          </Card>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </div>
               ) : isCurrent ? (
                 <div className="space-y-2">
@@ -133,7 +151,7 @@ export function DictationArea({
                       next[i] = e.target.value
                       setInputs(next)
                     }}
-                    placeholder="Gõ những gì bạn nghe được..."
+                    placeholder="Go nhung gi ban nghe duoc..."
                     className="w-full"
                     autoFocus
                   />
@@ -157,15 +175,15 @@ export function DictationArea({
                         onNext?.()
                       }}
                     >
-                      Kiểm tra
+                      Kiem tra
                     </Button>
                     <Button size="xs" variant="ghost" onClick={() => setShowHints(!showHints)}>
                       <Lightbulb className="mr-1 size-3" />
-                      Gợi ý
+                      Goi y
                     </Button>
                     <Button size="xs" variant="ghost" onClick={() => setInputs((transcripts ?? []).map(() => ""))}>
                       <RotateCcw className="mr-1 size-3" />
-                      Làm lại
+                      Lam lai
                     </Button>
                   </div>
                 </div>

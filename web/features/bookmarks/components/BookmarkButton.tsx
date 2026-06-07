@@ -7,7 +7,9 @@ import { cn } from "@/lib/utils"
 import {
   createTranscriptBookmark,
   deleteTranscriptBookmark,
+  updateTranscriptBookmarkNote,
 } from "@/features/bookmarks/services/bookmarks.action"
+import { BookmarkNoteDialog } from "@/features/bookmarks/components/BookmarkNoteDialog"
 import { toast } from "sonner"
 
 export function BookmarkButton({
@@ -25,6 +27,7 @@ export function BookmarkButton({
   const [currentBookmarkId, setCurrentBookmarkId] = useState<number | null>(
     initialBookmarkId ?? null
   )
+  const [noteOpen, setNoteOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const handleToggle = () => {
@@ -39,7 +42,7 @@ export function BookmarkButton({
           toast.error(res.error.message)
         } else {
           if (res.data) setCurrentBookmarkId(res.data.id)
-          toast.success("Da luu bai hoc")
+          setNoteOpen(true)
         }
       } else {
         if (!currentBookmarkId) return
@@ -55,21 +58,37 @@ export function BookmarkButton({
     })
   }
 
+  const handleSaveNote = (note: string) => {
+    if (!currentBookmarkId) return
+    startTransition(async () => {
+      await updateTranscriptBookmarkNote(currentBookmarkId, note)
+    })
+  }
+
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className={cn("size-8", className)}
-      disabled={isPending}
-      onClick={(e) => {
-        e.stopPropagation()
-        handleToggle()
-      }}
-      aria-label={bookmarked ? "Bo luu bai hoc" : "Luu bai hoc"}
-    >
-      <Bookmark
-        className={cn("size-4", bookmarked && "fill-current text-yellow-500")}
-      />
-    </Button>
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        disabled={isPending}
+        onClick={(e) => {
+          e.stopPropagation()
+          handleToggle()
+        }}
+        aria-label={bookmarked ? "Bo luu bai hoc" : "Luu bai hoc"}
+      >
+        <Bookmark
+          className={cn("size-4", bookmarked && "fill-current text-yellow-500")}
+        />
+      </Button>
+      {bookmarked && (
+        <BookmarkNoteDialog
+          open={noteOpen}
+          onOpenChange={setNoteOpen}
+          onSave={handleSaveNote}
+        />
+      )}
+    </>
   )
 }
