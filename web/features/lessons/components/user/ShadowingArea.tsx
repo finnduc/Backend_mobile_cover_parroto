@@ -1,17 +1,17 @@
 "use client"
 
-import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Mic, Square, Play, Pause, SkipBack, SkipForward, RotateCcw, Check } from "lucide-react"
-import { useState, useTransition } from "react"
+import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
+import { PronunciationScore } from "@/features/lessons/components/user/PronunciationScore"
+import { useAudioRecorder } from "@/features/lessons/hooks/use-audio-recorder"
 import { postShadowingStatus } from "@/features/lessons/services/shadowing-status.action"
 import { assessPronunciation, updatePronunciationProgress } from "@/features/pronunciation/services/pronunciation.action"
-import { useAudioRecorder } from "@/features/lessons/hooks/use-audio-recorder"
-import { PronunciationScore } from "@/features/lessons/components/user/PronunciationScore"
-import { Badge } from "@/components/ui/badge"
-import { toast } from "sonner"
 import type { Transcript } from "@/types/lessons.models"
 import type { PronunciationAttempt } from "@/types/pronunciation.models"
+import { Check, Mic, Pause, Play, RotateCcw, Send, SkipBack, SkipForward, Square, Volume2 } from "lucide-react"
+import { useEffect, useRef, useState, useTransition } from "react"
+import { toast } from "sonner"
 
 export interface ExerciseControlProps {
   transcripts: Transcript[]
@@ -28,6 +28,13 @@ export interface ExerciseControlProps {
   onReplay: () => void
   onTranscriptClick: (index: number) => void
 }
+
+const WAVEFORM_BARS = [
+  31, 22, 45, 34, 26, 36, 28, 15, 18, 38,
+  19, 45, 29, 28, 42, 20, 27, 35, 40, 37,
+  15, 16, 14, 16, 40, 43, 33, 25, 21, 27,
+  44, 10, 26, 17, 22, 12, 17, 9, 27, 33,
+]
 
 export function ShadowingArea({
   transcripts,
@@ -47,48 +54,98 @@ export function ShadowingArea({
     pronunciationScores ?? new Map()
   )
   const [assessingIndex, setAssessingIndex] = useState<number | null>(null)
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null)
+  const [recordedUrl, setRecordedUrl] = useState<string | null>(null)
+  const [replaying, setReplaying] = useState(false)
+  const replayAudioRef = useRef<HTMLAudioElement | null>(null)
   const { isRecording, startRecording, stopRecording } = useAudioRecorder()
   const [, startTransition] = useTransition()
 
   const lines = (transcripts ?? []).map((t) => t.content)
   const safeActiveIndex = (activeIndex ?? -1) >= 0 && (activeIndex ?? -1) < lines.length ? activeIndex! : 0
 
-  const handleRecord = async () => {
-    if (isRecording) {
-      try {
-        const blob = await stopRecording()
-        setAssessingIndex(safeActiveIndex)
-        const seg = (transcripts ?? [])[safeActiveIndex]
-        if (seg && lessonId) {
-          const formData = new FormData()
-          formData.append("audio", blob, "recording.webm")
-          formData.append("referenceText", seg.content)
-          formData.append("lessonId", String(lessonId))
-          formData.append("transcriptId", String(seg.id))
-
-          const res = await assessPronunciation(formData)
-          if (res.error) {
-            toast.error(res.error.message)
-          } else if (res.data) {
-            setScores((prev) => new Map(prev).set(safeActiveIndex, res.data!))
-            await updatePronunciationProgress(seg.id)
-            if (!completed.includes(safeActiveIndex)) {
-              setCompleted([...completed, safeActiveIndex])
-              await postShadowingStatus(seg.id, lessonId)
-            }
-            if (res.data.overallScore >= 80) {
-              toast.success("Pronunciation score: " + res.data.overallScore.toFixed(0) + " - Grade A")
-            }
-          }
-        }
-      } catch {
-        toast.error("Failed to process recording")
-      } finally {
-        setAssessingIndex(null)
+  useEffect(() => {
+    return () => {
+      if (recordedUrl) URL.revokeObjectURL(recordedUrl)
+      if (replayAudioRef.current) {
+        replayAudioRef.current.pause()
+        replayAudioRef.current = null
       }
+    }
+  }, [])
+
+  const handleRecordToggle = async () => {
+    if (isRecording) {
+      const blob = await stopRecording()
+      if (recordedUrl) URL.revokeObjectURL(recordedUrl)
+      const url = URL.createObjectURL(blob)
+      setRecordedBlob(blob)
+      setRecordedUrl(url)
     } else {
+      setRecordedBlob(null)
+      if (recordedUrl) {
+        URL.revokeObjectURL(recordedUrl)
+        setRecordedUrl(null)
+      }
       await startRecording()
     }
+  }
+
+  const handleReplay = () => {
+    if (!recordedUrl) return
+    if (replaying && replayAudioRef.current) {
+      replayAudioRef.current.pause()
+      replayAudioRef.current = null
+      setReplaying(false)
+      return
+    }
+    const audio = new Audio(recordedUrl)
+    audio.onended = () => {
+      setReplaying(false)
+      replayAudioRef.current = null
+    }
+    audio.onerror = () => {
+      toast.error("Failed to play recording")
+      setReplaying(false)
+      replayAudioRef.current = null
+    }
+    replayAudioRef.current = audio
+    setReplaying(true)
+    audio.play()
+  }
+
+  const handleSubmit = async () => {
+    if (!recordedBlob) return
+    setAssessingIndex(safeActiveIndex)
+    const seg = (transcripts ?? [])[safeActiveIndex]
+    if (seg && lessonId) {
+      const formData = new FormData()
+      formData.append("audio", recordedBlob, "recording.webm")
+      formData.append("referenceText", seg.content)
+      formData.append("lessonId", String(lessonId))
+      formData.append("transcriptId", String(seg.id))
+
+      const res = await assessPronunciation(formData)
+      if (res.error) {
+        toast.error(res.error.message)
+      } else if (res.data) {
+        setScores((prev) => new Map(prev).set(safeActiveIndex, res.data!))
+        await updatePronunciationProgress(seg.id)
+        if (!completed.includes(safeActiveIndex)) {
+          setCompleted([...completed, safeActiveIndex])
+          await postShadowingStatus(seg.id, lessonId)
+        }
+        if (res.data.overallScore >= 80) {
+          toast.success("Pronunciation score: " + res.data.overallScore.toFixed(0) + " - Grade A")
+        }
+        setRecordedBlob(null)
+        if (recordedUrl) {
+          URL.revokeObjectURL(recordedUrl)
+          setRecordedUrl(null)
+        }
+      }
+    }
+    setAssessingIndex(null)
   }
 
   const currentScore = scores.get(safeActiveIndex)
@@ -99,13 +156,13 @@ export function ShadowingArea({
       <div className="rounded-xl bg-gradient-to-b from-muted/50 to-background p-6 text-center">
         <div className="mb-4 flex items-center justify-center gap-2">
           <div className="flex h-16 w-64 items-center justify-center gap-1 rounded-full bg-muted px-4">
-            {Array.from({ length: 40 }).map((_, i) => (
+            {WAVEFORM_BARS.map((height, i) => (
               <div
                 key={i}
                 className="w-0.5 rounded-full bg-primary"
                 style={{
-                  height: `${Math.random() * 40 + 8}px`,
-                  opacity: isRecording ? 1 : 0.3,
+                  height: `${height}px`,
+                  opacity: isRecording ? 1 : recordedBlob ? 0.6 : 0.3,
                 }}
               />
             ))}
@@ -115,9 +172,9 @@ export function ShadowingArea({
         <div className="flex items-center justify-center gap-3">
           <Button
             size="lg"
-            variant={isRecording ? "destructive" : "default"}
+            variant={isRecording ? "destructive" : recordedBlob ? "secondary" : "default"}
             className="size-14 rounded-full"
-            onClick={handleRecord}
+            onClick={handleRecordToggle}
             disabled={assessingIndex !== null}
           >
             {assessingIndex !== null ? (
@@ -131,7 +188,7 @@ export function ShadowingArea({
           <Button
             size="icon"
             variant="outline"
-            onClick={onPrev ?? (() => {})}
+            onClick={onPrev ?? (() => { })}
             disabled={(activeIndex ?? -1) <= 0}
           >
             <SkipBack className="size-4" />
@@ -171,10 +228,34 @@ export function ShadowingArea({
           >
             <SkipForward className="size-4" />
           </Button>
-          <Button size="icon" variant="ghost" onClick={onReplay ?? (() => {})}>
+          <Button size="icon" variant="ghost" onClick={onReplay ?? (() => { })}>
             <RotateCcw className="size-4" />
           </Button>
         </div>
+
+        {recordedBlob && !isRecording && (
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleReplay}
+            >
+              {replaying ? (
+                <><Square className="mr-1 size-3" /> Stop</>
+              ) : (
+                <><Volume2 className="mr-1 size-3" /> Replay</>
+              )}
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSubmit}
+              disabled={assessingIndex !== null}
+            >
+              <Send className="mr-1 size-3" />
+              Submit
+            </Button>
+          </div>
+        )}
       </div>
 
       {currentScore && <PronunciationScore result={currentScore} />}
@@ -194,9 +275,8 @@ export function ShadowingArea({
           return (
             <div
               key={seg.id}
-              className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${
-                isSaved ? "bg-green-100 text-green-700 line-through" : ""
-              } ${isCompleted && !isSaved ? "bg-amber-50 text-amber-700" : ""} ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
+              className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${isSaved ? "bg-green-100 text-green-700 line-through" : ""
+                } ${isCompleted && !isSaved ? "bg-amber-50 text-amber-700" : ""} ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
             >
               {isSaved && <Check className="size-3.5 shrink-0 text-green-600" />}
               {isCompleted && !isSaved && <span className="size-3.5 shrink-0 rounded-full border border-amber-400" />}
