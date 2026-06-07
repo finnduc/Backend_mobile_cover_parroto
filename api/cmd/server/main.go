@@ -94,7 +94,7 @@ func main() {
 
 		v1 := api.Group("/v1")
 		db := database.DB
-		auth.RegisterRoutes(v1, db)
+		auth.RegisterRoutes(v1)
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
 		bookmark.RegisterRoutes(v1, db)
