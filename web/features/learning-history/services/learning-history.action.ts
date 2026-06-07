@@ -1,24 +1,27 @@
 'use server'
 import { apiFetch } from "@/lib/api-fetch"
+import { CACHE_TAGS } from "@/lib/tags"
+import { updateTag, refresh } from "next/cache"
 import type { BaseResponse } from "@/types/base-response"
 import type { LearningHistory } from "@/types/learning-history.models"
 
-export async function getHistoryByLesson(
-  lessonId: number
-): Promise<BaseResponse<LearningHistory>> {
-  return apiFetch<LearningHistory>(`/learning-history/${lessonId}`, {
-    withCredentials: true,
-  })
-}
-
-export async function recordHistory(
+export async function recordLearningHistory(
   lessonId: number,
-  durationWatched: number,
-  completed: boolean
+  completedDictation: boolean,
+  completedPronunciation: boolean | null
 ): Promise<BaseResponse<LearningHistory>> {
-  return apiFetch<LearningHistory>("/learning-history", {
+  const res = await apiFetch<LearningHistory>("/learning-history", {
     method: "POST",
-    body: { lessonId, durationWatched, completed },
+    body: {
+      lessonId,
+      completedDictation,
+      completedPronunciation,
+    },
     withCredentials: true,
   })
+  if (!res.error) {
+    updateTag(CACHE_TAGS.learningHistory)
+    refresh()
+  }
+  return res
 }
