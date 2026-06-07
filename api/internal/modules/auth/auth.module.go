@@ -14,5 +14,6 @@ func RegisterRoutes(r *gin.RouterGroup) {
 	protected := r.Group("/auth", middleware.ClerkAuthMiddleware())
 	{
 		protected.POST("/complete-signup", ctrl.Complete)
+		protected.POST("/sync", ctrl.Sync)
 	}
 }
