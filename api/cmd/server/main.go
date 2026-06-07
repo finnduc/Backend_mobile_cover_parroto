@@ -14,6 +14,7 @@ import (
 	"go-cover-parroto/internal/modules/dictation_status"
 	"go-cover-parroto/internal/modules/learning_history"
 	"go-cover-parroto/internal/modules/shadowing_status"
+	"go-cover-parroto/internal/modules/pronunciation"
 	"go-cover-parroto/internal/modules/transcript"
 	"go-cover-parroto/internal/modules/transcript_progress"
 	transcriptbookmark "go-cover-parroto/internal/modules/transcript_bookmark"
@@ -110,6 +111,7 @@ func main() {
 		vocabcat.RegisterRoutes(v1, db)
 		vocabdeck.RegisterRoutes(v1, db)
 		vocabitem.RegisterRoutes(v1, db)
+		pronunciation.RegisterRoutes(v1, db)
 	}
 
 	logger.S().Infof("API server running, documentation at http://localhost:%s/swagger", port)
