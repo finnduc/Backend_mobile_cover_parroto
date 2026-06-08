@@ -16,6 +16,7 @@ import (
 	"go-cover-parroto/internal/modules/pronunciation"
 	"go-cover-parroto/internal/modules/shadowing_status"
 	"go-cover-parroto/internal/modules/transcript"
+	lessonbookmark "go-cover-parroto/internal/modules/lesson_bookmark"
 	transcriptbookmark "go-cover-parroto/internal/modules/transcript_bookmark"
 	"go-cover-parroto/internal/modules/transcript_progress"
 	"go-cover-parroto/internal/modules/user"
@@ -103,6 +104,7 @@ func main() {
 		user.RegisterRoutes(v1)
 		lesson.RegisterRoutes(v1, db)
 		category.RegisterRoutes(v1, db)
+		lessonbookmark.RegisterRoutes(v1, db)
 		transcriptbookmark.RegisterRoutes(v1, db)
 		transcript.RegisterRoutes(v1, db)
 		shadowing_status.RegisterRoutes(v1, db)
