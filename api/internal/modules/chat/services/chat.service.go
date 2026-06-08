@@ -2,20 +2,16 @@ package services
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"strings"
 	"sync"
 	"time"
 
-	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	db_repos "go-cover-parroto/internal/database/repositories"
 	"go-cover-parroto/internal/modules/chat/dtos/res"
 	"go-cover-parroto/internal/modules/chat/hub"
-	userrepo "go-cover-parroto/internal/modules/user/repositories"
 
 	clerkuser "github.com/clerk/clerk-sdk-go/v2/user"
 	"go.uber.org/zap"
@@ -28,9 +24,9 @@ const (
 	sendCooldown        = time.Second
 )
 
-var ErrRateLimited = errors.New("you are sending messages too fast")
-var ErrEmptyContent = errors.New("message content cannot be empty")
-var ErrContentTooLong = errors.New("message content exceeds maximum length")
+var ErrRateLimited = response.TooManyRequests("you are sending messages too fast")
+var ErrEmptyContent = response.BadRequest("message content cannot be empty")
+var ErrContentTooLong = response.BadRequest("message content exceeds maximum length")
 
 func sLog() *zap.SugaredLogger {
 	return logger.S().With("service", "chat")
@@ -38,52 +34,50 @@ func sLog() *zap.SugaredLogger {
 
 type IChatService interface {
 	GetHistory(ctx context.Context, beforeID uint64, limit int) (*res.HistoryRes, *response.AppError)
-	SendMessage(ctx context.Context, userID, content string) error
-	SyncUser(ctx context.Context, userID string)
+	SendMessage(ctx context.Context, userID, content string) *response.AppError
+}
+
+type userCacheEntry struct {
+	Name      string
+	AvatarURL string
+	ExpiresAt time.Time
 }
 
 type chatService struct {
-	repo     db_repos.IChatRepo
-	userRepo userrepo.IUserRepo
-	hub      *hub.Hub
+	repo   db_repos.IChatRepo
+	sseHub *hub.SSEHub
 
 	mu       sync.Mutex
 	lastSend map[string]time.Time
 
-	syncedMu sync.Mutex
-	synced   map[string]time.Time
+	userCache   map[string]*userCacheEntry
+	userCacheMu sync.RWMutex
 }
 
-func NewChatService(repo db_repos.IChatRepo, userRepo userrepo.IUserRepo, h *hub.Hub) IChatService {
+func NewChatService(repo db_repos.IChatRepo, sse *hub.SSEHub) IChatService {
 	return &chatService{
-		repo:     repo,
-		userRepo: userRepo,
-		hub:      h,
-		lastSend: make(map[string]time.Time),
-		synced:   make(map[string]time.Time),
+		repo:      repo,
+		sseHub:    sse,
+		lastSend:  make(map[string]time.Time),
+		userCache: make(map[string]*userCacheEntry),
 	}
 }
 
-// SyncUser ensures the local users table has up-to-date name/avatar for the
-// given Clerk user id. Called when a client connects to chat so message
-// metadata renders correctly. Cached for 1h to avoid spamming Clerk.
-func (s *chatService) SyncUser(ctx context.Context, userID string) {
-	const ttl = time.Hour
+func (s *chatService) getCachedUser(ctx context.Context, userID string) (name, avatarURL string, ok bool) {
+	s.userCacheMu.RLock()
+	entry, found := s.userCache[userID]
+	s.userCacheMu.RUnlock()
 
-	s.syncedMu.Lock()
-	if last, ok := s.synced[userID]; ok && time.Since(last) < ttl {
-		s.syncedMu.Unlock()
-		return
+	if found && time.Now().Before(entry.ExpiresAt) {
+		return entry.Name, entry.AvatarURL, true
 	}
-	s.syncedMu.Unlock()
 
 	u, err := clerkuser.Get(ctx, userID)
 	if err != nil {
 		sLog().Warnw("failed to fetch user from clerk", "error", err, "userId", userID)
-		return
+		return "", "", false
 	}
 
-	name := ""
 	if u.FirstName != nil {
 		name = *u.FirstName
 	}
@@ -96,41 +90,37 @@ func (s *chatService) SyncUser(ctx context.Context, userID string) {
 	if name == "" && u.Username != nil {
 		name = *u.Username
 	}
-
-	email := ""
-	for _, e := range u.EmailAddresses {
-		if u.PrimaryEmailAddressID != nil && e.ID == *u.PrimaryEmailAddressID {
-			email = e.EmailAddress
-			break
-		}
-	}
-	if email == "" && len(u.EmailAddresses) > 0 {
-		email = u.EmailAddresses[0].EmailAddress
-	}
 	if name == "" {
-		name = email
+		name = "User"
 	}
 
-	avatar := ""
 	if u.ImageURL != nil {
-		avatar = *u.ImageURL
+		avatarURL = *u.ImageURL
 	}
 
-	row := &models.User{
-		ID:        userID,
-		Email:     email,
-		Name:     name,
-		AvatarURL: avatar,
-		UserRole:  enums.UserRoleUser,
+	s.userCacheMu.Lock()
+	s.userCache[userID] = &userCacheEntry{
+		Name:      name,
+		AvatarURL: avatarURL,
+		ExpiresAt: time.Now().Add(5 * time.Minute),
 	}
-	if err := s.userRepo.Upsert(ctx, row); err != nil {
-		sLog().Errorw("failed to upsert user", "error", err, "userId", userID)
-		return
-	}
+	s.userCacheMu.Unlock()
 
-	s.syncedMu.Lock()
-	s.synced[userID] = time.Now()
-	s.syncedMu.Unlock()
+	return name, avatarURL, true
+}
+
+func (s *chatService) toMessageRes(ctx context.Context, m *models.GlobalChatMessage) res.MessageRes {
+	out := res.MessageRes{
+		ID:        m.ID,
+		UserID:    m.UserID,
+		Content:   m.Content,
+		CreatedAt: m.CreatedAt,
+	}
+	if name, avatar, ok := s.getCachedUser(ctx, m.UserID); ok {
+		out.UserName = name
+		out.AvatarURL = avatar
+	}
+	return out
 }
 
 func (s *chatService) GetHistory(ctx context.Context, beforeID uint64, limit int) (*res.HistoryRes, *response.AppError) {
@@ -155,7 +145,7 @@ func (s *chatService) GetHistory(ctx context.Context, beforeID uint64, limit int
 
 	messages := make([]res.MessageRes, 0, len(rows))
 	for _, m := range rows {
-		messages = append(messages, toMessageRes(m))
+		messages = append(messages, s.toMessageRes(ctx, m))
 	}
 
 	var nextID *uint64
@@ -171,7 +161,7 @@ func (s *chatService) GetHistory(ctx context.Context, beforeID uint64, limit int
 	}, nil
 }
 
-func (s *chatService) SendMessage(ctx context.Context, userID, content string) error {
+func (s *chatService) SendMessage(ctx context.Context, userID, content string) *response.AppError {
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return ErrEmptyContent
@@ -191,28 +181,10 @@ func (s *chatService) SendMessage(ctx context.Context, userID, content string) e
 	}
 	if err := s.repo.Create(ctx, msg); err != nil {
 		sLog().Errorw("failed to save message", "error", err, "userId", userID)
-		return errors.New("failed to save message")
+		return response.Internal("failed to save message")
 	}
 
-	// reload with user so broadcast contains user info
-	full, err := s.repo.FindHistory(ctx, msg.ID+1, 1)
-	var enriched *models.GlobalChatMessage
-	if err == nil && len(full) > 0 && full[0].ID == msg.ID {
-		enriched = full[0]
-	} else {
-		enriched = msg
-	}
-
-	payload := res.WSEvent{
-		Type: "message",
-		Data: toMessageRes(enriched),
-	}
-	raw, mErr := json.Marshal(payload)
-	if mErr != nil {
-		sLog().Errorw("failed to marshal broadcast payload", "error", mErr)
-		return nil
-	}
-	s.hub.Broadcast(raw)
+	s.sseHub.Publish(hub.MessagesStream, "chat.message.created", s.toMessageRes(ctx, msg))
 	return nil
 }
 
@@ -225,18 +197,4 @@ func (s *chatService) allowSend(userID string) bool {
 	}
 	s.lastSend[userID] = now
 	return true
-}
-
-func toMessageRes(m *models.GlobalChatMessage) res.MessageRes {
-	out := res.MessageRes{
-		ID:        m.ID,
-		UserID:    m.UserID,
-		Content:   m.Content,
-		CreatedAt: m.CreatedAt,
-	}
-	if m.User != nil {
-		out.UserName = m.User.Name
-		out.AvatarURL = m.User.AvatarURL
-	}
-	return out
 }

@@ -1,11 +1,9 @@
 package chat
 
 import (
-	"context"
 	"net/http"
 
-	"go-cover-parroto/internal/core/logger"
-	"go-cover-parroto/internal/core/policy"
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/chat/dtos/req"
 	_ "go-cover-parroto/internal/modules/chat/dtos/res"
@@ -13,27 +11,17 @@ import (
 	"go-cover-parroto/internal/modules/chat/services"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
 type ChatController struct {
-	svc      services.IChatService
-	hub      *hub.Hub
-	upgrader websocket.Upgrader
+	svc    services.IChatService
+	sseHub *hub.SSEHub
 }
 
-func NewChatController(svc services.IChatService, h *hub.Hub) *ChatController {
+func NewChatController(svc services.IChatService, sse *hub.SSEHub) *ChatController {
 	return &ChatController{
-		svc: svc,
-		hub: h,
-		upgrader: websocket.Upgrader{
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
-			CheckOrigin: func(r *http.Request) bool {
-				// allow all origins; tighten if needed
-				return true
-			},
-		},
+		svc:    svc,
+		sseHub: sse,
 	}
 }
 
@@ -64,34 +52,31 @@ func (ctrl *ChatController) GetHistory(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
-// Connect godoc
-// @Summary Connect to global chat WebSocket
-// @Description Upgrade HTTP connection to a WebSocket channel for global chat
+// SendMessage godoc
+// @Summary Send a chat message
+// @Description Send a message to the global chat
 // @Tags chat
-// @Success 101 {string} string "Switching Protocols"
+// @Accept json
+// @Produce json
+// @Param body body req.SendMessageReq true "Message content"
+// @Success 201 {object} response.BaseResponse[any]
+// @Failure 400 {object} response.BaseResponse[any]
 // @Failure 401 {object} response.BaseResponse[any]
-// @Router /chat/ws [get]
+// @Router /chat/messages [post]
 // @Security BearerAuth
-func (ctrl *ChatController) Connect(c *gin.Context) {
-	userID, appErr := policy.GetUserID(c.Request.Context())
-	if appErr != nil {
+func (ctrl *ChatController) SendMessage(c *gin.Context) {
+	var body req.SendMessageReq
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
+		return
+	}
+
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+
+	if appErr := ctrl.svc.SendMessage(c.Request.Context(), userID, body.Content); appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
 	}
 
-	conn, err := ctrl.upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		logger.S().Warnw("websocket upgrade failed", "error", err)
-		return
-	}
-
-	// Sync user info from Clerk → local users table so message metadata
-	// (name, avatar) is available when broadcasting / paginating history.
-	ctrl.svc.SyncUser(c.Request.Context(), userID)
-
-	// WS lifecycle outlives the HTTP request context (which is canceled as soon
-	// as the gin handler returns after the upgrade), so use a fresh context for
-	// background DB writes triggered by incoming frames.
-	client := hub.NewClient(ctrl.hub, conn, userID, ctrl.svc.SendMessage, context.Background())
-	client.Start()
+	c.JSON(http.StatusCreated, response.Success[any](nil))
 }

@@ -52,13 +52,13 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 
 		handler.ServeHTTP(c.Writer, c.Request)
 
-		logger.Debugw("Auth header", "header", c.GetHeader("Authorization"))
+		// logger.Debugw("Auth header", "header", c.GetHeader("Authorization"))
 
 		if nextReq == nil {
 			logger.Warnw("Clerk rejected before inner handler",
 				"path", c.Request.URL.Path,
 				"method", c.Request.Method,
-				"authHeader", c.GetHeader("Authorization"),
+				// "authHeader", c.GetHeader("Authorization"),
 				"status", c.Writer.Status(),
 			)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response.Unauthorized())
@@ -77,7 +77,7 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 				"Invalid clerk session",
 				"path", nextReq.URL.Path,
 				"method", nextReq.Method,
-				"authHeader", c.GetHeader("Authorization"),
+				// "authHeader", c.GetHeader("Authorization"),
 				"subject", subject,
 			)
 

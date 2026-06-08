@@ -17,7 +17,3 @@ type HistoryRes struct {
 	NextID   *uint64      `json:"next_id,omitempty"`
 }
 
-type WSEvent struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data,omitempty"`
-}

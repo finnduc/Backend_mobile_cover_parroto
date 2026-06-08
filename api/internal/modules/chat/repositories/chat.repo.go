@@ -30,7 +30,6 @@ func (r *chatRepo) FindHistory(ctx context.Context, beforeID uint64, limit int) 
 
 	tx := r.db.WithContext(ctx).
 		Model(&models.GlobalChatMessage{}).
-		Preload("User").
 		Order("id DESC").
 		Limit(limit)
 

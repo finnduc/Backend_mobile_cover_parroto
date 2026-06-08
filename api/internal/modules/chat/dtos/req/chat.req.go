@@ -5,6 +5,7 @@ type ListMessagesQuery struct {
 	Limit    int    `form:"limit,default=20" example:"20"`
 }
 
-type SendMessagePayload struct {
-	Content string `json:"content" binding:"required,min=1,max=1000" example:"Hello world"`
+type SendMessageReq struct {
+	Content string `json:"content" binding:"required" example:"Hello world"`
 }
+

@@ -15,7 +15,7 @@ import {
 } from "react"
 import { toast } from "sonner"
 import { getChatHistory } from "@/features/chat/services/chat.get"
-import { useChatSocket } from "@/features/chat/hooks/useChatSocket"
+import { useChatSSE } from "@/features/chat/hooks/useChatSSE"
 import type { ChatMessage } from "@/types/chat.models"
 import { MessageBubble } from "./MessageBubble"
 
@@ -66,7 +66,7 @@ export function ChatWidget() {
     toast.error(reason)
   }, [])
 
-  const { status, sendMessage } = useChatSocket({
+  const { status, sendMessage } = useChatSSE({
     enabled: !!isSignedIn,
     onMessage: handleIncomingMessage,
     onError: handleSocketError,
@@ -144,7 +144,7 @@ export function ChatWidget() {
     }
   }, [hasMore, loadingMore, loadOlder])
 
-  const handleSend = (e?: FormEvent) => {
+  const handleSend = async (e?: FormEvent) => {
     e?.preventDefault()
     if (sending || !draft.trim()) return
     if (status !== "open") {
@@ -152,7 +152,7 @@ export function ChatWidget() {
       return
     }
     setSending(true)
-    const ok = sendMessage(draft)
+    const ok = await sendMessage(draft)
     setSending(false)
     if (ok) {
       setDraft("")

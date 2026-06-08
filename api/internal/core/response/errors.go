@@ -50,6 +50,10 @@ func Conflict(msg ...string) *AppError {
 	return New(http.StatusConflict, "Conflict occurred", msg...)
 }
 
+func TooManyRequests(msg ...string) *AppError {
+	return New(http.StatusTooManyRequests, "Too many requests", msg...)
+}
+
 func Internal(msg ...string) *AppError {
 	return New(http.StatusInternalServerError, "Internal server error", msg...)
 }

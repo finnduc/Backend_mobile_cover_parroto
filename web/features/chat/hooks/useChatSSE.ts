@@ -7,33 +7,15 @@ import type { ChatMessage } from "@/types/chat.models"
 
 type ConnectionStatus = "idle" | "connecting" | "open" | "closed" | "error"
 
-interface WSEventRaw {
-  type: string
-  data?: Record<string, unknown>
-}
-
-interface UseChatSocketOptions {
+interface UseChatSSEOptions {
   enabled: boolean
   onMessage?: (msg: ChatMessage) => void
   onError?: (reason: string) => void
 }
 
-function resolveWsUrl(): string | null {
-  const httpBase = process.env.NEXT_PUBLIC_API_URL
-  if (!httpBase) return null
-  try {
-    const u = new URL(httpBase)
-    u.protocol = u.protocol === "https:" ? "wss:" : "ws:"
-    const path = u.pathname.replace(/\/$/, "")
-    return `${u.origin}${path}/chat/ws`
-  } catch {
-    return null
-  }
-}
-
-export function useChatSocket({ enabled, onMessage, onError }: UseChatSocketOptions) {
+export function useChatSSE({ enabled, onMessage, onError }: UseChatSSEOptions) {
   const { isSignedIn, getToken } = useAuth()
-  const wsRef = useRef<WebSocket | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const reconnectAttemptRef = useRef(0)
   const enabledRef = useRef(enabled)
@@ -55,12 +37,6 @@ export function useChatSocket({ enabled, onMessage, onError }: UseChatSocketOpti
 
   const connect = useCallback(async () => {
     if (!enabledRef.current || !isSignedIn) return
-    const baseWsUrl = resolveWsUrl()
-    if (!baseWsUrl) {
-      onErrorRef.current?.("NEXT_PUBLIC_API_URL is not set")
-      setStatus("error")
-      return
-    }
 
     const token = await getToken()
     if (!token) {
@@ -69,36 +45,47 @@ export function useChatSocket({ enabled, onMessage, onError }: UseChatSocketOpti
       return
     }
 
-    const url = `${baseWsUrl}?token=${encodeURIComponent(token)}`
     setStatus("connecting")
-    const ws = new WebSocket(url)
-    wsRef.current = ws
 
-    ws.onopen = () => {
+    // Close existing connection
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+      eventSourceRef.current = null
+    }
+
+    // Create new EventSource with token in URL
+    // r3labs/sse requires ?stream= parameter to specify which stream to subscribe to
+    const url = `/api/chat/events?stream=messages&token=${encodeURIComponent(token)}`
+    const eventSource = new EventSource(url)
+    eventSourceRef.current = eventSource
+
+    eventSource.onopen = () => {
       reconnectAttemptRef.current = 0
       setStatus("open")
     }
 
-    ws.onmessage = (ev) => {
+    eventSource.addEventListener("chat.message.created", (event) => {
       try {
-        const raw = JSON.parse(ev.data) as WSEventRaw
-        if (raw.type === "message" && raw.data) {
-          onMessageRef.current?.(snakeToCamel<ChatMessage>(raw.data))
-        } else if (raw.type === "error" && typeof raw.data?.message === "string") {
-          onErrorRef.current?.(raw.data.message)
-        }
+        const raw = JSON.parse(event.data)
+        const message = snakeToCamel<ChatMessage>(raw)
+        onMessageRef.current?.(message)
       } catch {
-        // ignore malformed frames
+        // ignore malformed events
       }
-    }
+    })
 
-    ws.onerror = () => {
+    eventSource.addEventListener("ping", () => {
+      // keepalive only, ignore
+      console.log("ping success")
+    })
+
+    eventSource.onerror = () => {
       setStatus("error")
-    }
-
-    ws.onclose = () => {
-      wsRef.current = null
-      setStatus("closed")
+      onErrorRef.current?.("SSE connection error")
+      // Close to prevent native auto-reconnect with stale token
+      eventSource.close()
+      eventSourceRef.current = null
+      // Schedule manual reconnect with fresh token
       if (!enabledRef.current) return
       const attempt = ++reconnectAttemptRef.current
       const delay = Math.min(30_000, 1000 * 2 ** Math.min(attempt, 5))
@@ -114,37 +101,50 @@ export function useChatSocket({ enabled, onMessage, onError }: UseChatSocketOpti
 
   useEffect(() => {
     if (!enabled || !isSignedIn) return
+
     const handle = setTimeout(() => {
       void connectRef.current()
     }, 0)
+
     return () => {
       clearTimeout(handle)
       if (reconnectTimerRef.current) {
         clearTimeout(reconnectTimerRef.current)
         reconnectTimerRef.current = null
       }
-      const ws = wsRef.current
-      wsRef.current = null
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close(1000, "client unmount")
-      } else if (ws) {
-        ws.onopen = null
-        ws.onmessage = null
-        ws.onerror = null
-        ws.onclose = null
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close()
+        eventSourceRef.current = null
       }
       setStatus("idle")
     }
   }, [enabled, isSignedIn])
 
-  const sendMessage = useCallback((content: string): boolean => {
-    const ws = wsRef.current
-    if (!ws || ws.readyState !== WebSocket.OPEN) return false
-    const trimmed = content.trim()
-    if (!trimmed) return false
-    ws.send(JSON.stringify({ content: trimmed }))
-    return true
-  }, [])
+  const sendMessage = useCallback(
+    async (content: string): Promise<boolean> => {
+      const trimmed = content.trim()
+      if (!trimmed) return false
+
+      try {
+        const token = await getToken()
+        if (!token) return false
+
+        const response = await fetch("/api/chat/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content: trimmed }),
+        })
+
+        return response.ok
+      } catch {
+        return false
+      }
+    },
+    [getToken]
+  )
 
   return { status, sendMessage }
 }
