@@ -16,7 +16,7 @@ func Load() Config {
 	cfg := Config{
 		Server:    loadServerConfig(),
 		Postgres:  loadPostgresConfig(),
-		ClerkAuth: loadFirebaseConfig(),
+		ClerkAuth: loadClerkConfig(),
 		Logger:    loadLoggerConfig(),
 	}
 	cfg.Azure = LoadAzureConfig()

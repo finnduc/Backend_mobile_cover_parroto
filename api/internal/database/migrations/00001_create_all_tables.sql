@@ -32,15 +32,6 @@ CREATE TABLE transcripts (
 );
 CREATE INDEX idx_transcripts_lesson_id ON transcripts(lesson_id);
 
-CREATE TABLE bookmarks (
-    user_id VARCHAR(255) NOT NULL,
-    lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, lesson_id)
-);
-CREATE INDEX idx_bookmarks_user_id ON bookmarks(user_id);
-CREATE INDEX idx_bookmarks_lesson_id ON bookmarks(lesson_id);
-
 CREATE TABLE shadowing_status (
     user_id VARCHAR(255) NOT NULL,
     transcript_id INTEGER NOT NULL REFERENCES transcripts(id) ON DELETE CASCADE,
@@ -107,7 +98,6 @@ DROP TABLE IF EXISTS vocabulary_decks;
 DROP TABLE IF EXISTS vocabulary_categories;
 DROP TABLE IF EXISTS dictation_status;
 DROP TABLE IF EXISTS shadowing_status;
-DROP TABLE IF EXISTS bookmarks;
 DROP TABLE IF EXISTS transcripts;
 DROP TABLE IF EXISTS lessons;
 DROP TABLE IF EXISTS categories;

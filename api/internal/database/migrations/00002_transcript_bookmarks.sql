@@ -1,7 +1,5 @@
 -- +goose Up
 -- +goose StatementBegin
-DROP TABLE IF EXISTS bookmarks;
-
 CREATE TABLE transcript_bookmarks (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
@@ -18,14 +16,4 @@ CREATE INDEX idx_transcript_bookmarks_transcript_id ON transcript_bookmarks(tran
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS transcript_bookmarks;
-
-CREATE TABLE bookmarks (
-    user_id VARCHAR(255) NOT NULL,
-    lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, lesson_id)
-);
-
-CREATE INDEX idx_bookmarks_user_id ON bookmarks(user_id);
-CREATE INDEX idx_bookmarks_lesson_id ON bookmarks(lesson_id);
 -- +goose StatementEnd
