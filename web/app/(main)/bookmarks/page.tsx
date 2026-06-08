@@ -1,9 +1,23 @@
 import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
+import { SavedLessonsPageContent } from "@/features/lesson-bookmarks/components/SavedLessonsPageContent"
+import { getLessonBookmarks } from "@/features/lesson-bookmarks/services/lesson-bookmarks.get"
+import { getLessons } from "@/features/lessons/services/lessons.get"
 
 export default async function BookmarksPage() {
   const { userId } = await auth()
   if (!userId) return null
+
+  const bookmarksRes = await getLessonBookmarks()
+  const bookmarks = bookmarksRes.data ?? []
+
+  const lessonsRes = await getLessons(1, 100)
+  const lessons = lessonsRes.data ?? []
+
+  const bookmarksWithLessons = bookmarks.map((bookmark) => ({
+    ...bookmark,
+    lesson: lessons.find((l) => l.id === bookmark.lessonId),
+  }))
 
   return (
     <PageLayout
@@ -13,12 +27,7 @@ export default async function BookmarksPage() {
         { label: "Da luu" },
       ]}
     >
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <p className="text-lg font-medium">Chon mot bai hoc de xem bookmark</p>
-        <p className="text-sm">
-          Tim transcript bookmark trong trang chi tiet bai hoc
-        </p>
-      </div>
+      <SavedLessonsPageContent bookmarks={bookmarksWithLessons} />
     </PageLayout>
   )
 }

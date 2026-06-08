@@ -20,4 +20,5 @@ export const CACHE_TAGS = {
   pronunciation: "pronunciation",
   pronunciationProgress: "pronunciation-progress",
   transcriptProgress: "transcript-progress",
+  lessonBookmarks: "lesson-bookmarks",
 } as const

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { DifficultyBadge } from "@/components/common/DifficultyBadge"
 import { LessonActionModal } from "@/features/lessons/components/user/LessonActionModal"
+import { LessonBookmarkButton } from "@/features/lesson-bookmarks/components/LessonBookmarkButton"
 import type { Lesson } from "@/types/lessons.models"
 import { Play, Clock } from "lucide-react"
 
@@ -13,12 +14,18 @@ function formatDuration(seconds: number): string {
   return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`
 }
 
-export function LessonCard({ lesson }: { lesson: Lesson }) {
+export function LessonCard({
+  lesson,
+  isBookmarked = false,
+}: {
+  lesson: Lesson
+  isBookmarked?: boolean
+}) {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <Card className="group cursor-pointer overflow-hidden" onClick={() => setOpen(true)}>
+      <Card className="group relative cursor-pointer overflow-hidden" onClick={() => setOpen(true)}>
         <div className="relative aspect-video overflow-hidden bg-muted">
           <img
             src={lesson.thumbnailUrl}
@@ -27,6 +34,13 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="size-10 fill-white text-white" />
+          </div>
+          <div className="absolute right-2 top-2" onClick={(e) => e.stopPropagation()}>
+            <LessonBookmarkButton
+              lessonId={lesson.id}
+              isBookmarked={isBookmarked}
+              className="bg-white/80 backdrop-blur-sm"
+            />
           </div>
         </div>
         <CardContent className="space-y-2 p-3">
