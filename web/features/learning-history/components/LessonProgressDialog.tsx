@@ -27,7 +27,7 @@ export function LessonProgressDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-base leading-snug">
-            Tien do bai hoc
+            Tiến độ bài học
           </DialogTitle>
         </DialogHeader>
 
@@ -35,7 +35,7 @@ export function LessonProgressDialog({
           <div className="overflow-hidden rounded-xl border bg-muted">
             <img
               src="/process.jpg"
-              alt="Tien do hoc tap"
+              alt="Tiến độ học tập"
               className="w-full object-cover"
               onError={(e) => {
                 const el = e.currentTarget
@@ -45,7 +45,7 @@ export function LessonProgressDialog({
             />
             <div className="hidden flex-col items-center justify-center gap-2 py-10 text-muted-foreground">
               <PlayCircle className="size-10 opacity-30" />
-              <span className="text-sm">Chua co anh tien do</span>
+              <span className="text-sm">Chưa có ảnh tiến độ</span>
             </div>
           </div>
 
@@ -57,26 +57,26 @@ export function LessonProgressDialog({
                 {history.completedDictation && (
                   <Badge className="gap-1 bg-green-500 text-white hover:bg-green-600">
                     <CheckCircle className="size-3" />
-                    Dictation hoan thanh
+                    Dictation hoàn thành
                   </Badge>
                 )}
                 {history.completedPronunciation && (
                   <Badge className="gap-1 bg-blue-500 text-white hover:bg-blue-600">
                     <CheckCircle className="size-3" />
-                    Pronunciation hoan thanh
+                    Pronunciation hoàn thành
                   </Badge>
                 )}
                 {!history.completedDictation && !history.completedPronunciation && (
                   <Badge variant="secondary" className="gap-1">
                     <PlayCircle className="size-3" />
-                    Dang hoc
+                    Đang học
                   </Badge>
                 )}
               </div>
             </div>
           ) : (
             <div className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-              Ban chua bat dau hoc bai nay. Hay thu <strong>Dictation</strong> hoac{" "}
+              Bạn chưa bắt đầu học bài này. Hãy thử <strong>Dictation</strong> hoac{" "}
               <strong>Shadowing</strong>!
             </div>
           )}

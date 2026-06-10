@@ -2,86 +2,48 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { LessonProgressBar } from "@/features/lessons/components/user/LessonProgressBar"
-import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
-import { Lightbulb, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward, Check } from "lucide-react"
-import { useState, useEffect, useTransition } from "react"
+import type { ExerciseControlProps } from "@/features/lessons/types/exercise.types"
 import { postDictationStatus } from "@/features/lessons/services/dictation-status.action"
-import { toast } from "sonner"
+import { Check, Lightbulb, Mic, RotateCcw } from "lucide-react"
+import { useEffect, useState, useTransition } from "react"
+import { usePlayerContext } from "@/features/lessons/context/player-context"
+import { PlaybackControls } from "@/features/lessons/components/user/PlaybackControls"
 
 export function DictationArea({
   transcripts,
-  activeIndex,
-  highlightedIndex,
-  paused,
   initialCompletedIds,
   lessonId,
-  onPlay,
-  onPause,
-  onNext,
-  onPrev,
-  onReplay,
-  onTranscriptClick,
-}: Partial<ExerciseControlProps>) {
+}: ExerciseControlProps) {
+  const { activeIndex, highlightedIndex, onNext, onTranscriptClick } = usePlayerContext()
   const initialMaxLine = (initialCompletedIds ?? []).length > 0
     ? Math.max(...(initialCompletedIds ?? [])) + 1
     : 0
   const [maxLine, setMaxLine] = useState(initialMaxLine)
-  const [inputs, setInputs] = useState<string[]>((transcripts ?? []).map(() => ""))
+  const [inputs, setInputs] = useState<string[]>(transcripts.map(() => ""))
   const [showHints, setShowHints] = useState(false)
-  const [revealedWords, setRevealedWords] = useState<Set<number>>(new Set())
   const [, startTransition] = useTransition()
+  const [attempts, setAttempts] = useState<Record<number, number>>({})
+  const [answerRevealed, setAnswerRevealed] = useState<Set<number>>(new Set())
+  const [feedback, setFeedback] = useState<{ line: number; type: "correct" | "wrong" | "reveal"; message: string } | null>(null)
 
-  const currentLine =
-    (activeIndex ?? -1) >= 0
-      ? activeIndex!
-      : (highlightedIndex ?? -1) >= 0
-        ? highlightedIndex!
-        : 0
+  const currentLine = activeIndex >= 0 ? activeIndex : highlightedIndex >= 0 ? highlightedIndex : 0
 
   useEffect(() => {
-    if ((activeIndex ?? -1) >= 0) {
-      setMaxLine((prev) => Math.max(prev, activeIndex! + 1))
+    if (activeIndex >= 0) {
+      setMaxLine((prev) => Math.max(prev, activeIndex + 1))
     }
   }, [activeIndex])
 
   return (
     <div className="space-y-4">
-      <LessonProgressBar completed={(initialCompletedIds ?? []).length} total={(transcripts ?? []).length} />
-
-      <div className="flex items-center justify-center gap-2 rounded-xl border bg-background px-3 py-2">
+      <PlaybackControls totalLines={transcripts.length}>
         <Button size="lg" variant="default" className="size-12 rounded-full" disabled>
           <Mic className="size-5" />
         </Button>
-        <Button size="icon" variant="outline" onClick={onPrev ?? (() => {})} disabled={(activeIndex ?? -1) <= 0 && (highlightedIndex ?? -1) <= 0}>
-          <SkipBack className="size-4" />
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => (paused ? onPlay?.() : onPause?.())}
-        >
-          {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={onNext ?? (() => {})}
-          disabled={
-            ((activeIndex ?? -1) >= 0 ? activeIndex! : highlightedIndex ?? 0) >=
-            (transcripts ?? []).length - 1
-          }
-        >
-          <SkipForward className="size-4" />
-        </Button>
-        <Button size="icon" variant="ghost" onClick={onReplay ?? (() => {})}>
-          <RotateCcw className="size-4" />
-        </Button>
-      </div>
+      </PlaybackControls>
 
       <div className="space-y-2">
-        {(transcripts ?? []).map((seg, i) => {
+        {transcripts.map((seg, i) => {
           const isComplete = i < maxLine
           const isCurrent = i === currentLine
           const isSaved = (initialCompletedIds ?? []).includes(i)
@@ -93,11 +55,9 @@ export function DictationArea({
                   onTranscriptClick?.(i)
                 }
               }}
-              className={`rounded-lg p-3 transition-colors ${
-                isCurrent ? "border-2 border-primary/20 bg-transcript-active" : ""
-              } ${isSaved ? "bg-green-100" : ""} ${isComplete && !isSaved && !isCurrent ? "bg-amber-50" : ""} ${
-                isComplete && !isCurrent ? "cursor-pointer hover:bg-transcript-active/50" : ""
-              }`}
+              className={`rounded-lg p-3 transition-colors border ${isCurrent ? "border-2 border-primary/20 bg-transcript-active" : ""
+                } ${isSaved ? "bg-green-100" : ""} ${isComplete && !isSaved && !isCurrent ? "bg-amber-50" : ""} ${isComplete && !isCurrent ? "cursor-pointer hover:bg-transcript-active/50" : ""
+                }`}
             >
               {isComplete && !isCurrent ? (
                 <div className="space-y-2">
@@ -107,29 +67,7 @@ export function DictationArea({
                     ) : (
                       <span className="size-4 shrink-0 rounded-full border border-amber-400" />
                     )}
-                    <div className="flex flex-wrap gap-1">
-                      {seg.content.split(" ").map((word, wi) => {
-                        const revealed = revealedWords.has(i * 1000 + wi)
-                        return (
-                          <Card
-                            key={wi}
-                            className={`cursor-pointer px-1.5 py-0.5 text-sm transition-all ${
-                              revealed ? "bg-background" : "bg-muted blur-[3px] hover:blur-0"
-                            }`}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setRevealedWords((prev) => {
-                                const next = new Set(prev)
-                                next.add(i * 1000 + wi)
-                                return next
-                              })
-                            }}
-                          >
-                            {word}
-                          </Card>
-                        )
-                      })}
-                    </div>
+                    <p className="text-sm">{seg.content}</p>
                   </div>
                 </div>
               ) : isCurrent ? (
@@ -151,7 +89,7 @@ export function DictationArea({
                       next[i] = e.target.value
                       setInputs(next)
                     }}
-                    placeholder="Go nhung gi ban nghe duoc..."
+                    placeholder="Gõ những gì bạn nghe được..."
                     className="w-full"
                     autoFocus
                   />
@@ -159,37 +97,72 @@ export function DictationArea({
                     <Button
                       size="xs"
                       onClick={() => {
-                        const newMaxLine = Math.max(maxLine, currentLine + 1)
-                        setMaxLine(newMaxLine)
-                        const seg = (transcripts ?? [])[currentLine]
+                        const seg = transcripts[currentLine]
                         const userInput = (inputs[currentLine] ?? "").trim().toLowerCase()
                         const correctAnswer = seg?.content.trim().toLowerCase()
-                        if (seg && userInput === correctAnswer) {
+
+                        if (!seg) return
+
+                        // If answer already revealed, just advance
+                        if (answerRevealed.has(currentLine)) {
+                          onNext?.()
+                          return
+                        }
+
+                        if (userInput === correctAnswer) {
+                          // Correct answer
+                          const newMaxLine = Math.max(maxLine, currentLine + 1)
+                          setMaxLine(newMaxLine)
+                          setFeedback({ line: currentLine, type: "correct", message: "Chính xác!" })
                           startTransition(async () => {
                             const res = await postDictationStatus(seg.id, lessonId!)
                             if (res.error) {
-                              toast.error(res.error.message)
+                              setFeedback({ line: currentLine, type: "wrong", message: res.error.message })
                             }
                           })
+                          onNext?.()
+                        } else {
+                          // Wrong answer
+                          const currentAttempts = (attempts[currentLine] ?? 0) + 1
+                          setAttempts((prev) => ({ ...prev, [currentLine]: currentAttempts }))
+                          if (currentAttempts >= 3) {
+                            setFeedback({ line: currentLine, type: "reveal", message: `Đáp án: ${seg.content}` })
+                            setAnswerRevealed((prev) => new Set(prev).add(currentLine))
+                          } else {
+                            setFeedback({ line: currentLine, type: "wrong", message: "Sai rồi, thử lại!" })
+                          }
                         }
-                        onNext?.()
                       }}
                     >
-                      Kiem tra
+                      {answerRevealed.has(currentLine) ? "Tiếp tục" : "Kiểm tra"}
                     </Button>
                     <Button size="xs" variant="ghost" onClick={() => setShowHints(!showHints)}>
                       <Lightbulb className="mr-1 size-3" />
-                      Goi y
+                      Gợi ý
                     </Button>
-                    <Button size="xs" variant="ghost" onClick={() => setInputs((transcripts ?? []).map(() => ""))}>
+                    <Button size="xs" variant="ghost" onClick={() => setInputs(transcripts.map(() => ""))}>
                       <RotateCcw className="mr-1 size-3" />
-                      Lam lai
+                      Làm lại
                     </Button>
                   </div>
+                  {feedback && feedback.line === currentLine && (
+                    <p className={`text-sm ${feedback.type === "correct" ? "text-green-600" :
+                        feedback.type === "reveal" ? "text-blue-600" :
+                          "text-red-500"
+                      }`}>
+                      {feedback.message}
+                    </p>
+                  )}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground line-through">
-                  {seg.content.replace(/[a-zA-Z0-9]/g, "\u25B8")}
+                <p className="text-sm text-muted-foreground line-through select-none">
+                  {seg.content.split(" ").map((word, i) => (
+                    <span
+                      key={i}
+                      className="mr-1 inline-block h-3 rounded bg-muted align-middle"
+                      style={{ width: `${Math.max(word.length * 7, 16)}px` }}
+                    />
+                  ))}
                 </p>
               )}
             </div>

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"go-cover-parroto/internal/configs"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -15,8 +16,8 @@ var DB *gorm.DB
 
 func Init(cfg configs.PostgresConfig) error {
 	dsn := fmt.Sprintf(
-		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Ho_Chi_Minh",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s channel_binding=%s TimeZone=Asia/Ho_Chi_Minh",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode, cfg.ChannelBinding,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

@@ -3,5 +3,5 @@
 .kilo
 .claude
 .gemini
-
+*.sql
 superpowers

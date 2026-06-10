@@ -1,123 +1,65 @@
 "use client"
 
-import { useState } from "react"
-import { notFound } from "next/navigation"
 import { VidstackYoutubePlayer } from "@/features/lessons/components/user/VidstackYoutubePlayer"
 import { ModeToggle } from "@/features/lessons/components/user/ModeToggle"
-import { TranscriptLine } from "@/components/common/TranscriptLine"
+import { TranscriptSidebar } from "@/features/lessons/components/user/TranscriptSidebar"
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
-import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
-import type { VocabularyDeck } from "@/types/vocabulary.models"
-import type { ExerciseControlProps } from "@/features/lessons/components/user/ShadowingArea"
-import type { PronunciationAttempt } from "@/types/pronunciation.models"
+import { PlayerContext } from "@/features/lessons/context/player-context"
 import type { Transcript } from "@/types/lessons.models"
-import type { ComponentType } from "react"
+import type { TranscriptBookmark } from "@/types/book-mark.models"
+import type { VocabularyDeck } from "@/types/vocabulary.models"
+import type { ReactNode } from "react"
 
 export function LessonLayout({
-  exercise: ExerciseComponent,
-  duration,
+  children,
   videoUrl,
   transcripts,
   lessonId,
   decks = [],
   initialCompletedIds,
-  pronunciationScores,
+  bookmarks = [],
 }: {
-  exercise?: ComponentType<Partial<ExerciseControlProps>>
-  duration?: number
+  children?: ReactNode
   videoUrl?: string
   transcripts?: Transcript[]
   lessonId?: number
   decks?: VocabularyDeck[]
   initialCompletedIds?: number[]
-  pronunciationScores?: Map<number, PronunciationAttempt>
+  bookmarks?: TranscriptBookmark[]
 }) {
   const segments = transcripts ?? []
   const completedSet = new Set(initialCompletedIds ?? [])
   const initialActiveIndex = segments.findIndex((_, i) => !completedSet.has(i))
-  const {
-    playerRef,
-    paused,
-    playerMode,
-    setPlayerMode,
-    activeIndex,
-    highlightedIndex,
-    handleTranscriptClick,
-    handlePlay,
-    handlePause,
-    handleReplay,
-    handleNext,
-    handlePrev,
-  } = useLessonPlayer(segments, initialActiveIndex)
-
-  const [addToDeckTarget, setAddToDeckTarget] = useState<{
-    transcriptId: number
-    text: string
-  } | null>(null)
+  const playerState = useLessonPlayer(segments, initialActiveIndex)
 
   return (
-    <div className="flex h-full gap-6">
-      <div className="flex flex-1 flex-col gap-4">
-        {videoUrl ? (
-          <VidstackYoutubePlayer videoUrl={videoUrl} ref={playerRef} />
-        ) : (
-          notFound()
-        )}
-        <ModeToggle mode={playerMode} onChange={setPlayerMode} />
-        <div className="flex-1">
-          {ExerciseComponent != null ? (
-            <ExerciseComponent
-              transcripts={segments}
-              activeIndex={activeIndex}
-              highlightedIndex={highlightedIndex}
-              paused={paused}
-              initialCompletedIds={initialCompletedIds ?? []}
-              lessonId={lessonId}
-              pronunciationScores={pronunciationScores}
-              onPlay={handlePlay}
-              onPause={handlePause}
-              onNext={handleNext}
-              onPrev={handlePrev}
-              onReplay={handleReplay}
-              onTranscriptClick={handleTranscriptClick}
-            />
-          ) : null}
+    <PlayerContext.Provider value={{
+      paused: playerState.paused,
+      activeIndex: playerState.activeIndex,
+      highlightedIndex: playerState.highlightedIndex,
+      playerMode: playerState.playerMode,
+      setPlayerMode: playerState.setPlayerMode,
+      onPlay: playerState.handlePlay,
+      onPause: playerState.handlePause,
+      onNext: playerState.handleNext,
+      onPrev: playerState.handlePrev,
+      onReplay: playerState.handleReplay,
+      onTranscriptClick: playerState.handleTranscriptClick,
+    }}>
+      <div className="flex h-full gap-6">
+        <div className="flex flex-1 flex-col gap-4">
+          {videoUrl && <VidstackYoutubePlayer videoUrl={videoUrl} ref={playerState.playerRef} />}
+          <ModeToggle mode={playerState.playerMode} onChange={playerState.setPlayerMode} />
+          {children}
         </div>
-      </div>
-      <aside className="hidden w-80 shrink-0 lg:block">
-        <div className="sticky top-6 space-y-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">Transcript</h2>
-          <div className="max-h-[calc(100vh-12rem)] space-y-1 overflow-y-auto rounded-xl border p-2">
-            {segments.map((seg, i) => (
-              <TranscriptLine
-                key={seg.id}
-                text={seg.content}
-                active={i === highlightedIndex}
-                transcriptId={seg.id}
-                timestamp={`${Math.floor(seg.startTimestamp / 60)}:${(seg.startTimestamp % 60).toString().padStart(2, "0")}`}
-                onClick={() => handleTranscriptClick(i)}
-                onAddToDeck={(transcriptId, text) => {
-                  setAddToDeckTarget({ transcriptId, text })
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      {addToDeckTarget && lessonId != null && (
-        <AddToDeckDialog
-          open={!!addToDeckTarget}
-          onOpenChange={(open) => {
-            if (!open) setAddToDeckTarget(null)
-
-          }}
-          phrase={addToDeckTarget.text}
-          lessonId={lessonId}
-          transcriptId={addToDeckTarget.transcriptId}
+        <TranscriptSidebar
+          transcripts={segments}
+          completedIds={initialCompletedIds ?? []}
+          bookmarks={bookmarks}
+          lessonId={lessonId!}
           decks={decks}
         />
-      )}
-    </div>
+      </div>
+    </PlayerContext.Provider>
   )
 }

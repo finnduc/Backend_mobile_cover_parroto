@@ -15,7 +15,7 @@ migrate-create:
 	goose -dir internal/database/migrations create $(name) sql
 
 # DB URL build từ .env
-DB_URL=postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=$(POSTGRES_SSLMODE)
+DB_URL=postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=$(POSTGRES_SSLMODE)&channel_binding=$(POSTGRES_CHANNELBINDING)
 
 # Run migrations
 migrate-up:

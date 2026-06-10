@@ -32,15 +32,12 @@ interface NavItem {
 const mainNav: NavItem[] = [
   { label: "Bài học", href: ROUTES.USER.LESSONS.LIST, icon: BookText },
   { label: "Chủ đề", href: ROUTES.USER.CATEGORIES, icon: BookOpen },
-  { label: "Từ điển", href: "/vocabulary", icon: BookText },
-  { label: "Từ vựng", href: "/vocabulary/my-decks", icon: BookText },
-  { label: "Đã lưu", href: ROUTES.USER.BOOKMARKS, icon: Bookmark },
+  { label: "Bài học đã lưu", href: ROUTES.USER.BOOKMARKS, icon: Bookmark },
 ]
 
-const communityNav: NavItem[] = [
-  { label: "Cộng đồng", href: "/community", icon: Users },
-  { label: "Trò chuyện", href: "/chat", icon: MessageCircle },
-  { label: "Feedback", href: "/feedbacks", icon: MessageSquare },
+const vocabulary: NavItem[] = [
+  { label: "Từ điển", href: ROUTES.USER.VOCABULARY.LIST, icon: BookText },
+  { label: "Cá nhân", href: ROUTES.USER.VOCABULARY.MY_DECKS, icon: BookText },
 ]
 
 function NavItems({ items }: { items: NavItem[] }) {
@@ -76,15 +73,15 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupLabel>Bài học</SidebarGroupLabel>
           <SidebarMenu>
             <NavItems items={mainNav} />
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Cộng đồng</SidebarGroupLabel>
+          <SidebarGroupLabel>Từ vựng</SidebarGroupLabel>
           <SidebarMenu>
-            <NavItems items={communityNav} />
+            <NavItems items={vocabulary} />
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

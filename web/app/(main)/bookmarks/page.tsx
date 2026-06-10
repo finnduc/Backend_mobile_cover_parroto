@@ -21,10 +21,10 @@ export default async function BookmarksPage() {
 
   return (
     <PageLayout
-      title="Bai hoc da luu"
+      title="Bài học đã lưu"
       breadcrumbs={[
-        { label: "Bai hoc", href: "/lessons" },
-        { label: "Da luu" },
+        { label: "Bài học", href: "/lessons" },
+        { label: "Đã lưu" },
       ]}
     >
       <SavedLessonsPageContent bookmarks={bookmarksWithLessons} />

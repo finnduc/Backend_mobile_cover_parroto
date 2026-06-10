@@ -29,7 +29,7 @@ export function LessonBookmarkButton({
         setBookmarked(!next)
         toast.error(res.error.message)
       } else {
-        toast.success(next ? "Da luu bai hoc" : "Da bo luu bai hoc")
+        toast.success(next ? "Đã lưu bài học" : "Đã bỏ lưu bài học")
       }
     })
   }
@@ -44,7 +44,7 @@ export function LessonBookmarkButton({
         e.stopPropagation()
         handleToggle()
       }}
-      aria-label={bookmarked ? "Bo luu bai hoc" : "Luu bai hoc"}
+      aria-label={bookmarked ? "Bỏ lưu bài học" : "Lưu bài học"}
     >
       <Bookmark
         className={cn("size-4", bookmarked && "fill-current text-yellow-500")}

@@ -12,9 +12,9 @@ export function SavedLessonsPageContent({
   if (bookmarks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <p className="text-lg font-medium">Chua co bai hoc nao duoc luu</p>
+        <p className="text-lg font-medium">Chưa có bài học nào được lưu</p>
         <p className="text-sm">
-          Nhan vao bieu tuong bookmark de luu bai hoc
+          Nhấn vào biểu tượng bookmark để lưu bài học
         </p>
       </div>
     )

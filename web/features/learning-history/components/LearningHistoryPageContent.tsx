@@ -24,7 +24,7 @@ export function LearningHistoryPageContent({
             <CheckCircle className="size-6 text-green-500" />
             <div>
               <p className="text-2xl font-bold">{summary.completedCount}</p>
-              <p className="text-xs text-muted-foreground">Da hoan thanh</p>
+              <p className="text-xs text-muted-foreground">Đã hoàn thành</p>
             </div>
           </CardContent>
         </Card>
@@ -33,16 +33,16 @@ export function LearningHistoryPageContent({
             <Clock className="size-6 text-amber-500" />
             <div>
               <p className="text-2xl font-bold">{summary.unfinishedCount}</p>
-              <p className="text-xs text-muted-foreground">Dang hoc</p>
+              <p className="text-xs text-muted-foreground">Đang học</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">Da hoan thanh ({finished.length})</h2>
+        <h2 className="mb-3 text-lg font-semibold">Đã hoàn thành ({finished.length})</h2>
         {finished.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Chua co bai hoc nao hoan thanh</p>
+          <p className="text-sm text-muted-foreground">Chưa có bài học nào hoàn thành</p>
         ) : (
           <div className="space-y-2">
             {finished.map((h) => (
@@ -75,9 +75,9 @@ export function LearningHistoryPageContent({
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">Dang hoc ({unfinished.length})</h2>
+        <h2 className="mb-3 text-lg font-semibold">Đang học ({unfinished.length})</h2>
         {unfinished.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Chua co bai hoc dang hoc</p>
+          <p className="text-sm text-muted-foreground">Chưa có bài học đang học</p>
         ) : (
           <div className="space-y-2">
             {unfinished.map((h) => (

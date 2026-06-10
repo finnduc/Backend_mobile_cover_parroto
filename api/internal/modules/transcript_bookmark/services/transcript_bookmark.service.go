@@ -58,12 +58,19 @@ func (s *transcriptBookmarkService) Create(ctx context.Context, body req.CreateT
 }
 
 func (s *transcriptBookmarkService) List(ctx context.Context, query req.ListTranscriptBookmarkQuery) (*response.PaginatedResult[*models.TranscriptBookmark], *response.AppError) {
+	userID, err := policy.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query.UserID = &userID
+
 	log := sLog()
 	log.Infow("listing transcript bookmarks")
 
-	result, err := s.repo.FindAll(ctx, query.ToQuery())
-	if err != nil {
-		log.Errorw("failed to list transcript bookmarks", "error", err)
+	result, findErr := s.repo.FindAll(ctx, query.ToQuery())
+	if findErr != nil {
+		log.Errorw("failed to list transcript bookmarks", "error", findErr)
 		return nil, response.Internal("failed to list transcript bookmarks")
 	}
 	return result, nil

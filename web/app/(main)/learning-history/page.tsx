@@ -19,10 +19,10 @@ export default async function LearningHistoryPage() {
 
   return (
     <PageLayout
-      title="Lich su hoc tap"
+      title="Lịch sử học tập"
       breadcrumbs={[
-        { label: "Bai hoc", href: "/lessons" },
-        { label: "Lich su" },
+        { label: "Bài học", href: "/lessons" },
+        { label: "Lịch sử" },
       ]}
     >
       <LearningHistoryPageContent

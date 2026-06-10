@@ -35,10 +35,10 @@ export default async function LessonsPage({
 
   return (
     <PageLayout
-      title={category ? category.name : "Tat ca bai hoc"}
+      title={category ? category.name : "Tất cả bài học"}
       breadcrumbs={[
-        { label: "Chu de", href: ROUTES.USER.CATEGORIES },
-        { label: category ? category.name : "Tat ca bai hoc" },
+        { label: "Chủ đề", href: ROUTES.USER.CATEGORIES },
+        { label: category ? category.name : "Tất cả bài học" },
       ]}
     >
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
