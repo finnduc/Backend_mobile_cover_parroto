@@ -19,8 +19,8 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ITranscriptBookmarkService interface {
-	Create(ctx context.Context, body req.CreateTranscriptBookmarkReq) (*models.TranscriptBookmark, *response.AppError)
-	List(ctx context.Context, query req.ListTranscriptBookmarkQuery) (*response.PaginatedResult[*models.TranscriptBookmark], *response.AppError)
+	Create(ctx context.Context, userID string, body req.CreateTranscriptBookmarkReq) (*models.TranscriptBookmark, *response.AppError)
+	List(ctx context.Context, userID string, query req.ListTranscriptBookmarkQuery) (*response.PaginatedResult[*models.TranscriptBookmark], *response.AppError)
 	UpdateNote(ctx context.Context, id uint, body req.UpdateTranscriptBookmarkNoteReq) (*models.TranscriptBookmark, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
 }
@@ -33,12 +33,7 @@ func NewTranscriptBookmarkService(repo db_repos.ITranscriptBookmarkRepo) ITransc
 	return &transcriptBookmarkService{repo: repo}
 }
 
-func (s *transcriptBookmarkService) Create(ctx context.Context, body req.CreateTranscriptBookmarkReq) (*models.TranscriptBookmark, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *transcriptBookmarkService) Create(ctx context.Context, userID string, body req.CreateTranscriptBookmarkReq) (*models.TranscriptBookmark, *response.AppError) {
 	log := sLog().With("userId", userID, "transcriptId", body.TranscriptID)
 	log.Infow("creating transcript bookmark")
 
@@ -57,12 +52,7 @@ func (s *transcriptBookmarkService) Create(ctx context.Context, body req.CreateT
 	return bookmark, nil
 }
 
-func (s *transcriptBookmarkService) List(ctx context.Context, query req.ListTranscriptBookmarkQuery) (*response.PaginatedResult[*models.TranscriptBookmark], *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *transcriptBookmarkService) List(ctx context.Context, userID string, query req.ListTranscriptBookmarkQuery) (*response.PaginatedResult[*models.TranscriptBookmark], *response.AppError) {
 	query.UserID = &userID
 
 	log := sLog()
@@ -77,12 +67,12 @@ func (s *transcriptBookmarkService) List(ctx context.Context, query req.ListTran
 }
 
 func (s *transcriptBookmarkService) UpdateNote(ctx context.Context, id uint, body req.UpdateTranscriptBookmarkNoteReq) (*models.TranscriptBookmark, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
+	actor, err := policy.ActorFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	log := sLog().With("userId", userID, "id", id)
+	log := sLog().With("userId", actor.UserID, "id", id)
 	log.Infow("updating transcript bookmark note")
 
 	bookmark, findErr := s.repo.FindByID(ctx, id)
@@ -94,7 +84,7 @@ func (s *transcriptBookmarkService) UpdateNote(ctx context.Context, id uint, bod
 		return nil, response.Internal("failed to find transcript bookmark")
 	}
 
-	if accessErr := policy.Allow(ctx, bookmark.UserID); accessErr != nil {
+	if accessErr := policy.CanMutate(actor, bookmark.UserID); accessErr != nil {
 		return nil, accessErr
 	}
 
@@ -110,12 +100,12 @@ func (s *transcriptBookmarkService) UpdateNote(ctx context.Context, id uint, bod
 }
 
 func (s *transcriptBookmarkService) Delete(ctx context.Context, id uint) *response.AppError {
-	userID, err := policy.GetUserID(ctx)
+	actor, err := policy.ActorFromContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	log := sLog().With("userId", userID, "id", id)
+	log := sLog().With("userId", actor.UserID, "id", id)
 	log.Infow("deleting transcript bookmark")
 
 	bookmark, findErr := s.repo.FindByID(ctx, id)
@@ -127,7 +117,7 @@ func (s *transcriptBookmarkService) Delete(ctx context.Context, id uint) *respon
 		return response.Internal("failed to find transcript bookmark")
 	}
 
-	if accessErr := policy.Allow(ctx, bookmark.UserID); accessErr != nil {
+	if accessErr := policy.CanMutate(actor, bookmark.UserID); accessErr != nil {
 		return accessErr
 	}
 

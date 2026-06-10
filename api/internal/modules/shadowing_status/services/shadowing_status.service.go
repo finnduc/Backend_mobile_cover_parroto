@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"go-cover-parroto/internal/core/logger"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/shadowing_status/dtos/req"
@@ -20,7 +19,7 @@ func sLog() *zap.SugaredLogger {
 }
 
 type IShadowingStatusService interface {
-	Create(ctx context.Context, body req.CreateShadowingStatusReq) (*models.ShadowingStatus, *response.AppError)
+	Create(ctx context.Context, userID string, body req.CreateShadowingStatusReq) (*models.ShadowingStatus, *response.AppError)
 	List(ctx context.Context, query req.ListShadowingStatusQuery) (*response.PaginatedResult[*models.ShadowingStatus], *response.AppError)
 }
 
@@ -32,11 +31,7 @@ func NewShadowingStatusService(repo db_repos.IShadowingStatusRepo) IShadowingSta
 	return &shadowingStatusService{repo: repo}
 }
 
-func (s *shadowingStatusService) Create(ctx context.Context, body req.CreateShadowingStatusReq) (*models.ShadowingStatus, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *shadowingStatusService) Create(ctx context.Context, userID string, body req.CreateShadowingStatusReq) (*models.ShadowingStatus, *response.AppError) {
 
 	log := sLog().With("userId", userID, "transcriptId", body.TranscriptID)
 	log.Infow("creating shadowing status")

@@ -20,16 +20,16 @@ import (
 func TestDictationStatusService_Create(t *testing.T) {
 	tests := []struct {
 		name     string
-		ctx      context.Context
+		userID   string
 		body     req.CreateDictationStatusReq
 		setup    func(*repositories.MockDictationStatusRepo)
 		wantErr  bool
 		wantCode int
 	}{
 		{
-			name: "success",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateDictationStatusReq{TranscriptID: 7},
+			name:   "success",
+			userID: "user1",
+			body:   req.CreateDictationStatusReq{TranscriptID: 7},
 			setup: func(r *repositories.MockDictationStatusRepo) {
 				r.On("CreateOrIgnore", mock.Anything, mock.MatchedBy(func(s *models.DictationStatus) bool {
 					return s.UserID == "user1" && s.TranscriptID == 7
@@ -37,26 +37,18 @@ func TestDictationStatusService_Create(t *testing.T) {
 			},
 		},
 		{
-			name:     "unauthenticated returns 401",
-			ctx:      context.Background(),
-			body:     req.CreateDictationStatusReq{TranscriptID: 7},
-			setup:    func(r *repositories.MockDictationStatusRepo) {},
-			wantErr:  true,
-			wantCode: http.StatusUnauthorized,
-		},
-		{
-			name: "duplicate transcript is silently ignored",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateDictationStatusReq{TranscriptID: 7},
+			name:   "duplicate transcript is silently ignored",
+			userID: "user1",
+			body:   req.CreateDictationStatusReq{TranscriptID: 7},
 			setup: func(r *repositories.MockDictationStatusRepo) {
 				// CreateOrIgnore handles conflicts at DB level — no error returned
 				r.On("CreateOrIgnore", mock.Anything, mock.Anything).Return(nil)
 			},
 		},
 		{
-			name: "db error returns 500",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateDictationStatusReq{TranscriptID: 7},
+			name:   "db error returns 500",
+			userID: "user1",
+			body:   req.CreateDictationStatusReq{TranscriptID: 7},
 			setup: func(r *repositories.MockDictationStatusRepo) {
 				r.On("CreateOrIgnore", mock.Anything, mock.Anything).Return(errors.New("db error"))
 			},
@@ -71,7 +63,7 @@ func TestDictationStatusService_Create(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewDictationStatusService(mockRepo)
 
-			result, err := svc.Create(tt.ctx, tt.body)
+			result, err := svc.Create(context.Background(), tt.userID, tt.body)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)

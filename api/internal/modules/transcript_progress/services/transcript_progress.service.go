@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"go-cover-parroto/internal/core/logger"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/transcript_progress/dtos/req"
@@ -18,8 +17,8 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ITranscriptProgressService interface {
-	Create(ctx context.Context, lessonID uint, body req.CreateTranscriptProgressReq) (*models.TranscriptProgress, *response.AppError)
-	List(ctx context.Context, lessonID uint) ([]*models.TranscriptProgress, *response.AppError)
+	Create(ctx context.Context, userID string, lessonID uint, body req.CreateTranscriptProgressReq) (*models.TranscriptProgress, *response.AppError)
+	List(ctx context.Context, userID string, lessonID uint) ([]*models.TranscriptProgress, *response.AppError)
 }
 
 type transcriptProgressService struct {
@@ -30,12 +29,7 @@ func NewTranscriptProgressService(repo db_repos.ITranscriptProgressRepo) ITransc
 	return &transcriptProgressService{repo: repo}
 }
 
-func (s *transcriptProgressService) Create(ctx context.Context, lessonID uint, body req.CreateTranscriptProgressReq) (*models.TranscriptProgress, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *transcriptProgressService) Create(ctx context.Context, userID string, lessonID uint, body req.CreateTranscriptProgressReq) (*models.TranscriptProgress, *response.AppError) {
 	log := sLog().With("userId", userID, "transcriptId", body.TranscriptID, "lessonId", lessonID)
 	log.Infow("creating transcript progress")
 
@@ -55,12 +49,7 @@ func (s *transcriptProgressService) Create(ctx context.Context, lessonID uint, b
 	return progress, nil
 }
 
-func (s *transcriptProgressService) List(ctx context.Context, lessonID uint) ([]*models.TranscriptProgress, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *transcriptProgressService) List(ctx context.Context, userID string, lessonID uint) ([]*models.TranscriptProgress, *response.AppError) {
 	log := sLog().With("userId", userID, "lessonId", lessonID)
 	log.Infow("listing transcript progress")
 

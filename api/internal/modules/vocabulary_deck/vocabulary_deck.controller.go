@@ -3,6 +3,7 @@ package vocabulary_deck
 import (
 	"net/http"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/vocabulary_deck/dtos/req"
 	"go-cover-parroto/internal/modules/vocabulary_deck/dtos/res"
@@ -66,7 +67,12 @@ func (ctrl *VocabularyDeckController) ListByUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), q)
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	result, appErr := ctrl.svc.ListByUser(c.Request.Context(), userID, q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -117,7 +123,12 @@ func (ctrl *VocabularyDeckController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	deck, appErr := ctrl.svc.Create(c.Request.Context(), body)
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	deck, appErr := ctrl.svc.Create(c.Request.Context(), userID, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

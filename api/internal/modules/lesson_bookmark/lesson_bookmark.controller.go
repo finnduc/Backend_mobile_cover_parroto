@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/lesson_bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/lesson_bookmark/dtos/res"
@@ -22,13 +23,15 @@ func NewLessonBookmarkController(svc services.ILessonBookmarkService) *LessonBoo
 }
 
 func (ctrl *LessonBookmarkController) List(c *gin.Context) {
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+
 	var q req.ListLessonBookmarkQuery
 	if err := c.ShouldBindQuery(&q); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
 
-	result, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.List(c.Request.Context(), userID, q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -44,13 +47,15 @@ func (ctrl *LessonBookmarkController) List(c *gin.Context) {
 }
 
 func (ctrl *LessonBookmarkController) Toggle(c *gin.Context) {
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+
 	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
 		return
 	}
 
-	bookmark, appErr := ctrl.svc.Toggle(c.Request.Context(), uint(lessonID))
+	bookmark, appErr := ctrl.svc.Toggle(c.Request.Context(), userID, uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/transcript_progress/dtos/req"
 	"go-cover-parroto/internal/modules/transcript_progress/dtos/res"
@@ -34,7 +35,13 @@ func (ctrl *TranscriptProgressController) Create(c *gin.Context) {
 		return
 	}
 
-	progress, appErr := ctrl.svc.Create(c.Request.Context(), uint(lessonID), body)
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	progress, appErr := ctrl.svc.Create(c.Request.Context(), userID, uint(lessonID), body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -56,7 +63,13 @@ func (ctrl *TranscriptProgressController) List(c *gin.Context) {
 		return
 	}
 
-	progresses, appErr := ctrl.svc.List(c.Request.Context(), uint(lessonID))
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	progresses, appErr := ctrl.svc.List(c.Request.Context(), userID, uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

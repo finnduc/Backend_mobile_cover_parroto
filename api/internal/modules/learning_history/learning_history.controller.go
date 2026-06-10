@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/learning_history/dtos/req"
 	"go-cover-parroto/internal/modules/learning_history/dtos/res"
@@ -22,7 +23,8 @@ func NewLearningHistoryController(svc services.ILearningHistoryService) *Learnin
 }
 
 func (ctrl *LearningHistoryController) List(c *gin.Context) {
-	items, appErr := ctrl.svc.List(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	items, appErr := ctrl.svc.List(c.Request.Context(), userID)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -41,7 +43,8 @@ func (ctrl *LearningHistoryController) CreateOrUpdate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	item, appErr := ctrl.svc.CreateOrUpdate(c.Request.Context(), body)
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	item, appErr := ctrl.svc.CreateOrUpdate(c.Request.Context(), userID, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -55,7 +58,8 @@ func (ctrl *LearningHistoryController) CreateOrUpdate(c *gin.Context) {
 }
 
 func (ctrl *LearningHistoryController) ListFinished(c *gin.Context) {
-	items, appErr := ctrl.svc.ListFinished(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	items, appErr := ctrl.svc.ListFinished(c.Request.Context(), userID)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -69,7 +73,8 @@ func (ctrl *LearningHistoryController) ListFinished(c *gin.Context) {
 }
 
 func (ctrl *LearningHistoryController) ListUnfinished(c *gin.Context) {
-	items, appErr := ctrl.svc.ListUnfinished(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	items, appErr := ctrl.svc.ListUnfinished(c.Request.Context(), userID)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -83,7 +88,8 @@ func (ctrl *LearningHistoryController) ListUnfinished(c *gin.Context) {
 }
 
 func (ctrl *LearningHistoryController) Summary(c *gin.Context) {
-	completed, unfinished, appErr := ctrl.svc.Summary(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	completed, unfinished, appErr := ctrl.svc.Summary(c.Request.Context(), userID)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -100,7 +106,8 @@ func (ctrl *LearningHistoryController) LessonSummary(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
 		return
 	}
-	completed, uncompleted, appErr := ctrl.svc.LessonSummary(c.Request.Context(), uint(lessonID))
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	completed, uncompleted, appErr := ctrl.svc.LessonSummary(c.Request.Context(), userID, uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/auth/services"
 
@@ -29,7 +30,8 @@ func NewAuthController(svc services.IAuthService) *AuthController {
 // @Router /auth/complete-signup [post]
 // @Security BearerAuth
 func (ctrl *AuthController) Complete(c *gin.Context) {
-	appErr := ctrl.svc.CompleteSignUp(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	appErr := ctrl.svc.CompleteSignUp(c.Request.Context(), userID)
 
 	if appErr != nil {
 
@@ -47,7 +49,8 @@ func (ctrl *AuthController) Complete(c *gin.Context) {
 // @Router /auth/sync [post]
 // @Security BearerAuth
 func (ctrl *AuthController) Sync(c *gin.Context) {
-	user, appErr := ctrl.svc.SyncUser(c.Request.Context())
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	user, appErr := ctrl.svc.SyncUser(c.Request.Context(), userID)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

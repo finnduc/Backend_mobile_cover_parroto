@@ -5,30 +5,40 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
+	"go-cover-parroto/internal/utils"
 )
 
-func Allow(ctx context.Context, resourceOwnerID string) *response.AppError {
-	userID, ok := ctx.Value(enums.ContextKeyUserID).(string)
-	if !ok {
-		return response.Unauthorized("user not authenticated")
+func ActorFromContext(ctx context.Context) (*Actor, *response.AppError) {
+	userID, err := utils.GetFromContext[string](ctx, enums.ContextKeyUserID)
+	if err != nil {
+		return nil, err
 	}
+	role, _ := utils.GetFromContext[enums.UserRole](ctx, enums.ContextKeyUserRole)
+	return &Actor{UserID: userID, Role: role}, nil
+}
 
-	role, ok := ctx.Value(enums.ContextKeyUserRole).(enums.UserRole)
-	if ok && role == enums.UserRoleAdmin {
+func CanMutate(actor *Actor, resourceOwnerID string) *response.AppError {
+	if actor == nil {
+		return response.Unauthorized("login required")
+	}
+	if actor.Role == enums.UserRoleAdmin {
 		return nil
 	}
-
-	if userID == resourceOwnerID {
+	if actor.UserID == resourceOwnerID {
 		return nil
 	}
-
 	return response.Forbidden("access denied")
 }
 
-func GetUserID(ctx context.Context) (string, *response.AppError) {
-	userID, ok := ctx.Value(enums.ContextKeyUserID).(string)
-	if !ok {
-		return userID, response.Unauthorized("user not authenticated")
+func CanRead(actor *Actor, resourceOwnerID string) *response.AppError {
+	if actor == nil {
+		return response.Unauthorized("login required")
 	}
-	return userID, nil
+	if actor.Role == enums.UserRoleAdmin {
+		return nil
+	}
+	if actor.UserID == resourceOwnerID {
+		return nil
+	}
+	return response.Forbidden("access denied")
 }

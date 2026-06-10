@@ -18,10 +18,10 @@ func sLog() *zap.SugaredLogger {
 }
 
 type IPronunciationService interface {
-	Assess(ctx context.Context, lessonID, transcriptID uint, referenceText string, audioData []byte) (*PronunciationResult, *models.PronunciationAttempt, *response.AppError)
+	Assess(ctx context.Context, userID string, lessonID, transcriptID uint, referenceText string, audioData []byte) (*PronunciationResult, *models.PronunciationAttempt, *response.AppError)
 	DeleteAttempt(ctx context.Context, attemptID uint) *response.AppError
-	ListProgress(ctx context.Context, lessonID uint) ([]*models.PronunciationProgress, *response.AppError)
-	UpdateProgress(ctx context.Context, transcriptID uint) (*models.PronunciationProgress, *response.AppError)
+	ListProgress(ctx context.Context, userID string, lessonID uint) ([]*models.PronunciationProgress, *response.AppError)
+	UpdateProgress(ctx context.Context, userID string, transcriptID uint) (*models.PronunciationProgress, *response.AppError)
 }
 
 type pronunciationService struct {
@@ -36,12 +36,7 @@ func NewPronunciationService(
 	return &pronunciationService{attemptRepo: attemptRepo, progressRepo: progressRepo}
 }
 
-func (s *pronunciationService) Assess(ctx context.Context, lessonID, transcriptID uint, referenceText string, audioData []byte) (*PronunciationResult, *models.PronunciationAttempt, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (s *pronunciationService) Assess(ctx context.Context, userID string, lessonID, transcriptID uint, referenceText string, audioData []byte) (*PronunciationResult, *models.PronunciationAttempt, *response.AppError) {
 	log := sLog().With("userId", userID, "lessonId", lessonID, "transcriptId", transcriptID)
 	log.Infow("assessing pronunciation")
 
@@ -92,7 +87,7 @@ func (s *pronunciationService) Assess(ctx context.Context, lessonID, transcriptI
 }
 
 func (s *pronunciationService) DeleteAttempt(ctx context.Context, attemptID uint) *response.AppError {
-	_, err := policy.GetUserID(ctx)
+	actor, err := policy.ActorFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -105,7 +100,7 @@ func (s *pronunciationService) DeleteAttempt(ctx context.Context, attemptID uint
 		return response.Internal("failed to find attempt")
 	}
 
-	if accessErr := policy.Allow(ctx, attempt.UserID); accessErr != nil {
+	if accessErr := policy.CanMutate(actor, attempt.UserID); accessErr != nil {
 		return accessErr
 	}
 
@@ -116,12 +111,7 @@ func (s *pronunciationService) DeleteAttempt(ctx context.Context, attemptID uint
 	return nil
 }
 
-func (s *pronunciationService) ListProgress(ctx context.Context, lessonID uint) ([]*models.PronunciationProgress, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *pronunciationService) ListProgress(ctx context.Context, userID string, lessonID uint) ([]*models.PronunciationProgress, *response.AppError) {
 	progress, findErr := s.progressRepo.FindByUserAndLesson(ctx, userID, lessonID)
 	if findErr != nil {
 		return nil, response.Internal("failed to list progress")
@@ -129,12 +119,7 @@ func (s *pronunciationService) ListProgress(ctx context.Context, lessonID uint) 
 	return progress, nil
 }
 
-func (s *pronunciationService) UpdateProgress(ctx context.Context, transcriptID uint) (*models.PronunciationProgress, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *pronunciationService) UpdateProgress(ctx context.Context, userID string, transcriptID uint) (*models.PronunciationProgress, *response.AppError) {
 	best, findErr := s.attemptRepo.FindBestByUserAndTranscript(ctx, userID, transcriptID)
 	if findErr != nil {
 		if findErr.Error() == coreError.ErrNotFound.Error() {

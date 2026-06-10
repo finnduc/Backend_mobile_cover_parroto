@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/pronunciation/dtos/res"
 	"go-cover-parroto/internal/modules/pronunciation/services"
@@ -53,7 +54,13 @@ func (ctrl *PronunciationController) Assess(c *gin.Context) {
 		return
 	}
 
-	pronResult, attempt, appErr := ctrl.svc.Assess(c.Request.Context(), uint(lessonID), uint(transcriptID), referenceText, audioData)
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	pronResult, attempt, appErr := ctrl.svc.Assess(c.Request.Context(), userID, uint(lessonID), uint(transcriptID), referenceText, audioData)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -116,7 +123,13 @@ func (ctrl *PronunciationController) ListProgress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
 		return
 	}
-	items, appErr := ctrl.svc.ListProgress(c.Request.Context(), uint(lessonID))
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	items, appErr := ctrl.svc.ListProgress(c.Request.Context(), userID, uint(lessonID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -135,7 +148,13 @@ func (ctrl *PronunciationController) UpdateProgress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid transcript ID")))
 		return
 	}
-	item, appErr := ctrl.svc.UpdateProgress(c.Request.Context(), uint(transcriptID))
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	item, appErr := ctrl.svc.UpdateProgress(c.Request.Context(), userID, uint(transcriptID))
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

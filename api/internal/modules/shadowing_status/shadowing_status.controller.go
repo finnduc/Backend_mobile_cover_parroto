@@ -3,6 +3,7 @@ package shadowing_status
 import (
 	"net/http"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/shadowing_status/dtos/req"
 	"go-cover-parroto/internal/modules/shadowing_status/dtos/res"
@@ -38,7 +39,8 @@ func (ctrl *ShadowingStatusController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
-	status, appErr := ctrl.svc.Create(c.Request.Context(), body)
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+	status, appErr := ctrl.svc.Create(c.Request.Context(), userID, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

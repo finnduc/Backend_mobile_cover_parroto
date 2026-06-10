@@ -5,7 +5,6 @@ import (
 
 	coreError "go-cover-parroto/internal/core/errors"
 	"go-cover-parroto/internal/core/logger"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/learning_history/dtos/req"
@@ -18,12 +17,12 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ILearningHistoryService interface {
-	CreateOrUpdate(ctx context.Context, body req.CreateLearningHistoryReq) (*models.LearningHistory, *response.AppError)
-	List(ctx context.Context) ([]*models.LearningHistory, *response.AppError)
-	ListFinished(ctx context.Context) ([]*models.LearningHistory, *response.AppError)
-	ListUnfinished(ctx context.Context) ([]*models.LearningHistory, *response.AppError)
-	Summary(ctx context.Context) (int64, int64, *response.AppError)
-	LessonSummary(ctx context.Context, lessonID uint) (int64, int64, *response.AppError)
+	CreateOrUpdate(ctx context.Context, userID string, body req.CreateLearningHistoryReq) (*models.LearningHistory, *response.AppError)
+	List(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError)
+	ListFinished(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError)
+	ListUnfinished(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError)
+	Summary(ctx context.Context, userID string) (int64, int64, *response.AppError)
+	LessonSummary(ctx context.Context, userID string, lessonID uint) (int64, int64, *response.AppError)
 }
 
 type learningHistoryService struct {
@@ -34,11 +33,7 @@ func NewLearningHistoryService(repo db_repos.ILearningHistoryRepo) ILearningHist
 	return &learningHistoryService{repo: repo}
 }
 
-func (s *learningHistoryService) CreateOrUpdate(ctx context.Context, body req.CreateLearningHistoryReq) (*models.LearningHistory, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *learningHistoryService) CreateOrUpdate(ctx context.Context, userID string, body req.CreateLearningHistoryReq) (*models.LearningHistory, *response.AppError) {
 
 	history := &models.LearningHistory{
 		UserID:                 userID,
@@ -59,11 +54,7 @@ func (s *learningHistoryService) CreateOrUpdate(ctx context.Context, body req.Cr
 	return saved, nil
 }
 
-func (s *learningHistoryService) List(ctx context.Context) ([]*models.LearningHistory, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *learningHistoryService) List(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError) {
 	result, findErr := s.repo.FindByUser(ctx, userID)
 	if findErr != nil {
 		return nil, response.Internal("failed to list")
@@ -71,11 +62,7 @@ func (s *learningHistoryService) List(ctx context.Context) ([]*models.LearningHi
 	return result, nil
 }
 
-func (s *learningHistoryService) ListFinished(ctx context.Context) ([]*models.LearningHistory, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *learningHistoryService) ListFinished(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError) {
 	result, findErr := s.repo.FindFinished(ctx, userID)
 	if findErr != nil {
 		return nil, response.Internal("failed to list finished")
@@ -83,11 +70,7 @@ func (s *learningHistoryService) ListFinished(ctx context.Context) ([]*models.Le
 	return result, nil
 }
 
-func (s *learningHistoryService) ListUnfinished(ctx context.Context) ([]*models.LearningHistory, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *learningHistoryService) ListUnfinished(ctx context.Context, userID string) ([]*models.LearningHistory, *response.AppError) {
 	result, findErr := s.repo.FindUnfinished(ctx, userID)
 	if findErr != nil {
 		return nil, response.Internal("failed to list unfinished")
@@ -95,11 +78,7 @@ func (s *learningHistoryService) ListUnfinished(ctx context.Context) ([]*models.
 	return result, nil
 }
 
-func (s *learningHistoryService) Summary(ctx context.Context) (int64, int64, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return 0, 0, err
-	}
+func (s *learningHistoryService) Summary(ctx context.Context, userID string) (int64, int64, *response.AppError) {
 	finished, err1 := s.repo.CountFinished(ctx, userID)
 	unfinished, err2 := s.repo.CountUnfinished(ctx, userID)
 	if err1 != nil || err2 != nil {
@@ -108,11 +87,7 @@ func (s *learningHistoryService) Summary(ctx context.Context) (int64, int64, *re
 	return finished, unfinished, nil
 }
 
-func (s *learningHistoryService) LessonSummary(ctx context.Context, lessonID uint) (int64, int64, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return 0, 0, err
-	}
+func (s *learningHistoryService) LessonSummary(ctx context.Context, userID string, lessonID uint) (int64, int64, *response.AppError) {
 
 	history, findErr := s.repo.FindByUserAndLesson(ctx, userID, lessonID)
 	if findErr != nil {

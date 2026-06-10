@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/transcript_bookmark/dtos/req"
 	"go-cover-parroto/internal/modules/transcript_bookmark/dtos/res"
@@ -34,6 +35,8 @@ func NewTranscriptBookmarkController(svc services.ITranscriptBookmarkService) *T
 // @Router /transcript-bookmarks/{lessonId} [get]
 // @Security BearerAuth
 func (ctrl *TranscriptBookmarkController) List(c *gin.Context) {
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+
 	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
@@ -48,7 +51,7 @@ func (ctrl *TranscriptBookmarkController) List(c *gin.Context) {
 	lid := uint(lessonID)
 	q.LessonID = &lid
 
-	result, appErr := ctrl.svc.List(c.Request.Context(), q)
+	result, appErr := ctrl.svc.List(c.Request.Context(), userID, q)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return
@@ -75,13 +78,15 @@ func (ctrl *TranscriptBookmarkController) List(c *gin.Context) {
 // @Router /transcript-bookmarks [post]
 // @Security BearerAuth
 func (ctrl *TranscriptBookmarkController) Create(c *gin.Context) {
+	userID := c.Request.Context().Value(enums.ContextKeyUserID).(string)
+
 	var body req.CreateTranscriptBookmarkReq
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest(err.Error())))
 		return
 	}
 
-	bookmark, appErr := ctrl.svc.Create(c.Request.Context(), body)
+	bookmark, appErr := ctrl.svc.Create(c.Request.Context(), userID, body)
 	if appErr != nil {
 		c.JSON(appErr.Code, response.Fail(appErr))
 		return

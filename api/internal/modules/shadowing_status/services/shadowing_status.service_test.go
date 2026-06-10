@@ -21,16 +21,16 @@ import (
 func TestShadowingStatusService_Create(t *testing.T) {
 	tests := []struct {
 		name     string
-		ctx      context.Context
+		userID   string
 		body     req.CreateShadowingStatusReq
 		setup    func(*repositories.MockShadowingStatusRepo)
 		wantErr  bool
 		wantCode int
 	}{
 		{
-			name: "success",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateShadowingStatusReq{TranscriptID: 5},
+			name:   "success",
+			userID: "user1",
+			body:   req.CreateShadowingStatusReq{TranscriptID: 5},
 			setup: func(r *repositories.MockShadowingStatusRepo) {
 				r.On("FindByUserAndTranscript", mock.Anything, "user1", uint(5)).
 					Return(nil, gorm.ErrRecordNotFound)
@@ -40,17 +40,9 @@ func TestShadowingStatusService_Create(t *testing.T) {
 			},
 		},
 		{
-			name:     "unauthenticated returns 401",
-			ctx:      context.Background(),
-			body:     req.CreateShadowingStatusReq{TranscriptID: 5},
-			setup:    func(r *repositories.MockShadowingStatusRepo) {},
-			wantErr:  true,
-			wantCode: http.StatusUnauthorized,
-		},
-		{
-			name: "duplicate transcript returns 409",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateShadowingStatusReq{TranscriptID: 5},
+			name:   "duplicate transcript returns 409",
+			userID: "user1",
+			body:   req.CreateShadowingStatusReq{TranscriptID: 5},
 			setup: func(r *repositories.MockShadowingStatusRepo) {
 				existing := &models.ShadowingStatus{UserID: "user1", TranscriptID: 5}
 				r.On("FindByUserAndTranscript", mock.Anything, "user1", uint(5)).
@@ -60,9 +52,9 @@ func TestShadowingStatusService_Create(t *testing.T) {
 			wantCode: http.StatusConflict,
 		},
 		{
-			name: "find db error returns 500",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateShadowingStatusReq{TranscriptID: 5},
+			name:   "find db error returns 500",
+			userID: "user1",
+			body:   req.CreateShadowingStatusReq{TranscriptID: 5},
 			setup: func(r *repositories.MockShadowingStatusRepo) {
 				r.On("FindByUserAndTranscript", mock.Anything, "user1", uint(5)).
 					Return(nil, errors.New("db error"))
@@ -71,9 +63,9 @@ func TestShadowingStatusService_Create(t *testing.T) {
 			wantCode: http.StatusInternalServerError,
 		},
 		{
-			name: "create db error returns 500",
-			ctx:  testCtx("user1", enums.UserRoleUser),
-			body: req.CreateShadowingStatusReq{TranscriptID: 5},
+			name:   "create db error returns 500",
+			userID: "user1",
+			body:   req.CreateShadowingStatusReq{TranscriptID: 5},
 			setup: func(r *repositories.MockShadowingStatusRepo) {
 				r.On("FindByUserAndTranscript", mock.Anything, "user1", uint(5)).
 					Return(nil, gorm.ErrRecordNotFound)
@@ -90,7 +82,7 @@ func TestShadowingStatusService_Create(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewShadowingStatusService(mockRepo)
 
-			result, err := svc.Create(tt.ctx, tt.body)
+			result, err := svc.Create(testCtx("user1", enums.UserRoleUser), tt.userID, tt.body)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)

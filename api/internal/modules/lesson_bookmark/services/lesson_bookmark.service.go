@@ -19,10 +19,10 @@ func sLog() *zap.SugaredLogger {
 }
 
 type ILessonBookmarkService interface {
-	Create(ctx context.Context, body req.CreateLessonBookmarkReq) (*models.LessonBookmark, *response.AppError)
-	List(ctx context.Context, query req.ListLessonBookmarkQuery) (*response.PaginatedResult[*models.LessonBookmark], *response.AppError)
+	Create(ctx context.Context, userID string, body req.CreateLessonBookmarkReq) (*models.LessonBookmark, *response.AppError)
+	List(ctx context.Context, userID string, query req.ListLessonBookmarkQuery) (*response.PaginatedResult[*models.LessonBookmark], *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
-	Toggle(ctx context.Context, lessonID uint) (*models.LessonBookmark, *response.AppError)
+	Toggle(ctx context.Context, userID string, lessonID uint) (*models.LessonBookmark, *response.AppError)
 }
 
 type lessonBookmarkService struct {
@@ -33,12 +33,7 @@ func NewLessonBookmarkService(repo db_repos.ILessonBookmarkRepo) ILessonBookmark
 	return &lessonBookmarkService{repo: repo}
 }
 
-func (s *lessonBookmarkService) Create(ctx context.Context, body req.CreateLessonBookmarkReq) (*models.LessonBookmark, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *lessonBookmarkService) Create(ctx context.Context, userID string, body req.CreateLessonBookmarkReq) (*models.LessonBookmark, *response.AppError) {
 	log := sLog().With("userId", userID, "lessonId", body.LessonID)
 	log.Infow("creating lesson bookmark")
 
@@ -56,12 +51,7 @@ func (s *lessonBookmarkService) Create(ctx context.Context, body req.CreateLesso
 	return bookmark, nil
 }
 
-func (s *lessonBookmarkService) List(ctx context.Context, query req.ListLessonBookmarkQuery) (*response.PaginatedResult[*models.LessonBookmark], *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *lessonBookmarkService) List(ctx context.Context, userID string, query req.ListLessonBookmarkQuery) (*response.PaginatedResult[*models.LessonBookmark], *response.AppError) {
 	log := sLog().With("userId", userID)
 	log.Infow("listing lesson bookmarks")
 
@@ -77,12 +67,12 @@ func (s *lessonBookmarkService) List(ctx context.Context, query req.ListLessonBo
 }
 
 func (s *lessonBookmarkService) Delete(ctx context.Context, id uint) *response.AppError {
-	userID, err := policy.GetUserID(ctx)
+	actor, err := policy.ActorFromContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	log := sLog().With("userId", userID, "id", id)
+	log := sLog().With("userId", actor.UserID, "id", id)
 	log.Infow("deleting lesson bookmark")
 
 	bookmark, findErr := s.repo.FindByID(ctx, id)
@@ -94,7 +84,7 @@ func (s *lessonBookmarkService) Delete(ctx context.Context, id uint) *response.A
 		return response.Internal("failed to find lesson bookmark")
 	}
 
-	if accessErr := policy.Allow(ctx, bookmark.UserID); accessErr != nil {
+	if accessErr := policy.CanMutate(actor, bookmark.UserID); accessErr != nil {
 		return accessErr
 	}
 
@@ -107,12 +97,7 @@ func (s *lessonBookmarkService) Delete(ctx context.Context, id uint) *response.A
 	return nil
 }
 
-func (s *lessonBookmarkService) Toggle(ctx context.Context, lessonID uint) (*models.LessonBookmark, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *lessonBookmarkService) Toggle(ctx context.Context, userID string, lessonID uint) (*models.LessonBookmark, *response.AppError) {
 	log := sLog().With("userId", userID, "lessonId", lessonID)
 
 	existing, findErr := s.repo.FindByUserAndLesson(ctx, userID, lessonID)

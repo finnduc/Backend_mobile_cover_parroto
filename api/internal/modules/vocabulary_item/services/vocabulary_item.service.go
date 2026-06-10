@@ -61,12 +61,12 @@ func (s *vocabularyItemService) GetByID(ctx context.Context, id uint) (*models.V
 }
 
 func (s *vocabularyItemService) Create(ctx context.Context, body req.CreateVocabularyItemFromDeckReq) (*models.VocabularyItem, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
+	actor, err := policy.ActorFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	log := sLog().With("userId", userID, "deckId", body.DeckID)
+	log := sLog().With("userId", actor.UserID, "deckId", body.DeckID)
 	log.Infow("creating vocabulary item in user deck")
 
 	deck, deckErr := s.deckRepo.FindByID(ctx, body.DeckID)
@@ -78,7 +78,7 @@ func (s *vocabularyItemService) Create(ctx context.Context, body req.CreateVocab
 	}
 
 	if deck.UserID != nil {
-		if appErr := policy.Allow(ctx, *deck.UserID); appErr != nil {
+		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return nil, appErr
 		}
 	}
@@ -105,6 +105,11 @@ func (s *vocabularyItemService) Update(ctx context.Context, id uint, body req.Up
 	log := sLog().With("id", id)
 	log.Infow("updating vocabulary item")
 
+	actor, appErr := policy.ActorFromContext(ctx)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	item, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, coreError.ErrNotFound) {
@@ -114,7 +119,7 @@ func (s *vocabularyItemService) Update(ctx context.Context, id uint, body req.Up
 	}
 
 	if item.Deck != nil && item.Deck.UserID != nil {
-		if appErr := policy.Allow(ctx, *item.Deck.UserID); appErr != nil {
+		if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
 			return nil, appErr
 		}
 	}
@@ -136,6 +141,11 @@ func (s *vocabularyItemService) Delete(ctx context.Context, id uint) *response.A
 	log := sLog().With("id", id)
 	log.Infow("deleting vocabulary item")
 
+	actor, appErr := policy.ActorFromContext(ctx)
+	if appErr != nil {
+		return appErr
+	}
+
 	item, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, coreError.ErrNotFound) {
@@ -145,7 +155,7 @@ func (s *vocabularyItemService) Delete(ctx context.Context, id uint) *response.A
 	}
 
 	if item.Deck != nil && item.Deck.UserID != nil {
-		if appErr := policy.Allow(ctx, *item.Deck.UserID); appErr != nil {
+		if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
 			return appErr
 		}
 	}

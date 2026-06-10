@@ -8,7 +8,6 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
-	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/modules/auth/dtos/res"
 
@@ -21,9 +20,9 @@ func sLog() *zap.SugaredLogger {
 }
 
 type IAuthService interface {
-	CompleteSignUp(ctx context.Context) *response.AppError
-	SyncUser(ctx context.Context) (*res.AuthUserRes, *response.AppError)
-	GetUserProfile(ctx context.Context) (*res.AuthUserRes, *response.AppError)
+	CompleteSignUp(ctx context.Context, userID string) *response.AppError
+	SyncUser(ctx context.Context, userID string) (*res.AuthUserRes, *response.AppError)
+	GetUserProfile(ctx context.Context, userID string) (*res.AuthUserRes, *response.AppError)
 }
 
 type authService struct{}
@@ -32,16 +31,8 @@ func NewAuthService() IAuthService {
 	return &authService{}
 }
 
-func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
-	log := sLog()
-
-	userID, appErr := policy.GetUserID(ctx)
-	if appErr != nil {
-		log.Errorw("failed to get user id from context", "error", appErr)
-		return appErr
-	}
-
-	log.With("userId", userID)
+func (s *authService) CompleteSignUp(ctx context.Context, userID string) *response.AppError {
+	log := sLog().With("userId", userID)
 
 	roleMeta := map[string]interface{}{
 		"role": string(enums.UserRoleUser),
@@ -64,12 +55,7 @@ func (s *authService) CompleteSignUp(ctx context.Context) *response.AppError {
 	return nil
 }
 
-func (s *authService) getUserFromClerk(ctx context.Context) (*res.AuthUserRes, *response.AppError) {
-	userID, appErr := policy.GetUserID(ctx)
-	if appErr != nil {
-		return nil, appErr
-	}
-
+func (s *authService) getUserFromClerk(ctx context.Context, userID string) (*res.AuthUserRes, *response.AppError) {
 	clerkUser, err := clerkusersdk.Get(ctx, userID)
 	if err != nil {
 		return nil, response.Unauthorized("invalid user")
@@ -113,14 +99,14 @@ func (s *authService) getUserFromClerk(ctx context.Context) (*res.AuthUserRes, *
 	}, nil
 }
 
-func (s *authService) SyncUser(ctx context.Context) (*res.AuthUserRes, *response.AppError) {
+func (s *authService) SyncUser(ctx context.Context, userID string) (*res.AuthUserRes, *response.AppError) {
 	log := sLog()
 	log.Infow("syncing user")
-	return s.getUserFromClerk(ctx)
+	return s.getUserFromClerk(ctx, userID)
 }
 
-func (s *authService) GetUserProfile(ctx context.Context) (*res.AuthUserRes, *response.AppError) {
+func (s *authService) GetUserProfile(ctx context.Context, userID string) (*res.AuthUserRes, *response.AppError) {
 	log := sLog()
 	log.Infow("getting user profile")
-	return s.getUserFromClerk(ctx)
+	return s.getUserFromClerk(ctx, userID)
 }

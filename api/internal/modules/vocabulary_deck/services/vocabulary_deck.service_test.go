@@ -86,15 +86,15 @@ func TestVocabularyDeckService_ListDefault(t *testing.T) {
 func TestVocabularyDeckService_ListByUser(t *testing.T) {
 	tests := []struct {
 		name     string
-		ctx      context.Context
+		userID   string
 		setup    func(*repositories.MockVocabularyDeckRepo)
 		wantLen  int
 		wantErr  bool
 		wantCode int
 	}{
 		{
-			name: "success — returns user decks",
-			ctx:  userCtx("user1"),
+			name:   "success — returns user decks",
+			userID: "user1",
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindAll", mock.Anything, mock.Anything).Return(
 					&response.PaginatedResult[*models.VocabularyDeck]{
@@ -107,15 +107,8 @@ func TestVocabularyDeckService_ListByUser(t *testing.T) {
 			wantLen: 1,
 		},
 		{
-			name:     "unauthenticated returns 401",
-			ctx:      context.Background(),
-			setup:    func(r *repositories.MockVocabularyDeckRepo) {},
-			wantErr:  true,
-			wantCode: http.StatusUnauthorized,
-		},
-		{
-			name: "db error returns 500",
-			ctx:  userCtx("user1"),
+			name:   "db error returns 500",
+			userID: "user1",
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindAll", mock.Anything, mock.Anything).Return(nil, errors.New("db error"))
 			},
@@ -130,7 +123,7 @@ func TestVocabularyDeckService_ListByUser(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewVocabularyDeckService(mockRepo)
 
-			result, err := svc.ListByUser(tt.ctx, req.ListVocabularyDeckQuery{Page: 1, Limit: 10})
+			result, err := svc.ListByUser(userCtx("user1"), tt.userID, req.ListVocabularyDeckQuery{Page: 1, Limit: 10})
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -205,7 +198,7 @@ func TestVocabularyDeckService_GetByID(t *testing.T) {
 func TestVocabularyDeckService_Create(t *testing.T) {
 	tests := []struct {
 		name     string
-		ctx      context.Context
+		userID   string
 		body     req.CreateVocabularyDeckReq
 		setup    func(*repositories.MockVocabularyDeckRepo)
 		wantName string
@@ -213,9 +206,9 @@ func TestVocabularyDeckService_Create(t *testing.T) {
 		wantCode int
 	}{
 		{
-			name: "success — creates user deck",
-			ctx:  userCtx("user1"),
-			body: req.CreateVocabularyDeckReq{Name: "My Deck", Level: "beginner"},
+			name:   "success — creates user deck",
+			userID: "user1",
+			body:   req.CreateVocabularyDeckReq{Name: "My Deck", Level: "beginner"},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("Create", mock.Anything, mock.MatchedBy(func(d *models.VocabularyDeck) bool {
 					return d.Name == "My Deck" && d.UserID != nil && *d.UserID == "user1"
@@ -226,17 +219,9 @@ func TestVocabularyDeckService_Create(t *testing.T) {
 			wantName: "My Deck",
 		},
 		{
-			name:     "unauthenticated returns 401",
-			ctx:      context.Background(),
-			body:     req.CreateVocabularyDeckReq{Name: "My Deck"},
-			setup:    func(r *repositories.MockVocabularyDeckRepo) {},
-			wantErr:  true,
-			wantCode: http.StatusUnauthorized,
-		},
-		{
-			name: "db error returns 500",
-			ctx:  userCtx("user1"),
-			body: req.CreateVocabularyDeckReq{Name: "Fail"},
+			name:   "db error returns 500",
+			userID: "user1",
+			body:   req.CreateVocabularyDeckReq{Name: "Fail"},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("Create", mock.Anything, mock.Anything).Return(errors.New("db error"))
 			},
@@ -251,7 +236,7 @@ func TestVocabularyDeckService_Create(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewVocabularyDeckService(mockRepo)
 
-			result, err := svc.Create(tt.ctx, tt.body)
+			result, err := svc.Create(userCtx("user1"), tt.userID, tt.body)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -460,7 +445,7 @@ func TestVocabularyDeckService_CreateAsSystem(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewVocabularyDeckService(mockRepo)
 
-			result, err := svc.CreateAsSystem(context.Background(), tt.body)
+			result, err := svc.CreateAsSystem(adminCtx(), tt.body)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -510,7 +495,7 @@ func TestVocabularyDeckService_DeleteAsSystem(t *testing.T) {
 			tt.setup(mockRepo)
 			svc := NewVocabularyDeckService(mockRepo)
 
-			err := svc.DeleteAsSystem(context.Background(), tt.id)
+			err := svc.DeleteAsSystem(adminCtx(), tt.id)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)

@@ -22,9 +22,9 @@ func sLog() *zap.SugaredLogger {
 type IVocabularyDeckService interface {
 	List(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
 	ListDefault(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
-	ListByUser(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
+	ListByUser(ctx context.Context, userID string, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError)
 	GetByID(ctx context.Context, id uint) (*models.VocabularyDeck, *response.AppError)
-	Create(ctx context.Context, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
+	Create(ctx context.Context, userID string, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
 	Update(ctx context.Context, id uint, body req.UpdateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
 	Delete(ctx context.Context, id uint) *response.AppError
 	CreateAsSystem(ctx context.Context, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError)
@@ -64,11 +64,7 @@ func (s *vocabularyDeckService) ListDefault(ctx context.Context, query req.ListV
 	return result, nil
 }
 
-func (s *vocabularyDeckService) ListByUser(ctx context.Context, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError) {
-	userID, appErr := policy.GetUserID(ctx)
-	if appErr != nil {
-		return nil, appErr
-	}
+func (s *vocabularyDeckService) ListByUser(ctx context.Context, userID string, query req.ListVocabularyDeckQuery) (*response.PaginatedResult[*models.VocabularyDeck], *response.AppError) {
 	log := sLog().With("userId", userID)
 	log.Infow("listing user vocabulary decks")
 	dbQuery := query.ToQuery()
@@ -95,11 +91,7 @@ func (s *vocabularyDeckService) GetByID(ctx context.Context, id uint) (*models.V
 	return deck, nil
 }
 
-func (s *vocabularyDeckService) Create(ctx context.Context, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError) {
-	userID, err := policy.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (s *vocabularyDeckService) Create(ctx context.Context, userID string, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError) {
 
 	log := sLog().With("userId", userID)
 	log.Infow("creating user vocabulary deck")
@@ -130,7 +122,11 @@ func (s *vocabularyDeckService) Update(ctx context.Context, id uint, body req.Up
 	}
 
 	if deck.UserID != nil {
-		if appErr := policy.Allow(ctx, *deck.UserID); appErr != nil {
+		actor, appErr := policy.ActorFromContext(ctx)
+		if appErr != nil {
+			return nil, appErr
+		}
+		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return nil, appErr
 		}
 	}
@@ -159,7 +155,11 @@ func (s *vocabularyDeckService) Delete(ctx context.Context, id uint) *response.A
 	}
 
 	if deck.UserID != nil {
-		if appErr := policy.Allow(ctx, *deck.UserID); appErr != nil {
+		actor, appErr := policy.ActorFromContext(ctx)
+		if appErr != nil {
+			return appErr
+		}
+		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return appErr
 		}
 	}
@@ -173,6 +173,9 @@ func (s *vocabularyDeckService) Delete(ctx context.Context, id uint) *response.A
 }
 
 func (s *vocabularyDeckService) CreateAsSystem(ctx context.Context, body req.CreateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError) {
+	if _, err := policy.ActorFromContext(ctx); err != nil {
+		return nil, err
+	}
 	log := sLog()
 	log.Infow("creating system vocabulary deck")
 	deck := &models.VocabularyDeck{
@@ -191,6 +194,9 @@ func (s *vocabularyDeckService) CreateAsSystem(ctx context.Context, body req.Cre
 }
 
 func (s *vocabularyDeckService) UpdateAsSystem(ctx context.Context, id uint, body req.UpdateVocabularyDeckReq) (*models.VocabularyDeck, *response.AppError) {
+	if _, err := policy.ActorFromContext(ctx); err != nil {
+		return nil, err
+	}
 	log := sLog().With("id", id)
 	log.Infow("updating system vocabulary deck")
 	deck, err := s.repo.FindByID(ctx, id)
@@ -214,6 +220,9 @@ func (s *vocabularyDeckService) UpdateAsSystem(ctx context.Context, id uint, bod
 }
 
 func (s *vocabularyDeckService) DeleteAsSystem(ctx context.Context, id uint) *response.AppError {
+	if _, err := policy.ActorFromContext(ctx); err != nil {
+		return err
+	}
 	log := sLog().With("id", id)
 	log.Infow("deleting system vocabulary deck")
 	_, err := s.repo.FindByID(ctx, id)
