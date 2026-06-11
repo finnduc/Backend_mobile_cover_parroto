@@ -3,18 +3,25 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/common/DataTable"
+import { PaginationBar } from "@/components/common/PaginationBar"
 import { CreateModal } from "@/components/common/CreateModal"
 import { EditModal } from "@/components/common/EditModal"
 import { CategoryForm, type CategoryFormValues } from "@/features/categories/components/admin/CategoryForm"
 import { createAdminCategory, updateAdminCategory, deleteAdminCategory } from "@/features/categories/services/categories.action"
+import { ROUTES } from "@/lib/routes"
 import { toast } from "sonner"
 import type { Column } from "@/components/common/DataTable"
 import type { Category } from "@/types/categories.models"
+import type { PaginatedMeta } from "@/types/base-response"
 
 export function CategoriesPageContent({
   categories,
+  meta,
+  limit,
 }: {
   categories: Category[]
+  meta: PaginatedMeta
+  limit: number
 }) {
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
@@ -65,6 +72,13 @@ export function CategoriesPageContent({
       </div>
 
       <DataTable columns={columns} data={categories} />
+
+      <PaginationBar
+        currentPage={meta.page}
+        totalPages={meta.totalPages}
+        baseUrl={ROUTES.ADMIN.CATEGORIES.LIST}
+        searchParams={new URLSearchParams({ limit: String(limit) })}
+      />
 
       <CreateModal
         open={createOpen}

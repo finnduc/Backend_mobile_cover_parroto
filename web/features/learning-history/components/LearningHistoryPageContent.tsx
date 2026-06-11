@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Clock } from "lucide-react"
+import { CheckCircle, Clock, Mic, Headphones } from "lucide-react"
 import type { LearningHistory, LearningHistorySummary } from "@/types/learning-history.models"
 import { ROUTES } from "@/lib/routes"
 import Link from "next/link"
@@ -11,14 +11,18 @@ export function LearningHistoryPageContent({
   finished,
   unfinished,
   summary,
+  shadowingPercent,
+  dictationPercent,
 }: {
   finished: LearningHistory[]
   unfinished: LearningHistory[]
   summary: LearningHistorySummary
+  shadowingPercent: number
+  dictationPercent: number
 }) {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="flex items-center gap-3 pt-6">
             <CheckCircle className="size-6 text-green-500" />
@@ -34,6 +38,24 @@ export function LearningHistoryPageContent({
             <div>
               <p className="text-2xl font-bold">{summary.unfinishedCount}</p>
               <p className="text-xs text-muted-foreground">Đang học</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-3 pt-6">
+            <Mic className="size-6 text-blue-500" />
+            <div>
+              <p className="text-2xl font-bold">{shadowingPercent}%</p>
+              <p className="text-xs text-muted-foreground">Câu đã shadow</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-3 pt-6">
+            <Headphones className="size-6 text-purple-500" />
+            <div>
+              <p className="text-2xl font-bold">{dictationPercent}%</p>
+              <p className="text-xs text-muted-foreground">Câu đã dictate</p>
             </div>
           </CardContent>
         </Card>

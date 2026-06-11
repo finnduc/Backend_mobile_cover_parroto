@@ -38,9 +38,9 @@ type CreateVocabularyItemFromDeckReq struct {
 }
 
 type UpdateVocabularyItemReq struct {
-	Phrase           string `json:"phrase"`
-	NormalizedPhrase string `json:"normalized_phrase"`
-	Meaning          string `json:"meaning"`
-	ExampleSentence  string `json:"example_sentence"`
-	Note             string `json:"note"`
+	Phrase           *string `json:"phrase"`
+	NormalizedPhrase *string `json:"normalized_phrase"`
+	Meaning          *string `json:"meaning"`
+	ExampleSentence  *string `json:"example_sentence"`
+	Note             *string `json:"note"`
 }

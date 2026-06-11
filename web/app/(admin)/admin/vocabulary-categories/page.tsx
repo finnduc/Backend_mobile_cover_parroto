@@ -2,13 +2,24 @@ import { AdminPageLayout } from "@/components/layouts/AdminPageLayout"
 import { AdminVocabCategoriesTable } from "@/features/vocabulary/components/admin/AdminVocabCategoriesTable"
 import { getAdminVocabularyCategories } from "@/features/vocabulary/services/vocabulary.get"
 
-export default async function AdminVocabCategoriesPage() {
-  const res = await getAdminVocabularyCategories()
+const DEFAULT_LIMIT = 10
+
+export default async function AdminVocabCategoriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; limit?: string }>
+}) {
+  const { page, limit } = await searchParams
+  const pageNum = Math.max(1, Number(page) || 1)
+  const limitNum = Math.max(1, Number(limit) || DEFAULT_LIMIT)
+
+  const res = await getAdminVocabularyCategories(pageNum, limitNum)
   const categories = res.data ?? []
+  const meta = res.meta ?? { page: pageNum, limit: limitNum, total: 0, totalPages: 0 }
 
   return (
     <AdminPageLayout>
-      <AdminVocabCategoriesTable categories={categories} />
+      <AdminVocabCategoriesTable categories={categories} meta={meta} limit={limitNum} />
     </AdminPageLayout>
   )
 }

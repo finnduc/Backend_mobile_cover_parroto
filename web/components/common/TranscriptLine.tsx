@@ -5,7 +5,8 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { cn } from "@/lib/utils"
-import { BookOpen, Bookmark } from "lucide-react"
+import { BookOpen } from "lucide-react"
+// import { Bookmark } from "lucide-react"
 
 function formatTimestamp(timestamp: string) {
   // Case: "1:9.944000000000003"
@@ -39,22 +40,22 @@ export function TranscriptLine({
   text,
   active = false,
   completed = false,
-  bookmarked = false,
+  // bookmarked = false,
   timestamp,
   transcriptId,
   onClick,
   onAddToDeck,
-  onBookmark,
+  // onBookmark,
 }: {
   text: string
   active?: boolean
   completed?: boolean
-  bookmarked?: boolean
+  // bookmarked?: boolean
   timestamp?: string
   transcriptId?: number
   onClick?: () => void
   onAddToDeck?: (transcriptId: number, text: string) => void
-  onBookmark?: () => void
+  // onBookmark?: () => void
 }) {
 
   return (
@@ -76,7 +77,7 @@ export function TranscriptLine({
             </span>
           )}
           <span className={cn("flex-1", completed && "line-through opacity-60")}>{text}</span>
-          {onBookmark && (
+          {/* {onBookmark && (
             <Bookmark
               className={cn(
                 "size-4 shrink-0 cursor-pointer transition-colors",
@@ -87,7 +88,7 @@ export function TranscriptLine({
                 onBookmark()
               }}
             />
-          )}
+          )} */}
         </button>
       </ContextMenuTrigger>
       <ContextMenuContent>

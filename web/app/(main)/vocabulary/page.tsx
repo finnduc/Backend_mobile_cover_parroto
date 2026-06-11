@@ -10,9 +10,10 @@ export default async function VocabularyPage() {
 
   return (
     <PageLayout
-      title="Từ vựng"
+      title="Từ điển"
       breadcrumbs={[
         { label: "Từ vựng" },
+        {label: "Từ điển"}
       ]}
     >
       <VocabularyBrowser categories={categories} decks={decks} />

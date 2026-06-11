@@ -8,9 +8,13 @@ export async function getCategories(): Promise<BaseResponse<Category[]>> {
   return apiFetch<Category[]>("/categories")
 }
 
-export async function getAdminCategories(): Promise<BaseResponse<Category[]>> {
+export async function getAdminCategories(
+  page = 1,
+  limit = 10
+): Promise<BaseResponse<Category[]>> {
   return apiFetch<Category[]>("/admin/categories", {
     withCredentials: true,
+    query: { page, limit },
     tags: [CACHE_TAGS.categories],
   })
 }

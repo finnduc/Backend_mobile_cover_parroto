@@ -8,7 +8,7 @@ import { getPronunciationProgress } from "@/features/pronunciation/services/pron
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { ROUTES } from "@/lib/routes"
 import type { PronunciationAttempt } from "@/types/pronunciation.models"
-import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+// import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 
 export default async function ShadowingPage({
   params,
@@ -59,8 +59,8 @@ export default async function ShadowingPage({
   const decksRes = await getUserVocabularyDecks()
   const decks = decksRes.data ?? []
 
-  const bookmarksRes = await getTranscriptBookmarks(lesson.id)
-  const bookmarks = bookmarksRes.data ?? []
+  // const bookmarksRes = await getTranscriptBookmarks(lesson.id)
+  // const bookmarks = bookmarksRes.data ?? []
 
   return (
     <PageLayout
@@ -76,7 +76,7 @@ export default async function ShadowingPage({
         lessonId={lesson.id}
         decks={decks}
         initialCompletedIds={initialCompletedIds}
-        bookmarks={bookmarks}
+        // bookmarks={bookmarks}
       >
         <ShadowingArea
           transcripts={transcripts}

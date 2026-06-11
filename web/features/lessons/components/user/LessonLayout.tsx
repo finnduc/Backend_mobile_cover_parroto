@@ -6,7 +6,7 @@ import { TranscriptSidebar } from "@/features/lessons/components/user/Transcript
 import { useLessonPlayer } from "@/features/lessons/hooks/use-lesson-player"
 import { PlayerContext } from "@/features/lessons/context/player-context"
 import type { Transcript } from "@/types/lessons.models"
-import type { TranscriptBookmark } from "@/types/book-mark.models"
+// import type { TranscriptBookmark } from "@/types/book-mark.models"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
 import type { ReactNode } from "react"
 
@@ -17,7 +17,7 @@ export function LessonLayout({
   lessonId,
   decks = [],
   initialCompletedIds,
-  bookmarks = [],
+  // bookmarks = [],
 }: {
   children?: ReactNode
   videoUrl?: string
@@ -25,7 +25,7 @@ export function LessonLayout({
   lessonId?: number
   decks?: VocabularyDeck[]
   initialCompletedIds?: number[]
-  bookmarks?: TranscriptBookmark[]
+  // bookmarks?: TranscriptBookmark[]
 }) {
   const segments = transcripts ?? []
   const completedSet = new Set(initialCompletedIds ?? [])
@@ -55,7 +55,7 @@ export function LessonLayout({
         <TranscriptSidebar
           transcripts={segments}
           completedIds={initialCompletedIds ?? []}
-          bookmarks={bookmarks}
+          // bookmarks={bookmarks}
           lessonId={lessonId!}
           decks={decks}
         />

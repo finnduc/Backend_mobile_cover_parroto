@@ -15,3 +15,17 @@ export async function getTranscriptBookmarks(
     tags: [CACHE_TAGS.bookmarks],
   })
 }
+
+export async function getAllTranscriptBookmarks(
+  lessonIds: number[]
+): Promise<{ lessonId: number; bookmark: TranscriptBookmark }[]> {
+  if (lessonIds.length === 0) return []
+  const results = await Promise.all(
+    lessonIds.map(async (lessonId) => {
+      const res = await getTranscriptBookmarks(lessonId, 1, 100)
+      const bookmarks = res.data ?? []
+      return bookmarks.map((bookmark) => ({ lessonId, bookmark }))
+    })
+  )
+  return results.flat()
+}

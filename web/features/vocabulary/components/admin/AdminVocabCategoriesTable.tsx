@@ -3,18 +3,25 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/common/DataTable"
+import { PaginationBar } from "@/components/common/PaginationBar"
 import { CreateModal } from "@/components/common/CreateModal"
 import { EditModal } from "@/components/common/EditModal"
 import { VocabularyCategoryForm } from "@/features/vocabulary/components/admin/VocabularyCategoryForm"
 import { createVocabularyCategory, updateVocabularyCategory, deleteVocabularyCategory } from "@/features/vocabulary/services/vocabulary.action"
+import { ROUTES } from "@/lib/routes"
 import { toast } from "sonner"
 import type { Column } from "@/components/common/DataTable"
 import type { VocabularyCategory } from "@/types/vocabulary.models"
+import type { PaginatedMeta } from "@/types/base-response"
 
 export function AdminVocabCategoriesTable({
   categories,
+  meta,
+  limit,
 }: {
   categories: VocabularyCategory[]
+  meta: PaginatedMeta
+  limit: number
 }) {
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
@@ -33,6 +40,7 @@ export function AdminVocabCategoriesTable({
           <Button size="xs" variant="destructive" onClick={async () => {
             const res = await deleteVocabularyCategory(cat.id)
             if (res.error) toast.error(res.error.message)
+            else toast.success("Deleted")
           }}>Delete</Button>
         </div>
       ),
@@ -46,6 +54,12 @@ export function AdminVocabCategoriesTable({
         <Button onClick={() => setCreateOpen(true)}>Create Category</Button>
       </div>
       <DataTable columns={columns} data={categories} />
+      <PaginationBar
+        currentPage={meta.page}
+        totalPages={meta.totalPages}
+        baseUrl={ROUTES.ADMIN.VOCABULARY.CATEGORIES.LIST}
+        searchParams={new URLSearchParams({ limit: String(limit) })}
+      />
       <CreateModal open={createOpen} onOpenChange={setCreateOpen} title="Create Vocabulary Category" submitLabel="">
         <VocabularyCategoryForm onSubmit={async (values) => {
           const res = await createVocabularyCategory({ name: values.name, description: values.description })

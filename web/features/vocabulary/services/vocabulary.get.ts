@@ -8,9 +8,13 @@ export async function getVocabularyCategories(): Promise<BaseResponse<Vocabulary
   return apiFetch<VocabularyCategory[]>("/vocabulary-categories")
 }
 
-export async function getAdminVocabularyCategories(): Promise<BaseResponse<VocabularyCategory[]>> {
+export async function getAdminVocabularyCategories(
+  page = 1,
+  limit = 10
+): Promise<BaseResponse<VocabularyCategory[]>> {
   return apiFetch<VocabularyCategory[]>("/admin/vocabulary-categories", {
     withCredentials: true,
+    query: { page, limit },
     tags: [CACHE_TAGS.vocabularyCategories],
   })
 }
@@ -46,9 +50,13 @@ export async function getVocabularyDeck(deckId: number): Promise<BaseResponse<Vo
   })
 }
 
-export async function getAdminVocabularyDecks(): Promise<BaseResponse<VocabularyDeck[]>> {
+export async function getAdminVocabularyDecks(
+  page = 1,
+  limit = 10
+): Promise<BaseResponse<VocabularyDeck[]>> {
   return apiFetch<VocabularyDeck[]>("/admin/vocabulary-decks", {
     withCredentials: true,
+    query: { page, limit },
     tags: [CACHE_TAGS.vocabularyDecks],
   })
 }
@@ -66,7 +74,7 @@ export async function getVocabularyItems(
 export async function getAdminVocabularyItems(
   deckId: number,
   page = 1,
-  limit = 100
+  limit = 10
 ): Promise<BaseResponse<VocabularyItem[]>> {
   return apiFetch<VocabularyItem[]>(`/admin/vocabulary-decks/${deckId}/items`, {
     withCredentials: true,

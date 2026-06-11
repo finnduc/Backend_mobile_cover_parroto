@@ -28,8 +28,8 @@ type CreateVocabularyDeckReq struct {
 }
 
 type UpdateVocabularyDeckReq struct {
-	Name         string `json:"name" binding:"required"`
-	Description  string `json:"description"`
-	ThumbnailURL string `json:"thumbnail_url"`
-	Level        string `json:"level"`
+	Name         *string `json:"name"`
+	Description  *string `json:"description"`
+	ThumbnailURL *string `json:"thumbnail_url"`
+	Level        *string `json:"level"`
 }

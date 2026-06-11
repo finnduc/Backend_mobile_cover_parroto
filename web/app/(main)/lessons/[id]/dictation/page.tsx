@@ -5,7 +5,7 @@ import { DictationArea } from "@/features/lessons/components/user/DictationArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { getDictationStatus } from "@/features/lessons/services/dictation-status.get"
-import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
+// import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function DictationPage({
@@ -35,8 +35,8 @@ export default async function DictationPage({
   const decksRes = await getUserVocabularyDecks()
   const decks = decksRes.data ?? []
 
-  const bookmarksRes = await getTranscriptBookmarks(lesson.id)
-  const bookmarks = bookmarksRes.data ?? []
+  // const bookmarksRes = await getTranscriptBookmarks(lesson.id)
+  // const bookmarks = bookmarksRes.data ?? []
 
   return (
     <PageLayout
@@ -52,7 +52,7 @@ export default async function DictationPage({
         lessonId={lesson.id}
         decks={decks}
         initialCompletedIds={initialCompletedIds}
-        bookmarks={bookmarks}
+        // bookmarks={bookmarks}
       >
         <DictationArea
           transcripts={transcripts}

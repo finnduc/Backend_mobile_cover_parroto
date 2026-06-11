@@ -2,25 +2,25 @@
 
 import { useState } from "react"
 import { TranscriptLine } from "@/components/common/TranscriptLine"
-import { BookmarkNoteDialog } from "@/features/bookmarks/components/BookmarkNoteDialog"
+// import { BookmarkNoteDialog } from "@/features/bookmarks/components/BookmarkNoteDialog"
 import { AddToDeckDialog } from "@/features/lessons/components/user/AddToDeckDialog"
 import { Progress } from "@/components/ui/progress"
 import { usePlayerContext } from "@/features/lessons/context/player-context"
-import { createTranscriptBookmark, deleteTranscriptBookmark } from "@/features/bookmarks/services/bookmarks.action"
+// import { createTranscriptBookmark, deleteTranscriptBookmark } from "@/features/bookmarks/services/bookmarks.action"
 import type { Transcript } from "@/types/lessons.models"
-import type { TranscriptBookmark } from "@/types/book-mark.models"
+// import type { TranscriptBookmark } from "@/types/book-mark.models"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
 
 export function TranscriptSidebar({
   transcripts,
   completedIds,
-  bookmarks = [],
+  // bookmarks = [],
   lessonId,
   decks = [],
 }: {
   transcripts: Transcript[]
   completedIds: number[]
-  bookmarks?: TranscriptBookmark[]
+  // bookmarks?: TranscriptBookmark[]
   lessonId: number
   decks?: VocabularyDeck[]
 }) {
@@ -31,21 +31,21 @@ export function TranscriptSidebar({
     text: string
   } | null>(null)
 
-  const [noteDialogOpen, setNoteDialogOpen] = useState(false)
-  const [activeBookmarkId, setActiveBookmarkId] = useState<number | null>(null)
+  // const [noteDialogOpen, setNoteDialogOpen] = useState(false)
+  // const [activeBookmarkId, setActiveBookmarkId] = useState<number | null>(null)
 
-  const handleBookmarkToggle = async (transcriptId: number) => {
-    const existing = bookmarks.find((b) => b.transcriptId === transcriptId)
-    if (existing) {
-      await deleteTranscriptBookmark(existing.id)
-    } else {
-      const res = await createTranscriptBookmark(transcriptId, "")
-      if (res.data) {
-        setActiveBookmarkId(res.data.id)
-        setNoteDialogOpen(true)
-      }
-    }
-  }
+  // const handleBookmarkToggle = async (transcriptId: number) => {
+  //   const existing = bookmarks.find((b) => b.transcriptId === transcriptId)
+  //   if (existing) {
+  //     await deleteTranscriptBookmark(existing.id)
+  //   } else {
+  //     const res = await createTranscriptBookmark(transcriptId, "")
+  //     if (res.data) {
+  //       setActiveBookmarkId(res.data.id)
+  //       setNoteDialogOpen(true)
+  //     }
+  //   }
+  // }
 
   return (
     <aside className="hidden w-80 shrink-0 lg:block">
@@ -58,14 +58,14 @@ export function TranscriptSidebar({
               text={seg.content}
               active={i === highlightedIndex}
               completed={completedIds.includes(seg.id)}
-              bookmarked={bookmarks.some((b) => b.transcriptId === seg.id)}
+              // bookmarked={bookmarks.some((b) => b.transcriptId === seg.id)}
               transcriptId={seg.id}
               timestamp={`${Math.floor(seg.startTimestamp / 60)}:${(seg.startTimestamp % 60).toString().padStart(2, "0")}`}
               onClick={() => onTranscriptClick(i)}
               onAddToDeck={(transcriptId, text) => {
                 setAddToDeckTarget({ transcriptId, text })
               }}
-              onBookmark={() => handleBookmarkToggle(seg.id)}
+              // onBookmark={() => handleBookmarkToggle(seg.id)}
             />
           ))}
         </div>
@@ -93,7 +93,7 @@ export function TranscriptSidebar({
         />
       )}
 
-      {activeBookmarkId && (
+      {/* {activeBookmarkId && (
         <BookmarkNoteDialog
           open={noteDialogOpen}
           onOpenChange={setNoteDialogOpen}
@@ -102,7 +102,7 @@ export function TranscriptSidebar({
             await updateTranscriptBookmarkNote(activeBookmarkId, note)
           }}
         />
-      )}
+      )} */}
     </aside>
   )
 }

@@ -15,7 +15,14 @@ type Meta struct {
 
 // NewMeta creates pagination metadata safely (SQL-style)
 func NewMeta(page, limit int, total int64) Meta {
-	if limit <= 0 {
+	if limit == 0 {
+		return Meta{
+			Limit: 0,
+			Total: total,
+		}
+	}
+
+	if limit < 0 {
 		limit = 10
 	}
 

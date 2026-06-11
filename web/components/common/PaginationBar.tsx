@@ -40,9 +40,8 @@ export function PaginationBar({
   baseUrl: string
   searchParams?: URLSearchParams
 }) {
-  if (totalPages <= 1) return null
-
   const params = searchParams ?? new URLSearchParams()
+  const pages = totalPages >= 1 ? getPageNumbers(currentPage, totalPages) : [1]
 
   return (
     <Pagination>
@@ -54,7 +53,7 @@ export function PaginationBar({
           />
         </PaginationItem>
 
-        {getPageNumbers(currentPage, totalPages).map((p, i) =>
+        {pages.map((p, i) =>
           p === "ellipsis" ? (
             <PaginationItem key={`ellipsis-${i}`}>
               <PaginationEllipsis />

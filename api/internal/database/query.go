@@ -32,7 +32,7 @@ func (q *Query) SetPage(page int) *Query {
 }
 
 func (q *Query) SetLimit(limit int) *Query {
-	if limit > 0 {
+	if limit >= 0 {
 		q.Limit = limit
 	}
 	return q
@@ -56,8 +56,10 @@ func (q *Query) Apply(db *gorm.DB) *gorm.DB {
 		result = result.Order(q.OrderBy)
 	}
 
-	offset := (q.Page - 1) * q.Limit
-	result = result.Offset(offset).Limit(q.Limit)
+	if q.Limit > 0 {
+		offset := (q.Page - 1) * q.Limit
+		result = result.Offset(offset).Limit(q.Limit)
+	}
 
 	return result
 }

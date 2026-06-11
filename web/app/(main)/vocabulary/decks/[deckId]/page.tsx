@@ -24,7 +24,8 @@ export default async function SystemDeckDetailPage({
     <PageLayout
       title={deck.name}
       breadcrumbs={[
-        { label: "Tu vung", href: ROUTES.USER.VOCABULARY.LIST },
+        { label: "Từ vựng"},
+        {label: "Từ điển", href: ROUTES.USER.VOCABULARY.LIST},
         { label: deck.name },
       ]}
     >
