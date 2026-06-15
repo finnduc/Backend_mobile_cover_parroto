@@ -142,6 +142,26 @@ func (ctrl *PronunciationController) ListProgress(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Success(result))
 }
 
+func (ctrl *PronunciationController) ListProgressDetail(c *gin.Context) {
+	lessonID, err := strconv.ParseUint(c.Param("lessonId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("invalid lesson ID")))
+		return
+	}
+	userID, appErr := utils.GetFromContext[string](c.Request.Context(), enums.ContextKeyUserID)
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+
+	result, appErr := ctrl.svc.ListProgressDetail(c.Request.Context(), userID, uint(lessonID))
+	if appErr != nil {
+		c.JSON(appErr.Code, response.Fail(appErr))
+		return
+	}
+	c.JSON(http.StatusOK, response.Success(result))
+}
+
 func (ctrl *PronunciationController) UpdateProgress(c *gin.Context) {
 	transcriptID, err := strconv.ParseUint(c.Param("transcriptId"), 10, 64)
 	if err != nil {

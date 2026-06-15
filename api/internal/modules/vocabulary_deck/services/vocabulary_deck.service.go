@@ -131,10 +131,18 @@ func (s *vocabularyDeckService) Update(ctx context.Context, id uint, body req.Up
 		}
 	}
 
-	deck.Name = body.Name
-	deck.Description = body.Description
-	deck.ThumbnailURL = body.ThumbnailURL
-	deck.Level = body.Level
+	if body.Name != nil {
+		deck.Name = *body.Name
+	}
+	if body.Description != nil {
+		deck.Description = *body.Description
+	}
+	if body.ThumbnailURL != nil {
+		deck.ThumbnailURL = *body.ThumbnailURL
+	}
+	if body.Level != nil {
+		deck.Level = *body.Level
+	}
 	if updateErr := s.repo.Update(ctx, deck); updateErr != nil {
 		log.Errorw("failed to update deck", "error", updateErr)
 		return nil, response.Internal("failed to update deck")
@@ -207,10 +215,18 @@ func (s *vocabularyDeckService) UpdateAsSystem(ctx context.Context, id uint, bod
 		return nil, response.Internal("failed to get deck")
 	}
 
-	deck.Name = body.Name
-	deck.Description = body.Description
-	deck.ThumbnailURL = body.ThumbnailURL
-	deck.Level = body.Level
+	if body.Name != nil {
+		deck.Name = *body.Name
+	}
+	if body.Description != nil {
+		deck.Description = *body.Description
+	}
+	if body.ThumbnailURL != nil {
+		deck.ThumbnailURL = *body.ThumbnailURL
+	}
+	if body.Level != nil {
+		deck.Level = *body.Level
+	}
 	if updateErr := s.repo.Update(ctx, deck); updateErr != nil {
 		log.Errorw("failed to update deck", "error", updateErr)
 		return nil, response.Internal("failed to update deck")

@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation"
+import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
 import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
 import { DictationArea } from "@/features/lessons/components/user/DictationArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { getDictationStatus } from "@/features/lessons/services/dictation-status.get"
+import type { VocabularyDeck } from "@/types/vocabulary.models"
 // import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 import { ROUTES } from "@/lib/routes"
 
@@ -14,6 +16,7 @@ export default async function DictationPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const { userId } = await auth()
   const lessonRes = await getLesson(Number(id))
 
   if (!lessonRes.data) {
@@ -25,15 +28,20 @@ export default async function DictationPage({
   const transcripts = (transcriptsRes.data ?? [])
     .sort((a, b) => a.sequence - b.sequence)
 
-  const statusRes = await getDictationStatus(lesson.id)
-  const completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
   const transcriptIdToIndex = new Map(transcripts.map((t, i) => [t.id, i]))
-  const initialCompletedIds = completedTranscriptIds
-    .map((tid) => transcriptIdToIndex.get(tid))
-    .filter((i): i is number => i !== undefined)
+  let initialCompletedIds: number[] = []
+  let decks: VocabularyDeck[] = []
 
-  const decksRes = await getUserVocabularyDecks()
-  const decks = decksRes.data ?? []
+  if (userId) {
+    const statusRes = await getDictationStatus(lesson.id)
+    const completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
+    initialCompletedIds = completedTranscriptIds
+      .map((tid) => transcriptIdToIndex.get(tid))
+      .filter((i): i is number => i !== undefined)
+
+    const decksRes = await getUserVocabularyDecks()
+    decks = decksRes.data ?? []
+  }
 
   // const bookmarksRes = await getTranscriptBookmarks(lesson.id)
   // const bookmarks = bookmarksRes.data ?? []
@@ -58,6 +66,7 @@ export default async function DictationPage({
           transcripts={transcripts}
           initialCompletedIds={initialCompletedIds}
           lessonId={lesson.id}
+          isAuthenticated={!!userId}
         />
       </LessonLayout>
     </PageLayout>

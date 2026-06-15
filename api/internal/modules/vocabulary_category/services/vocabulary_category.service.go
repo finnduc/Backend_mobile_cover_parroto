@@ -75,10 +75,18 @@ func (s *vocabularyCategoryService) Update(ctx context.Context, id uint, body re
 	log.Infow("updating vocabulary category")
 	category, err := s.repo.FindByID(ctx, id)
 	if err != nil {
-		return nil, response.NotFound("category not found")
+		if errors.Is(err, coreError.ErrNotFound) {
+			return nil, response.NotFound("category not found")
+		}
+		log.Errorw("failed to get category for update", "error", err)
+		return nil, response.Internal("failed to get category")
 	}
-	category.Name = body.Name
-	category.Description = body.Description
+	if body.Name != nil {
+		category.Name = *body.Name
+	}
+	if body.Description != nil {
+		category.Description = *body.Description
+	}
 	if updateErr := s.repo.Update(ctx, category); updateErr != nil {
 		log.Errorw("failed to update category", "error", updateErr)
 		return nil, response.Internal("failed to update category")
@@ -90,6 +98,14 @@ func (s *vocabularyCategoryService) Update(ctx context.Context, id uint, body re
 func (s *vocabularyCategoryService) Delete(ctx context.Context, id uint) *response.AppError {
 	log := sLog().With("id", id)
 	log.Infow("deleting vocabulary category")
+	_, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, coreError.ErrNotFound) {
+			return response.NotFound("category not found")
+		}
+		log.Errorw("failed to get category for delete", "error", err)
+		return response.Internal("failed to get category")
+	}
 	if err := s.repo.Delete(ctx, id); err != nil {
 		log.Errorw("failed to delete category", "error", err)
 		return response.Internal("failed to delete category")

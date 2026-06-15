@@ -198,6 +198,7 @@ func TestVocabularyCategoryService_Create(t *testing.T) {
 
 func TestVocabularyCategoryService_Update(t *testing.T) {
 	existing := &models.VocabularyCategory{ID: 1, Name: "Old Name", Description: "Old desc"}
+	strPtr := func(s string) *string { return &s }
 
 	tests := []struct {
 		name     string
@@ -211,7 +212,7 @@ func TestVocabularyCategoryService_Update(t *testing.T) {
 		{
 			name: "success",
 			id:   1,
-			body: req.UpdateVocabularyCategoryReq{Name: "New Name", Description: "New desc"},
+			body: req.UpdateVocabularyCategoryReq{Name: strPtr("New Name"), Description: strPtr("New desc")},
 			setup: func(r *repositories.MockVocabularyCategoryRepo) {
 				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
 				r.On("Update", mock.Anything, mock.MatchedBy(func(c *models.VocabularyCategory) bool {
@@ -223,7 +224,7 @@ func TestVocabularyCategoryService_Update(t *testing.T) {
 		{
 			name: "not found returns 404",
 			id:   999,
-			body: req.UpdateVocabularyCategoryReq{Name: "X"},
+			body: req.UpdateVocabularyCategoryReq{Name: strPtr("X")},
 			setup: func(r *repositories.MockVocabularyCategoryRepo) {
 				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 			},
@@ -233,7 +234,7 @@ func TestVocabularyCategoryService_Update(t *testing.T) {
 		{
 			name: "update db error returns 500",
 			id:   1,
-			body: req.UpdateVocabularyCategoryReq{Name: "New Name"},
+			body: req.UpdateVocabularyCategoryReq{Name: strPtr("New Name")},
 			setup: func(r *repositories.MockVocabularyCategoryRepo) {
 				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
 				r.On("Update", mock.Anything, mock.Anything).Return(errors.New("db error"))
@@ -276,13 +277,24 @@ func TestVocabularyCategoryService_Delete(t *testing.T) {
 			name: "success",
 			id:   1,
 			setup: func(r *repositories.MockVocabularyCategoryRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(&models.VocabularyCategory{ID: 1}, nil)
 				r.On("Delete", mock.Anything, uint(1)).Return(nil)
 			},
+		},
+		{
+			name: "not found returns 404",
+			id:   999,
+			setup: func(r *repositories.MockVocabularyCategoryRepo) {
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
+			},
+			wantErr:  true,
+			wantCode: http.StatusNotFound,
 		},
 		{
 			name: "db error returns 500",
 			id:   2,
 			setup: func(r *repositories.MockVocabularyCategoryRepo) {
+				r.On("FindByID", mock.Anything, uint(2)).Return(&models.VocabularyCategory{ID: 2}, nil)
 				r.On("Delete", mock.Anything, uint(2)).Return(errors.New("db error"))
 			},
 			wantErr:  true,

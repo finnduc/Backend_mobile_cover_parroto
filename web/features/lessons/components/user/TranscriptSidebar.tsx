@@ -56,6 +56,7 @@ export function TranscriptSidebar({
             <TranscriptLine
               key={seg.id}
               text={seg.content}
+              phonetic={seg.phonetic}
               active={i === highlightedIndex}
               completed={completedIds.includes(seg.id)}
               // bookmarked={bookmarks.some((b) => b.transcriptId === seg.id)}

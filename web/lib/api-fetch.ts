@@ -107,7 +107,7 @@ export async function apiFetch<T = any>(
       ...(resultMeta && { meta: resultMeta }),
     } as BaseResponse<T>;
   } catch (error: any) {
-    console.error(error);
+    // console.error(error);
     return {
       data: null,
       error: {

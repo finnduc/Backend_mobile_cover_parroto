@@ -10,6 +10,7 @@ import (
 	"go-cover-parroto/internal/core/response"
 	"go-cover-parroto/internal/database/models"
 	db_repos "go-cover-parroto/internal/database/repositories"
+	"go-cover-parroto/internal/modules/pronunciation/dtos/res"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +22,7 @@ type IPronunciationService interface {
 	Assess(ctx context.Context, userID string, lessonID, transcriptID uint, referenceText string, audioData []byte) (*PronunciationResult, *models.PronunciationAttempt, *response.AppError)
 	DeleteAttempt(ctx context.Context, attemptID uint) *response.AppError
 	ListProgress(ctx context.Context, userID string, lessonID uint) ([]*models.PronunciationProgress, *response.AppError)
+	ListProgressDetail(ctx context.Context, userID string, lessonID uint) ([]res.PronunciationProgressDetailRes, *response.AppError)
 	UpdateProgress(ctx context.Context, userID string, transcriptID uint) (*models.PronunciationProgress, *response.AppError)
 }
 
@@ -117,6 +119,51 @@ func (s *pronunciationService) ListProgress(ctx context.Context, userID string, 
 		return nil, response.Internal("failed to list progress")
 	}
 	return progress, nil
+}
+
+func (s *pronunciationService) ListProgressDetail(ctx context.Context, userID string, lessonID uint) ([]res.PronunciationProgressDetailRes, *response.AppError) {
+	progress, findErr := s.progressRepo.FindByUserAndLesson(ctx, userID, lessonID)
+	if findErr != nil {
+		return nil, response.Internal("failed to list progress")
+	}
+
+	var result []res.PronunciationProgressDetailRes
+	for _, p := range progress {
+		detail := res.PronunciationProgressDetailRes{
+			UserID:       p.UserID,
+			LessonID:     p.LessonID,
+			TranscriptID: p.TranscriptID,
+			BestAttemptID: p.BestAttemptID,
+			BestScore:     p.BestScore,
+			Feedback:      p.Feedback,
+			CreatedAt:     p.CreatedAt.Format("2006-01-02T15:04:05Z"),
+			UpdatedAt:     p.UpdatedAt.Format("2006-01-02T15:04:05Z"),
+			Words:         []res.WordResult{},
+		}
+
+		if p.BestAttemptID != nil {
+			attempt, err := s.attemptRepo.FindByID(ctx, *p.BestAttemptID)
+			if err == nil && attempt != nil {
+				detail.OverallScore = attempt.OverallScore
+				detail.Scores = res.PronunciationScores{
+					Accuracy:     attempt.AccuracyScore,
+					Fluency:      attempt.FluencyScore,
+					Completeness: attempt.CompletenessScore,
+					Prosody:      attempt.ProsodyScore,
+				}
+				if attempt.WordResults != "" {
+					var words []res.WordResult
+					if jsonErr := json.Unmarshal([]byte(attempt.WordResults), &words); jsonErr == nil {
+						detail.Words = words
+					}
+				}
+			}
+		}
+
+		result = append(result, detail)
+	}
+
+	return result, nil
 }
 
 func (s *pronunciationService) UpdateProgress(ctx context.Context, userID string, transcriptID uint) (*models.PronunciationProgress, *response.AppError) {

@@ -9,10 +9,9 @@ import { useAudioRecorder } from "@/features/lessons/hooks/use-audio-recorder"
 import { postShadowingStatus } from "@/features/lessons/services/shadowing-status.action"
 import { assessPronunciation, updatePronunciationProgress } from "@/features/pronunciation/services/pronunciation.action"
 import type { ExerciseControlProps } from "@/features/lessons/types/exercise.types"
-import type { Transcript } from "@/types/lessons.models"
 import type { PronunciationAttempt } from "@/types/pronunciation.models"
-import { Check, Mic, Send, Square, Volume2 } from "lucide-react"
-import { useEffect, useRef, useState, useTransition } from "react"
+import { Check, ChevronDown, ChevronUp, Mic, Send, Square, Volume2 } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 const WAVEFORM_BARS = [
@@ -26,6 +25,7 @@ export function ShadowingArea({
   transcripts,
   initialCompletedIds,
   lessonId,
+  isAuthenticated,
   pronunciationScores,
 }: ExerciseControlProps) {
   const [completed, setCompleted] = useState<number[]>(initialCompletedIds ?? [])
@@ -36,9 +36,9 @@ export function ShadowingArea({
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null)
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null)
   const [replaying, setReplaying] = useState(false)
+  const [expandedScoreIndex, setExpandedScoreIndex] = useState<number | null>(null)
   const replayAudioRef = useRef<HTMLAudioElement | null>(null)
   const { isRecording, startRecording, stopRecording } = useAudioRecorder()
-  const [, startTransition] = useTransition()
   const { activeIndex } = usePlayerContext()
 
   const lines = transcripts.map((t) => t.content)
@@ -95,7 +95,7 @@ export function ShadowingArea({
   }
 
   const handleSubmit = async () => {
-    if (!recordedBlob) return
+    if (!recordedBlob || !isAuthenticated) return
     setAssessingIndex(safeActiveIndex)
     const seg = transcripts[safeActiveIndex]
     if (seg && lessonId) {
@@ -128,8 +128,6 @@ export function ShadowingArea({
     setAssessingIndex(null)
   }
 
-  const currentScore = scores.get(safeActiveIndex)
-
   return (
     <div className="space-y-4">
       <div className="rounded-xl bg-gradient-to-b from-muted/50 to-background p-6 text-center">
@@ -147,7 +145,11 @@ export function ShadowingArea({
             ))}
           </div>
         </div>
-        <p className="mb-6 text-lg font-medium">{lines[safeActiveIndex]}</p>
+        <p className="mb-1 text-lg font-medium">{lines[safeActiveIndex]}</p>
+        {transcripts[safeActiveIndex]?.phonetic && (
+          <p className="mb-5 text-sm text-muted-foreground">/{transcripts[safeActiveIndex].phonetic}/</p>
+        )}
+        {!transcripts[safeActiveIndex]?.phonetic && <div className="mb-6" />}
         <PlaybackControls totalLines={lines.length}>
           <Button
             size="lg"
@@ -191,8 +193,6 @@ export function ShadowingArea({
         )}
       </div>
 
-      {currentScore && <PronunciationScore result={currentScore} />}
-
       <div className="space-y-1">
         {transcripts.map((seg, i) => {
           const isCompleted = completed.includes(i) && i !== safeActiveIndex
@@ -205,20 +205,43 @@ export function ShadowingArea({
                 ? "bg-amber-500"
                 : "bg-red-500"
             : ""
+          const isExpanded = expandedScoreIndex === i
           return (
-            <div
-              key={seg.id}
-              className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${isSaved ? "bg-green-100 text-green-700 line-through" : ""
-                } ${isCompleted && !isSaved ? "bg-amber-50 text-amber-700" : ""} ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
-            >
-              {isSaved && <Check className="size-3.5 shrink-0 text-green-600" />}
-              {isCompleted && !isSaved && <span className="size-3.5 shrink-0 rounded-full border border-amber-400" />}
-              {segScore && (
-                <Badge className={scoreBadgeClass + " text-white text-xs"}>
-                  {segScore.overallScore.toFixed(0)}
-                </Badge>
+            <div key={seg.id}>
+              <div
+                className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${isSaved ? "bg-green-100 text-green-700 line-through" : ""
+                  } ${isCompleted && !isSaved ? "bg-amber-50 text-amber-700" : ""} ${i === safeActiveIndex ? "bg-transcript-active font-medium" : ""}`}
+              >
+                {isSaved && <Check className="size-3.5 shrink-0 text-green-600" />}
+                {isCompleted && !isSaved && <span className="size-3.5 shrink-0 rounded-full border border-amber-400" />}
+                {segScore && (
+                  <button
+                    type="button"
+                    onClick={() => setExpandedScoreIndex(isExpanded ? null : i)}
+                    className="flex items-center gap-1 cursor-pointer"
+                  >
+                    <Badge className={scoreBadgeClass + " text-white text-xs"}>
+                      {segScore.overallScore.toFixed(0)}
+                    </Badge>
+                    {isExpanded ? (
+                      <ChevronUp className="size-3 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="size-3 text-muted-foreground" />
+                    )}
+                  </button>
+                )}
+                <div className="min-w-0">
+                  <span>{seg.content}</span>
+                  {seg.phonetic && (
+                    <span className="block text-xs text-muted-foreground">/{seg.phonetic}/</span>
+                  )}
+                </div>
+              </div>
+              {isExpanded && segScore && (
+                <div className="px-3 py-2">
+                  <PronunciationScore result={segScore} />
+                </div>
               )}
-              {seg.content}
             </div>
           )
         })}

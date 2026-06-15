@@ -89,13 +89,27 @@ func (s *lessonService) Update(ctx context.Context, id uint, body req.UpdateLess
 		log.Errorw("failed to get lesson for update", "error", err)
 		return nil, response.Internal("failed to get lesson")
 	}
-	lesson.CategoryID = body.CategoryID
-	lesson.Title = body.Title
-	lesson.Description = body.Description
-	lesson.VideoURL = body.VideoURL
-	lesson.ThumbnailURL = body.ThumbnailURL
-	lesson.Level = body.Level
-	lesson.Duration = body.Duration
+	if body.CategoryID != nil {
+		lesson.CategoryID = body.CategoryID
+	}
+	if body.Title != nil {
+		lesson.Title = *body.Title
+	}
+	if body.Description != nil {
+		lesson.Description = *body.Description
+	}
+	if body.VideoURL != nil {
+		lesson.VideoURL = *body.VideoURL
+	}
+	if body.ThumbnailURL != nil {
+		lesson.ThumbnailURL = *body.ThumbnailURL
+	}
+	if body.Level != nil {
+		lesson.Level = *body.Level
+	}
+	if body.Duration != nil {
+		lesson.Duration = *body.Duration
+	}
 	if updateErr := s.repo.Update(ctx, lesson); updateErr != nil {
 		log.Errorw("failed to update lesson", "error", updateErr)
 		return nil, response.Internal("failed to update lesson")
@@ -107,6 +121,14 @@ func (s *lessonService) Update(ctx context.Context, id uint, body req.UpdateLess
 func (s *lessonService) Delete(ctx context.Context, id uint) *response.AppError {
 	log := sLog().With("lessonId", id)
 	log.Infow("deleting lesson")
+	_, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, coreError.ErrNotFound) {
+			return response.NotFound("lesson not found")
+		}
+		log.Errorw("failed to get lesson for delete", "error", err)
+		return response.Internal("failed to get lesson")
+	}
 	if err := s.repo.Delete(ctx, id); err != nil {
 		log.Errorw("failed to delete lesson", "error", err)
 		return response.Internal("failed to delete lesson")

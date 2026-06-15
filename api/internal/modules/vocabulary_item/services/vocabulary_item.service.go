@@ -124,11 +124,21 @@ func (s *vocabularyItemService) Update(ctx context.Context, id uint, body req.Up
 		}
 	}
 
-	item.Phrase = body.Phrase
-	item.NormalizedPhrase = body.NormalizedPhrase
-	item.Meaning = body.Meaning
-	item.ExampleSentence = body.ExampleSentence
-	item.Note = body.Note
+	if body.Phrase != nil {
+		item.Phrase = *body.Phrase
+	}
+	if body.NormalizedPhrase != nil {
+		item.NormalizedPhrase = *body.NormalizedPhrase
+	}
+	if body.Meaning != nil {
+		item.Meaning = *body.Meaning
+	}
+	if body.ExampleSentence != nil {
+		item.ExampleSentence = *body.ExampleSentence
+	}
+	if body.Note != nil {
+		item.Note = *body.Note
+	}
 	if updateErr := s.repo.Update(ctx, item); updateErr != nil {
 		log.Errorw("failed to update item", "error", updateErr)
 		return nil, response.Internal("failed to update item")

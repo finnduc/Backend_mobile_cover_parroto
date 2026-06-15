@@ -361,7 +361,7 @@ func TestTranscriptService_Update(t *testing.T) {
 			id:   999,
 			body: req.UpdateTranscriptReq{Sequence: &seq},
 			setup: func(r *repositories.MockTranscriptRepo) {
-				r.On("FindByID", mock.Anything, uint(999)).Return(nil, errors.New("record not found"))
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 			},
 			wantErr:  true,
 			wantCode: http.StatusNotFound,
@@ -412,13 +412,24 @@ func TestTranscriptService_Delete(t *testing.T) {
 			name: "success",
 			id:   1,
 			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(&models.Transcript{ID: 1}, nil)
 				r.On("Delete", mock.Anything, uint(1)).Return(nil)
 			},
+		},
+		{
+			name: "not found returns 404",
+			id:   999,
+			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
+			},
+			wantErr:  true,
+			wantCode: http.StatusNotFound,
 		},
 		{
 			name: "db error returns 500",
 			id:   2,
 			setup: func(r *repositories.MockTranscriptRepo) {
+				r.On("FindByID", mock.Anything, uint(2)).Return(&models.Transcript{ID: 2}, nil)
 				r.On("Delete", mock.Anything, uint(2)).Return(errors.New("db error"))
 			},
 			wantErr:  true,

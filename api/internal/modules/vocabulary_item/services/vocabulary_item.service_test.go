@@ -272,7 +272,7 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			name: "success — owner updates own deck item",
 			ctx:  userCtx("user1"),
 			id:   1,
-			body: req.UpdateVocabularyItemReq{Phrase: "new phrase", NormalizedPhrase: "new phrase", Meaning: "meaning"},
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("new phrase"), NormalizedPhrase: strPtr("new phrase"), Meaning: strPtr("meaning")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(1)).Return(itemWithUserDeck, nil)
 				ir.On("Update", mock.Anything, mock.MatchedBy(func(i *models.VocabularyItem) bool {
@@ -285,7 +285,7 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			name: "success — any user updates system deck item",
 			ctx:  userCtx("any_user"),
 			id:   2,
-			body: req.UpdateVocabularyItemReq{Phrase: "updated", NormalizedPhrase: "updated", Meaning: "meaning"},
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("updated"), NormalizedPhrase: strPtr("updated"), Meaning: strPtr("meaning")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(2)).Return(itemWithSystemDeck, nil)
 				ir.On("Update", mock.Anything, mock.Anything).Return(nil)
@@ -296,7 +296,7 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			name: "forbidden — non-owner updates user deck item",
 			ctx:  userCtx("other_user"),
 			id:   1,
-			body: req.UpdateVocabularyItemReq{Phrase: "hack"},
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("hack")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(1)).Return(itemWithUserDeck, nil)
 			},
@@ -307,7 +307,7 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			name: "not found returns 404",
 			ctx:  userCtx("user1"),
 			id:   999,
-			body: req.UpdateVocabularyItemReq{Phrase: "x"},
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("x")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 			},
@@ -318,7 +318,7 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			name: "db update error returns 500",
 			ctx:  userCtx("user1"),
 			id:   1,
-			body: req.UpdateVocabularyItemReq{Phrase: "x", NormalizedPhrase: "x", Meaning: "x"},
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("x"), NormalizedPhrase: strPtr("x"), Meaning: strPtr("x")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(1)).Return(itemWithUserDeck, nil)
 				ir.On("Update", mock.Anything, mock.Anything).Return(errors.New("db error"))

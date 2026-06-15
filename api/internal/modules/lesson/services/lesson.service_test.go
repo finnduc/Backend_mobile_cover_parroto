@@ -171,6 +171,7 @@ func TestLessonService_Create(t *testing.T) {
 
 func TestLessonService_Update(t *testing.T) {
 	existing := &models.Lesson{ID: 1, Title: "Original"}
+	strPtr := func(s string) *string { return &s }
 	tests := []struct {
 		name     string
 		id       uint
@@ -183,7 +184,7 @@ func TestLessonService_Update(t *testing.T) {
 		{
 			name: "success",
 			id:   1,
-			body: req.UpdateLessonReq{Title: "Updated"},
+			body: req.UpdateLessonReq{Title: strPtr("Updated")},
 			setup: func(r *repositories.MockLessonRepo) {
 				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
 				r.On("Update", mock.Anything, mock.MatchedBy(func(l *models.Lesson) bool {
@@ -195,7 +196,7 @@ func TestLessonService_Update(t *testing.T) {
 		{
 			name: "not found returns 404",
 			id:   999,
-			body: req.UpdateLessonReq{Title: "Nope"},
+			body: req.UpdateLessonReq{Title: strPtr("Nope")},
 			setup: func(r *repositories.MockLessonRepo) {
 				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 			},
@@ -205,7 +206,7 @@ func TestLessonService_Update(t *testing.T) {
 		{
 			name: "update error returns 500",
 			id:   1,
-			body: req.UpdateLessonReq{Title: "Updated"},
+			body: req.UpdateLessonReq{Title: strPtr("Updated")},
 			setup: func(r *repositories.MockLessonRepo) {
 				r.On("FindByID", mock.Anything, uint(1)).Return(existing, nil)
 				r.On("Update", mock.Anything, mock.Anything).Return(errors.New("db error"))
@@ -248,13 +249,24 @@ func TestLessonService_Delete(t *testing.T) {
 			name: "success",
 			id:   1,
 			setup: func(r *repositories.MockLessonRepo) {
+				r.On("FindByID", mock.Anything, uint(1)).Return(&models.Lesson{ID: 1}, nil)
 				r.On("Delete", mock.Anything, uint(1)).Return(nil)
 			},
+		},
+		{
+			name: "not found returns 404",
+			id:   999,
+			setup: func(r *repositories.MockLessonRepo) {
+				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
+			},
+			wantErr:  true,
+			wantCode: http.StatusNotFound,
 		},
 		{
 			name: "db error returns 500",
 			id:   2,
 			setup: func(r *repositories.MockLessonRepo) {
+				r.On("FindByID", mock.Anything, uint(2)).Return(&models.Lesson{ID: 2}, nil)
 				r.On("Delete", mock.Anything, uint(2)).Return(errors.New("db error"))
 			},
 			wantErr:  true,

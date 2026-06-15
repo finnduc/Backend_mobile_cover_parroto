@@ -7,11 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTable } from "@/components/common/DataTable"
 import { Plus, Trash2, Save, Upload, Download } from "lucide-react"
 import {
-  createAdminTranscript,
   updateAdminTranscript,
   deleteAdminTranscript,
 } from "@/features/lessons/services/transcripts.action"
 import { TranscriptBulkDialog } from "@/features/lessons/components/admin/TranscriptBulkDialog"
+import { TranscriptCreateDialog } from "@/features/lessons/components/admin/TranscriptCreateDialog"
 import { toast } from "sonner"
 import type { Transcript } from "@/types/lessons.models"
 import type { Column } from "@/components/common/DataTable"
@@ -26,6 +26,7 @@ export function TranscriptContent({
   const [transcripts, setTranscripts] = useState(initialTranscripts)
 
   const [importOpen, setImportOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
 
   const exportJson = () => {
     const data = transcripts.map((t) => ({
@@ -48,26 +49,14 @@ export function TranscriptContent({
     toast.success("Transcripts exported as JSON.")
   }
 
-  const addNew = async () => {
-    const maxSeq = Math.max(0, ...transcripts.map((t) => t.sequence))
-    const res = await createAdminTranscript({
-      lessonId,
-      sequence: maxSeq + 1,
-      content: "",
-      phonetic: "",
-      vietnamese: "",
-      startTimestamp: 0,
-      endTimestamp: 0,
-    })
-    if (res.error) {
-      toast.error(res.error.message)
-    }
-  }
+  const nextSequence = Math.max(0, ...transcripts.map((t) => t.sequence)) + 1
 
   const remove = async (id: number) => {
     const res = await deleteAdminTranscript(id, lessonId)
     if (res.error) {
       toast.error(res.error.message)
+    } else {
+      setTranscripts((prev) => prev.filter((t) => t.id !== id))
     }
   }
 
@@ -101,6 +90,30 @@ export function TranscriptContent({
         <Input
           value={t.content}
           onChange={(e) => update(t.id, "content", e.target.value)}
+          onBlur={() => saveRow(t)}
+          className="h-8 text-sm"
+        />
+      ),
+    },
+    {
+      key: "phonetic",
+      header: "Phonetic",
+      render: (t) => (
+        <Input
+          value={t.phonetic}
+          onChange={(e) => update(t.id, "phonetic", e.target.value)}
+          onBlur={() => saveRow(t)}
+          className="h-8 text-sm"
+        />
+      ),
+    },
+    {
+      key: "vietnamese",
+      header: "Vietnamese",
+      render: (t) => (
+        <Input
+          value={t.vietnamese}
+          onChange={(e) => update(t.id, "vietnamese", e.target.value)}
           onBlur={() => saveRow(t)}
           className="h-8 text-sm"
         />
@@ -161,7 +174,7 @@ export function TranscriptContent({
             <Download className="mr-1 size-4" />
             Export JSON
           </Button>
-          <Button size="sm" onClick={addNew}>
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-1 size-4" />
             Add Segment
           </Button>
@@ -181,6 +194,14 @@ export function TranscriptContent({
         lessonId={lessonId}
         open={importOpen}
         onOpenChange={setImportOpen}
+      />
+
+      <TranscriptCreateDialog
+        lessonId={lessonId}
+        nextSequence={nextSequence}
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={(t) => setTranscripts((prev) => [...prev, t])}
       />
     </div>
   )

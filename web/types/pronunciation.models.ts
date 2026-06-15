@@ -44,3 +44,9 @@ export interface PronunciationProgress {
   createdAt: string
   updatedAt: string
 }
+
+export interface PronunciationProgressDetail extends PronunciationProgress {
+  overallScore: number
+  scores: PronunciationScores
+  words: PronunciationWord[]
+}

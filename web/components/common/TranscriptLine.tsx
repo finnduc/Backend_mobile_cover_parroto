@@ -38,6 +38,7 @@ function formatTimestamp(timestamp: string) {
 
 export function TranscriptLine({
   text,
+  phonetic,
   active = false,
   completed = false,
   // bookmarked = false,
@@ -48,6 +49,7 @@ export function TranscriptLine({
   // onBookmark,
 }: {
   text: string
+  phonetic?: string
   active?: boolean
   completed?: boolean
   // bookmarked?: boolean
@@ -76,7 +78,12 @@ export function TranscriptLine({
               {formatTimestamp(timestamp)}
             </span>
           )}
-          <span className={cn("flex-1", completed && "line-through opacity-60")}>{text}</span>
+          <div className="flex-1 min-w-0">
+            <span className={cn("block", completed && "line-through opacity-60")}>{text}</span>
+            {/* {phonetic && (
+              <span className="block text-xs text-muted-foreground mt-0.5">/{phonetic}/</span>
+            )} */}
+          </div>
           {/* {onBookmark && (
             <Bookmark
               className={cn(

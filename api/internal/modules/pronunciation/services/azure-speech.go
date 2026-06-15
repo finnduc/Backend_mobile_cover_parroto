@@ -13,26 +13,36 @@ import (
 	"go-cover-parroto/internal/configs"
 )
 
-type pronunciationWordResult struct {
-	Word          string  `json:"Word"`
-	AccuracyScore float64 `json:"AccuracyScore"`
-	ErrorType     string  `json:"ErrorType"`
-	Phonemes      []struct {
-		Phoneme       string  `json:"Phoneme"`
+type azurePronunciationAssessment struct {
+	PronScore         float64 `json:"PronScore"`
+	AccuracyScore     float64 `json:"AccuracyScore"`
+	FluencyScore      float64 `json:"FluencyScore"`
+	CompletenessScore float64 `json:"CompletenessScore"`
+}
+
+type pronunciationPhonemeResult struct {
+	Phoneme                 string  `json:"Phoneme"`
+	PronunciationAssessment struct {
 		AccuracyScore float64 `json:"AccuracyScore"`
-	} `json:"Phonemes"`
+	} `json:"PronunciationAssessment"`
+}
+
+type pronunciationWordResult struct {
+	Word                 string `json:"Word"`
+	PronunciationAssessment struct {
+		AccuracyScore float64 `json:"AccuracyScore"`
+		ErrorType     string  `json:"ErrorType"`
+	} `json:"PronunciationAssessment"`
+	Phonemes []pronunciationPhonemeResult `json:"Phonemes"`
 }
 
 type pronunciationNBest struct {
-	Lexical            string                    `json:"Lexical"`
-	ITN                string                    `json:"ITN"`
-	MaskedITN          string                    `json:"MaskedITN"`
-	Display            string                    `json:"Display"`
-	AccuracyScore      float64                   `json:"AccuracyScore"`
-	FluencyScore       float64                   `json:"FluencyScore"`
-	CompletenessScore  float64                   `json:"CompletenessScore"`
-	PronScore          float64                   `json:"PronScore"`
-	Words              []pronunciationWordResult `json:"Words"`
+	Lexical                 string                        `json:"Lexical"`
+	ITN                     string                        `json:"ITN"`
+	MaskedITN               string                        `json:"MaskedITN"`
+	Display                 string                        `json:"Display"`
+	PronunciationAssessment azurePronunciationAssessment  `json:"PronunciationAssessment"`
+	Words                   []pronunciationWordResult      `json:"Words"`
 }
 
 type azureAssessmentResult struct {
@@ -114,36 +124,40 @@ func assessPronunciation(audioData []byte, referenceText string) (*Pronunciation
 	}
 
 	best := azureResult.NBest[0]
+	pron := best.PronunciationAssessment
 
 	prosodyScore := 0.0
 	if len(best.Words) > 0 {
-		prosodyScore = best.PronScore
+		prosodyScore = pron.PronScore
 	}
 
 	result := &PronunciationResult{
 		Text:         best.Display,
-		OverallScore: best.PronScore,
+		OverallScore: pron.PronScore,
 		Scores: PronunciationScores{
-			Accuracy:     best.AccuracyScore,
-			Fluency:      best.FluencyScore,
-			Completeness: best.CompletenessScore,
+			Accuracy:     pron.AccuracyScore,
+			Fluency:      pron.FluencyScore,
+			Completeness: pron.CompletenessScore,
 			Prosody:      prosodyScore,
 		},
+		Words: []WordResult{},
 	}
 
 	result.Feedback = formatVietnameseFeedback(result.OverallScore)
 
 	for _, w := range best.Words {
+		wordPron := w.PronunciationAssessment
 		wordResult := WordResult{
-			Word:     w.Word,
-			Score:    w.AccuracyScore,
-			Feedback: formatWordFeedback(w.AccuracyScore),
+			Word:         w.Word,
+			Score:        wordPron.AccuracyScore,
+			Feedback:     formatWordFeedback(wordPron.AccuracyScore),
+			WeakPhonemes: []PhonemeResult{},
 		}
 		for _, p := range w.Phonemes {
-			if p.AccuracyScore < 80 {
+			if p.PronunciationAssessment.AccuracyScore < 80 {
 				wordResult.WeakPhonemes = append(wordResult.WeakPhonemes, PhonemeResult{
 					Phoneme: p.Phoneme,
-					Score:   p.AccuracyScore,
+					Score:   p.PronunciationAssessment.AccuracyScore,
 				})
 			}
 		}

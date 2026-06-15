@@ -48,7 +48,7 @@ export function PronunciationScore({ result }: { result: PronunciationAttempt })
           <p className="text-xs text-muted-foreground">{result.feedback}</p>
         )}
 
-        {result.words.length > 0 && (
+        {result.words && result.words.length > 0 && (
           <Accordion type="single" collapsible>
             <AccordionItem value="words" className="border-none">
               <AccordionTrigger className="text-xs py-0">Word Details</AccordionTrigger>

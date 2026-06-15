@@ -13,6 +13,7 @@ export function DictationArea({
   transcripts,
   initialCompletedIds,
   lessonId,
+  isAuthenticated,
 }: ExerciseControlProps) {
   const { activeIndex, highlightedIndex, onNext, onTranscriptClick } = usePlayerContext()
   const initialMaxLine = (initialCompletedIds ?? []).length > 0
@@ -60,7 +61,7 @@ export function DictationArea({
                 }`}
             >
               {isComplete && !isCurrent ? (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     {isSaved ? (
                       <Check className="size-4 shrink-0 text-green-600" />
@@ -69,6 +70,9 @@ export function DictationArea({
                     )}
                     <p className="text-sm">{seg.content}</p>
                   </div>
+                  {seg.phonetic && (
+                    <p className="text-xs text-muted-foreground pl-6">/{seg.phonetic}/</p>
+                  )}
                 </div>
               ) : isCurrent ? (
                 <div className="space-y-2">
@@ -80,7 +84,10 @@ export function DictationArea({
                     </span>
                   </div>
                   {showHints && (
-                    <p className="text-xs text-muted-foreground">{seg.vietnamese || seg.content.slice(0, 20) + "..."}</p>
+                    <div className="text-xs text-muted-foreground space-y-0.5">
+                      {seg.phonetic && <p>/{seg.phonetic}/</p>}
+                      <p>{seg.vietnamese || seg.content.slice(0, 20) + "..."}</p>
+                    </div>
                   )}
                   <Input
                     value={inputs[i]}
@@ -114,12 +121,14 @@ export function DictationArea({
                           const newMaxLine = Math.max(maxLine, currentLine + 1)
                           setMaxLine(newMaxLine)
                           setFeedback({ line: currentLine, type: "correct", message: "Chính xác!" })
-                          startTransition(async () => {
-                            const res = await postDictationStatus(seg.id, lessonId!)
-                            if (res.error) {
-                              setFeedback({ line: currentLine, type: "wrong", message: res.error.message })
-                            }
-                          })
+                          if (isAuthenticated) {
+                            startTransition(async () => {
+                              const res = await postDictationStatus(seg.id, lessonId!)
+                              if (res.error) {
+                                setFeedback({ line: currentLine, type: "wrong", message: res.error.message })
+                              }
+                            })
+                          }
                           onNext?.()
                         } else {
                           // Wrong answer

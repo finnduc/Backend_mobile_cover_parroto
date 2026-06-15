@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
 import { DifficultyBadge } from "@/components/common/DifficultyBadge"
-import { LessonActionModal } from "@/features/lessons/components/user/LessonActionModal"
+import { Card, CardContent } from "@/components/ui/card"
 import { LessonBookmarkButton } from "@/features/lesson-bookmarks/components/LessonBookmarkButton"
+import { LessonActionModal } from "@/features/lessons/components/user/LessonActionModal"
 import type { Lesson } from "@/types/lessons.models"
-import { Play, Clock } from "lucide-react"
+import { Show } from "@clerk/nextjs"
+import { Clock, Play } from "lucide-react"
+import { useState } from "react"
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60)
@@ -35,13 +36,14 @@ export function LessonCard({
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="size-10 fill-white text-white" />
           </div>
-          <div className="absolute right-2 top-2" onClick={(e) => e.stopPropagation()}>
+          <Show when="signed-in"><div className="absolute right-2 top-2" onClick={(e) => e.stopPropagation()}>
             <LessonBookmarkButton
               lessonId={lesson.id}
               isBookmarked={isBookmarked}
               className="bg-white/80 backdrop-blur-sm"
             />
           </div>
+          </Show >
         </div>
         <CardContent className="space-y-2 p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

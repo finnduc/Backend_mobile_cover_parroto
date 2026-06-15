@@ -155,7 +155,11 @@ func (s *transcriptService) Update(ctx context.Context, id uint, body req.Update
 	log.Infow("updating transcript")
 	transcript, err := s.repo.FindByID(ctx, id)
 	if err != nil {
-		return nil, response.NotFound("transcript not found")
+		if errors.Is(err, coreError.ErrNotFound) {
+			return nil, response.NotFound("transcript not found")
+		}
+		log.Errorw("failed to get transcript for update", "error", err)
+		return nil, response.Internal("failed to get transcript")
 	}
 	if body.Sequence != nil {
 		transcript.Sequence = *body.Sequence
@@ -186,6 +190,14 @@ func (s *transcriptService) Update(ctx context.Context, id uint, body req.Update
 func (s *transcriptService) Delete(ctx context.Context, id uint) *response.AppError {
 	log := sLog().With("transcriptId", id)
 	log.Infow("deleting transcript")
+	_, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, coreError.ErrNotFound) {
+			return response.NotFound("transcript not found")
+		}
+		log.Errorw("failed to get transcript for delete", "error", err)
+		return response.Internal("failed to get transcript")
+	}
 	if err := s.repo.Delete(ctx, id); err != nil {
 		log.Errorw("failed to delete transcript", "error", err)
 		return response.Internal("failed to delete transcript")

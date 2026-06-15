@@ -20,6 +20,7 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {
 		protected.POST("/pronunciation-attempts", ctrl.Assess)
 		protected.DELETE("/pronunciation/attempts/:attemptId", ctrl.DeleteAttempt)
 		protected.GET("/pronunciation/progress/:lessonId", ctrl.ListProgress)
+		protected.GET("/pronunciation/progress/:lessonId/detail", ctrl.ListProgressDetail)
 		protected.POST("/pronunciation/progress/update/:transcriptId", ctrl.UpdateProgress)
 	}
 }

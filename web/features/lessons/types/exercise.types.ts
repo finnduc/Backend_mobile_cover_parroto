@@ -5,5 +5,6 @@ export interface ExerciseControlProps {
   transcripts: Transcript[]
   initialCompletedIds: number[]
   lessonId: number
+  isAuthenticated?: boolean
   pronunciationScores?: Map<number, PronunciationAttempt>
 }

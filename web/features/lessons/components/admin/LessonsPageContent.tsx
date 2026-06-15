@@ -37,9 +37,6 @@ function getLessonColumns(): Column<Lesson>[] {
       render: (l) => (
         <div className="flex justify-end gap-1">
           <Button size="xs" variant="outline" asChild>
-            <Link href={ROUTES.ADMIN.LESSONS.DETAIL(String(l.id))}>View</Link>
-          </Button>
-          <Button size="xs" variant="outline" asChild>
             <Link href={ROUTES.ADMIN.LESSONS.EDIT(String(l.id))}>Edit</Link>
           </Button>
           <Button size="xs" variant="outline" asChild>

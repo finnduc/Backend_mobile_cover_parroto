@@ -269,7 +269,7 @@ func TestVocabularyDeckService_Update(t *testing.T) {
 			name: "success — owner updates deck",
 			ctx:  userCtx("user1"),
 			id:   4,
-			body: req.UpdateVocabularyDeckReq{Name: "New Name", Level: "intermediate"},
+			body: req.UpdateVocabularyDeckReq{Name: strPtr("New Name"), Level: strPtr("intermediate")},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindByID", mock.Anything, uint(4)).Return(userDeck, nil)
 				r.On("Update", mock.Anything, mock.MatchedBy(func(d *models.VocabularyDeck) bool {
@@ -282,7 +282,7 @@ func TestVocabularyDeckService_Update(t *testing.T) {
 			name: "forbidden — non-owner returns 403",
 			ctx:  userCtx("other_user"),
 			id:   4,
-			body: req.UpdateVocabularyDeckReq{Name: "Hack"},
+			body: req.UpdateVocabularyDeckReq{Name: strPtr("Hack")},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindByID", mock.Anything, uint(4)).Return(userDeck, nil)
 			},
@@ -293,7 +293,7 @@ func TestVocabularyDeckService_Update(t *testing.T) {
 			name: "not found returns 404",
 			ctx:  userCtx("user1"),
 			id:   999,
-			body: req.UpdateVocabularyDeckReq{Name: "X"},
+			body: req.UpdateVocabularyDeckReq{Name: strPtr("X")},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindByID", mock.Anything, uint(999)).Return(nil, coreError.ErrNotFound)
 			},
@@ -304,7 +304,7 @@ func TestVocabularyDeckService_Update(t *testing.T) {
 			name: "update error returns 500",
 			ctx:  userCtx("user1"),
 			id:   4,
-			body: req.UpdateVocabularyDeckReq{Name: "Name"},
+			body: req.UpdateVocabularyDeckReq{Name: strPtr("Name")},
 			setup: func(r *repositories.MockVocabularyDeckRepo) {
 				r.On("FindByID", mock.Anything, uint(4)).Return(userDeck, nil)
 				r.On("Update", mock.Anything, mock.Anything).Return(errors.New("db error"))
