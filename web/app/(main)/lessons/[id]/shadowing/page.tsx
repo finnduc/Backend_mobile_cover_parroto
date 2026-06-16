@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
+import { ShadowingLayout } from "@/features/lessons/components/user/ShadowingLayout"
 import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getShadowingStatus } from "@/features/lessons/services/shadowing-status.get"
@@ -31,14 +31,15 @@ export default async function ShadowingPage({
     .sort((a, b) => a.sequence - b.sequence)
 
   const transcriptIdToIndex = new Map(transcripts.map((t, i) => [t.id, i]))
-  let initialCompletedIds: number[] = []
+  let completedTranscriptIds: number[] = []
+  let initialCompletedIndices: number[] = []
   const pronunciationScores = new Map<number, PronunciationAttempt>()
   let decks: VocabularyDeck[] = []
 
   if (userId) {
     const statusRes = await getShadowingStatus(lesson.id)
-    const completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
-    initialCompletedIds = completedTranscriptIds
+    completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
+    initialCompletedIndices = completedTranscriptIds
       .map((tid) => transcriptIdToIndex.get(tid))
       .filter((i): i is number => i !== undefined)
 
@@ -78,22 +79,21 @@ export default async function ShadowingPage({
         { label: "Bài học Shadowing" },
       ]}
     >
-      <LessonLayout
+      <ShadowingLayout
         videoUrl={lesson.videoUrl}
         transcripts={transcripts}
         lessonId={lesson.id}
         decks={decks}
-        initialCompletedIds={initialCompletedIds}
-        // bookmarks={bookmarks}
+        completedTranscriptIds={completedTranscriptIds}
       >
         <ShadowingArea
           transcripts={transcripts}
-          initialCompletedIds={initialCompletedIds}
+          initialCompletedIds={initialCompletedIndices}
           lessonId={lesson.id}
           isAuthenticated={!!userId}
           pronunciationScores={pronunciationScores}
         />
-      </LessonLayout>
+      </ShadowingLayout>
     </PageLayout>
   )
 }

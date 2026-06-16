@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { LessonLayout } from "@/features/lessons/components/user/LessonLayout"
+import { DictationLayout } from "@/features/lessons/components/user/DictationLayout"
 import { DictationArea } from "@/features/lessons/components/user/DictationArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
@@ -29,13 +29,14 @@ export default async function DictationPage({
     .sort((a, b) => a.sequence - b.sequence)
 
   const transcriptIdToIndex = new Map(transcripts.map((t, i) => [t.id, i]))
-  let initialCompletedIds: number[] = []
+  let completedTranscriptIds: number[] = []
+  let initialCompletedIndices: number[] = []
   let decks: VocabularyDeck[] = []
 
   if (userId) {
     const statusRes = await getDictationStatus(lesson.id)
-    const completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
-    initialCompletedIds = completedTranscriptIds
+    completedTranscriptIds = (statusRes.data ?? []).map((s) => s.transcriptId)
+    initialCompletedIndices = completedTranscriptIds
       .map((tid) => transcriptIdToIndex.get(tid))
       .filter((i): i is number => i !== undefined)
 
@@ -54,21 +55,20 @@ export default async function DictationPage({
         { label: "Bài học Nghe chép chính tả" },
       ]}
     >
-      <LessonLayout
+      <DictationLayout
         videoUrl={lesson.videoUrl}
         transcripts={transcripts}
         lessonId={lesson.id}
         decks={decks}
-        initialCompletedIds={initialCompletedIds}
-        // bookmarks={bookmarks}
+        completedTranscriptIds={completedTranscriptIds}
       >
         <DictationArea
           transcripts={transcripts}
-          initialCompletedIds={initialCompletedIds}
+          initialCompletedIds={initialCompletedIndices}
           lessonId={lesson.id}
           isAuthenticated={!!userId}
         />
-      </LessonLayout>
+      </DictationLayout>
     </PageLayout>
   )
 }
