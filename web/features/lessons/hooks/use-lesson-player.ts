@@ -11,26 +11,28 @@ export function useLessonPlayer(transcripts: Transcript[], initialActiveIndex = 
   const currentTime = useMediaState("currentTime", playerRef)
   const paused = useMediaState("paused", playerRef)
 
-  const [playerMode, setPlayerMode] = useState<"normal" | "transcript">("normal")
+  const [autoStop, setAutoStop] = useState(true)
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex)
-  const prevModeRef = useRef(playerMode)
+  const prevAutoStopRef = useRef(autoStop)
+
+  const [transcriptMode, setTranscriptMode] = useState<"masked" | "full">("masked")
+  const [sidebarVisible, setSidebarVisible] = useState(true)
 
   const highlightedIndex = transcripts.findIndex(
     (seg) => currentTime >= seg.startTimestamp && currentTime < seg.endTimestamp,
   )
 
-  // Auto-stop at segment end in transcript mode
   useEffect(() => {
-    if (playerMode !== "transcript" || activeIndex < 0 || activeIndex >= transcripts.length) return
+    if (!autoStop || activeIndex < 0 || activeIndex >= transcripts.length) return
     if (currentTime >= transcripts[activeIndex].endTimestamp) {
+      console.log(currentTime, transcripts[activeIndex].endTimestamp)
       remote.pause()
     }
-  }, [currentTime, playerMode, activeIndex, transcripts, remote])
+  }, [currentTime, autoStop, activeIndex, transcripts, remote])
 
-  // Replay current segment when switching to transcript mode
   useEffect(() => {
-    const justSwitched = playerMode === "transcript" && prevModeRef.current !== "transcript"
-    prevModeRef.current = playerMode
+    const justSwitched = autoStop && !prevAutoStopRef.current
+    prevAutoStopRef.current = autoStop
     if (!justSwitched) return
     const idx = activeIndex >= 0 ? activeIndex : highlightedIndex
     if (idx < 0) return
@@ -38,7 +40,7 @@ export function useLessonPlayer(transcripts: Transcript[], initialActiveIndex = 
     if (!seg) return
     remote.seek(seg.startTimestamp)
     remote.play()
-  }, [playerMode, activeIndex, highlightedIndex, transcripts, remote])
+  }, [autoStop, activeIndex, highlightedIndex, transcripts, remote])
 
   const handleTranscriptClick = useCallback(
     (index: number) => {
@@ -83,10 +85,14 @@ export function useLessonPlayer(transcripts: Transcript[], initialActiveIndex = 
   return {
     playerRef,
     paused,
-    playerMode,
-    setPlayerMode,
+    autoStop,
+    setAutoStop,
     activeIndex,
     highlightedIndex,
+    transcriptMode,
+    setTranscriptMode,
+    sidebarVisible,
+    setSidebarVisible,
     handleTranscriptClick,
     handlePlay,
     handlePause,

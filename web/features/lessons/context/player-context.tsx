@@ -1,13 +1,19 @@
 "use client"
 
-import { createContext, useContext } from "react"
+import { createContext, useContext, type RefObject } from "react"
+import type { MediaPlayerInstance } from "@vidstack/react"
 
 interface PlayerContextValue {
+  playerRef: RefObject<MediaPlayerInstance | null>
   paused: boolean
   activeIndex: number
   highlightedIndex: number
-  playerMode: "normal" | "transcript"
-  setPlayerMode: (mode: "normal" | "transcript") => void
+  autoStop: boolean
+  setAutoStop: (v: boolean) => void
+  transcriptMode: "masked" | "full"
+  setTranscriptMode: (v: "masked" | "full") => void
+  sidebarVisible: boolean
+  setSidebarVisible: (v: boolean) => void
   onPlay: () => void
   onPause: () => void
   onNext: () => void
