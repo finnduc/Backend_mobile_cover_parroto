@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { UserRole } from "./lib/enums/user-role.enum"
 
-const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/profile(.*)", "/learning-history(.*)"])
+const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/profile(.*)"])
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
 const isOnboardingRoute = createRouteMatcher(['/onboarding'])
 

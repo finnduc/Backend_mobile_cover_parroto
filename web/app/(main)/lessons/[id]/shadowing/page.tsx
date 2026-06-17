@@ -1,16 +1,13 @@
 import { notFound } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { ShadowingLayout } from "@/features/lessons/components/user/ShadowingLayout"
-import { ShadowingArea } from "@/features/lessons/components/user/ShadowingArea"
+import { ShadowingLayout } from "@/features/lessons/components/user/shadowing/ShadowingLayout"
+import { ShadowingArea } from "@/features/lessons/components/user/shadowing/ShadowingArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getShadowingStatus } from "@/features/lessons/services/shadowing-status.get"
-import { getPronunciationProgressDetail } from "@/features/pronunciation/services/pronunciation.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { ROUTES } from "@/lib/routes"
-import type { PronunciationAttempt } from "@/types/pronunciation.models"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
-// import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 
 export default async function ShadowingPage({
   params,
@@ -33,7 +30,6 @@ export default async function ShadowingPage({
   const transcriptIdToIndex = new Map(transcripts.map((t, i) => [t.id, i]))
   let completedTranscriptIds: number[] = []
   let initialCompletedIndices: number[] = []
-  const pronunciationScores = new Map<number, PronunciationAttempt>()
   let decks: VocabularyDeck[] = []
 
   if (userId) {
@@ -43,33 +39,9 @@ export default async function ShadowingPage({
       .map((tid) => transcriptIdToIndex.get(tid))
       .filter((i): i is number => i !== undefined)
 
-    const progressRes = await getPronunciationProgressDetail(lesson.id)
-    ;(progressRes.data ?? []).forEach((p) => {
-      const idx = transcriptIdToIndex.get(p.transcriptId)
-      if (idx !== undefined) {
-        pronunciationScores.set(idx, {
-          text: transcripts[idx]?.content ?? "",
-          overallScore: p.overallScore ?? p.bestScore ?? 0,
-          scores: p.scores ?? { accuracy: 0, fluency: 0, completeness: 0, prosody: 0 },
-          feedback: p.feedback ?? "",
-          words: p.words ?? [],
-          attempt: {
-            id: p.bestAttemptId ?? 0,
-            userId: p.userId,
-            lessonId: p.lessonId,
-            transcriptId: p.transcriptId,
-            createdAt: p.createdAt,
-          },
-        })
-      }
-    })
-
     const decksRes = await getUserVocabularyDecks()
     decks = decksRes.data ?? []
   }
-
-  // const bookmarksRes = await getTranscriptBookmarks(lesson.id)
-  // const bookmarks = bookmarksRes.data ?? []
 
   return (
     <PageLayout
@@ -91,7 +63,6 @@ export default async function ShadowingPage({
           initialCompletedIds={initialCompletedIndices}
           lessonId={lesson.id}
           isAuthenticated={!!userId}
-          pronunciationScores={pronunciationScores}
         />
       </ShadowingLayout>
     </PageLayout>

@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, normalizeSentence, splitWords } from "@/lib/utils"
 import { toast } from "sonner"
 import { createVocabularyDeck, createVocabularyItem } from "@/features/vocabulary/services/vocabulary.action"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
@@ -40,7 +40,7 @@ export function AddToDeckDialog({
   transcriptId: number
   decks: VocabularyDeck[]
 }) {
-  const tokens = phrase.trim().split(/\s+/).filter(Boolean)
+  const tokens = splitWords(normalizeSentence(phrase))
   const [selectedTokens, setSelectedTokens] = useState<Set<number>>(new Set(tokens.map((_, i) => i)))
   const [customPhrase, setCustomPhrase] = useState(phrase)
   const [meaning, setMeaning] = useState("")

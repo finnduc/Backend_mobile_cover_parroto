@@ -23,10 +23,3 @@ test.describe('Settings page', () => {
   })
 })
 
-test.describe('Learning history page', () => {
-  test('loads learning history without errors', async ({ page }) => {
-    await page.goto('/learning-history')
-    await expect(page).toHaveURL('/learning-history')
-    await expect(page.locator('body')).not.toContainText('500')
-  })
-})

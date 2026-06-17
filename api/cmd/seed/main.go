@@ -38,7 +38,6 @@ func main() {
 	seedUsers(db)
 	seedLessons(db)
 	seedTranscripts(db)
-	seedBookmarks(db)
 	fmt.Println("✅ Seed completed!")
 }
 
@@ -193,28 +192,8 @@ func seedTranscripts(db *gorm.DB) {
 	if result.Error != nil {
 		log.Printf("⚠️  transcripts: %v", result.Error)
 	} else {
-		fmt.Printf("   transcripts: %d rows\n", result.RowsAffected)
-	}
-}
-
-// ─── Transcript Bookmarks ─────────────────────────────────────
-
-func seedBookmarks(db *gorm.DB) {
-	bookmarks := []models.TranscriptBookmark{
-		{UserID: "2", TranscriptID: 1, Note: "", CreatedAt: time.Now()},
-		{UserID: "2", TranscriptID: 3, Note: "important", CreatedAt: time.Now()},
-		{UserID: "3", TranscriptID: 2, Note: "", CreatedAt: time.Now()},
-		{UserID: "4", TranscriptID: 1, Note: "review later", CreatedAt: time.Now()},
-		{UserID: "4", TranscriptID: 5, Note: "", CreatedAt: time.Now()},
-		{UserID: "5", TranscriptID: 3, Note: "", CreatedAt: time.Now()},
-	}
-
-	result := db.CreateInBatches(&bookmarks, len(bookmarks))
-	if result.Error != nil {
-		log.Printf("⚠️  transcript bookmarks: %v", result.Error)
-	} else {
-		fmt.Printf("   transcript bookmarks: %d rows\n", result.RowsAffected)
-	}
+    fmt.Printf("   transcripts: %d rows\n", result.RowsAffected)
+  }
 }
 
 

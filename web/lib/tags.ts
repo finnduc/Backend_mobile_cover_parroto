@@ -7,8 +7,6 @@ export const CACHE_TAGS = {
   transcript: (id: number) => `transcript-${id}`,
   users: "users",
   user: (id: string) => `user-${id}`,
-  bookmarks: "transcript-bookmarks",
-  learningHistory: "learning-history",
   vocabularyCategories: "vocabulary-categories",
   vocabularyCategory: (id: number) => `vocabulary-category-${id}`,
   vocabularyDecks: "vocabulary-decks",
@@ -17,8 +15,5 @@ export const CACHE_TAGS = {
   vocabularyItem: (id: number) => `vocabulary-item-${id}`,
   shadowingStatus: "shadowing-status",
   dictationStatus: "dictation-status",
-  pronunciation: "pronunciation",
-  pronunciationProgress: "pronunciation-progress",
-  transcriptProgress: "transcript-progress",
   lessonBookmarks: "lesson-bookmarks",
 } as const

@@ -7,33 +7,23 @@ import (
 	categoryrepos "go-cover-parroto/internal/modules/category/repositories"
 	lessonrepos "go-cover-parroto/internal/modules/lesson/repositories"
 	transcriptrepos "go-cover-parroto/internal/modules/transcript/repositories"
-	transcriptbookmarkrepos "go-cover-parroto/internal/modules/transcript_bookmark/repositories"
 )
 
 type IProvider interface {
-	TranscriptBookmark() db_repos.ITranscriptBookmarkRepo
 	Category() db_repos.ICategoryRepo
 	Lesson() db_repos.ILessonRepo
 	Transcript() db_repos.ITranscriptRepo
 }
 
 type gormProvider struct {
-	tx                    *gorm.DB
-	transcriptBookmarkRepo db_repos.ITranscriptBookmarkRepo
-	categoryRepo          db_repos.ICategoryRepo
+	tx             *gorm.DB
+	categoryRepo   db_repos.ICategoryRepo
 	lessonRepo     db_repos.ILessonRepo
 	transcriptRepo db_repos.ITranscriptRepo
 }
 
 func NewGormProvider(tx *gorm.DB) *gormProvider {
 	return &gormProvider{tx: tx}
-}
-
-func (p *gormProvider) TranscriptBookmark() db_repos.ITranscriptBookmarkRepo {
-	if p.transcriptBookmarkRepo == nil {
-		p.transcriptBookmarkRepo = transcriptbookmarkrepos.NewTranscriptBookmarkRepo(p.tx)
-	}
-	return p.transcriptBookmarkRepo
 }
 
 func (p *gormProvider) Category() db_repos.ICategoryRepo {

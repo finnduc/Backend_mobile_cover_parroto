@@ -22,3 +22,25 @@ export function extractYoutubeId(url: string): string | null {
   }
   return null
 }
+
+
+export function normalizeWord(word: string) {
+  return word
+    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
+    .toLowerCase()
+}
+
+export function normalizeSentence(text: string) {
+  return text
+    .split(/\s+/)
+    .map((w) =>
+      w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
+    )
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+}
+
+export function splitWords(s: string): string[] {
+  return s.split(/\s+/).filter((w) => w.length > 0)
+}

@@ -7,7 +7,6 @@ type Config struct {
 	Postgres  PostgresConfig
 	ClerkAuth ClerkConfig
 	Logger    LoggerConfig
-	Azure     AzureConfig
 }
 
 func Load() Config {
@@ -19,6 +18,5 @@ func Load() Config {
 		ClerkAuth: loadClerkConfig(),
 		Logger:    loadLoggerConfig(),
 	}
-	cfg.Azure = LoadAzureConfig()
 	return cfg
 }

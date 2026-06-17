@@ -10,7 +10,6 @@ export const ROUTES = {
       MY_DECKS: "/vocabulary/my-decks",
       MY_DECK: (id: number) => `/vocabulary/my-decks/${id}`,
     },
-    LEARNING_HISTORY: "/learning-history",
     LESSONS: {
       LIST: "/lessons",
       SHADOWING: (id: number) => `/lessons/${id}/shadowing`,
@@ -45,11 +44,6 @@ export const ROUTES = {
       LIST: "/admin/bookmarks",
       // NO create/edit - users manage their own
       // Delete modal on LIST
-    },
-    LEARNING_HISTORY: {
-      LIST: "/admin/learning-history",
-      // NO create/edit - system managed
-      // View only, maybe delete modal
     },
     VOCABULARY: {
       CATEGORIES: {

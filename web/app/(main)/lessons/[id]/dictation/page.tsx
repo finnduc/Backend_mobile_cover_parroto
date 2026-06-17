@@ -1,13 +1,12 @@
 import { notFound } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { PageLayout } from "@/components/layouts/PageLayout"
-import { DictationLayout } from "@/features/lessons/components/user/DictationLayout"
-import { DictationArea } from "@/features/lessons/components/user/DictationArea"
+import { DictationLayout } from "@/features/lessons/components/user/dictation/DictationLayout"
+import { DictationArea } from "@/features/lessons/components/user/dictation/DictationArea"
 import { getLesson, getTranscripts } from "@/features/lessons/services/lessons.get"
 import { getUserVocabularyDecks } from "@/features/vocabulary/services/vocabulary.get"
 import { getDictationStatus } from "@/features/lessons/services/dictation-status.get"
 import type { VocabularyDeck } from "@/types/vocabulary.models"
-// import { getTranscriptBookmarks } from "@/features/bookmarks/services/bookmarks.get"
 import { ROUTES } from "@/lib/routes"
 
 export default async function DictationPage({
@@ -43,9 +42,6 @@ export default async function DictationPage({
     const decksRes = await getUserVocabularyDecks()
     decks = decksRes.data ?? []
   }
-
-  // const bookmarksRes = await getTranscriptBookmarks(lesson.id)
-  // const bookmarks = bookmarksRes.data ?? []
 
   return (
     <PageLayout
