@@ -7,6 +7,7 @@ type Config struct {
 	Postgres  PostgresConfig
 	ClerkAuth ClerkConfig
 	Logger    LoggerConfig
+	Deepgram  DeepgramConfig
 }
 
 func Load() Config {
@@ -17,6 +18,7 @@ func Load() Config {
 		Postgres:  loadPostgresConfig(),
 		ClerkAuth: loadClerkConfig(),
 		Logger:    loadLoggerConfig(),
+		Deepgram:  loadDeepgramConfig(),
 	}
 	return cfg
 }

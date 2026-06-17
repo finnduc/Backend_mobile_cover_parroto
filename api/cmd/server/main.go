@@ -22,6 +22,10 @@ import (
 
 	_ "go-cover-parroto/cmd/server/docs"
 
+	api "github.com/deepgram/deepgram-go-sdk/v3/pkg/api/listen/v1/rest"
+	interfaces "github.com/deepgram/deepgram-go-sdk/v3/pkg/client/interfaces/v1"
+	listenrest "github.com/deepgram/deepgram-go-sdk/v3/pkg/client/listen/v1/rest"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -63,6 +67,12 @@ func main() {
 		logger.S().Fatalf("Failed to connect to database: %v", err)
 	}
 
+	if cfg.Deepgram.APIKey == "" {
+		logger.S().Fatal("DEEPGRAM_API_KEY environment variable is required")
+	}
+	dgClient := listenrest.New(cfg.Deepgram.APIKey, &interfaces.ClientOptions{})
+	dgApi := api.New(dgClient)
+
 	port := cfg.Server.Port
 
 	r := gin.Default()
@@ -98,7 +108,7 @@ func main() {
 		category.RegisterRoutes(v1, db)
 		lessonbookmark.RegisterRoutes(v1, db)
 		transcript.RegisterRoutes(v1, db)
-		shadowing_status.RegisterRoutes(v1, db)
+		shadowing_status.RegisterRoutes(v1, db, dgApi)
 		dictation_status.RegisterRoutes(v1, db)
 		vocabcat.RegisterRoutes(v1, db)
 		vocabdeck.RegisterRoutes(v1, db)

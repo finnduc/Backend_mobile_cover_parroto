@@ -1,7 +1,12 @@
 package shadowing_status
 
 import (
+	"context"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"time"
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
@@ -14,11 +19,12 @@ import (
 )
 
 type ShadowingStatusController struct {
-	svc services.IShadowingStatusService
+	svc              services.IShadowingStatusService
+	transcriptionSvc services.ITranscriptionService
 }
 
-func NewShadowingStatusController(svc services.IShadowingStatusService) *ShadowingStatusController {
-	return &ShadowingStatusController{svc: svc}
+func NewShadowingStatusController(svc services.IShadowingStatusService, transcriptionSvc services.ITranscriptionService) *ShadowingStatusController {
+	return &ShadowingStatusController{svc: svc, transcriptionSvc: transcriptionSvc}
 }
 
 // Create godoc
@@ -82,4 +88,55 @@ func (ctrl *ShadowingStatusController) List(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.SuccessWithMeta(statuses, result.Meta))
+}
+
+// TranscribeShadowing godoc
+// @Summary Transcribe audio for shadowing exercise
+// @Tags shadowing-status
+// @Accept multipart/form-data
+// @Produce json
+// @Param audio formData file true "Audio file"
+// @Success 200 {object} response.BaseResponse[res.ShadowingTranscribeRes]
+// @Failure 400 {object} response.BaseResponse[any]
+// @Failure 401 {object} response.BaseResponse[any]
+// @Failure 500 {object} response.BaseResponse[any]
+// @Router /shadowing-status/transcribe [post]
+// @Security BearerAuth
+func (ctrl *ShadowingStatusController) TranscribeShadowing(c *gin.Context) {
+	const maxUploadSize = 10 << 20 // 10 MB
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
+
+	file, header, err := c.Request.FormFile("audio")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Fail(response.BadRequest("audio file is required")))
+		return
+	}
+	defer file.Close()
+
+	// Save to temp file
+	tempFile, err := os.CreateTemp("", "shadowing-audio-*"+filepath.Ext(header.Filename))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to create temp file")))
+		return
+	}
+	defer os.Remove(tempFile.Name())
+	defer tempFile.Close()
+
+	if _, err := io.Copy(tempFile, file); err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("failed to save audio file")))
+		return
+	}
+	// Transcribe using Deepgram with timeout
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+	transcribedText, err := ctrl.transcriptionSvc.Transcribe(ctx, tempFile.Name())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.Fail(response.Internal("transcription failed")))
+		return
+	}
+
+	result := res.ShadowingTranscribeRes{
+		TranscribedText: transcribedText,
+	}
+	c.JSON(http.StatusOK, response.Success(result))
 }

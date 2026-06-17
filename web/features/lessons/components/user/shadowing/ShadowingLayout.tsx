@@ -32,17 +32,13 @@ export function ShadowingLayout({
 }) {
   const completedSet = new Set(completedTranscriptIds)
   const initialActiveIndex = transcripts.findIndex((t) => !completedSet.has(t.id))
-  const [videoLarge, setVideoLarge] = useState(false)
 
   return (
     <LessonProvider transcripts={transcripts} initialActiveIndex={initialActiveIndex}>
       <div className="flex gap-6">
         <div className="flex flex-1 flex-col gap-4">
           {videoUrl && <ConnectedVideoPlayer videoUrl={videoUrl} />}
-          <VideoControlBar
-            videoLarge={videoLarge}
-            onVideoLargeChange={setVideoLarge}
-          />
+          <VideoControlBar />
           <Card>
             <CardHeader>
               <CardTitle>Bài tập Shadowing</CardTitle>

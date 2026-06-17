@@ -4,50 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { ActionRow } from "@/features/lessons/components/user/ActionRow"
+import { WordDiffResult } from "@/features/lessons/components/user/WordDiffResult"
 import { WordBlockInput } from "@/features/lessons/components/user/dictation/WordBlockInput"
 import { usePlayerContext } from "@/features/lessons/context/player-context"
 import { postDictationStatus } from "@/features/lessons/services/dictation-status.action"
 import type { ExerciseControlProps } from "@/features/lessons/types/exercise.types"
-import { cn, normalizeSentence, normalizeWord, splitWords } from "@/lib/utils"
+import { computeWordDiff } from "@/features/lessons/utils/word-diff"
+import { cn, normalizeSentence, splitWords } from "@/lib/utils"
 import { Transcript } from "@/types/lessons.models"
 import { useState, useTransition } from "react"
-
-
-function computeWordDiff(correct: string[], input: string[]) {
-  const result: { word: string; status: "correct" | "wrong" }[] = []
-
-  for (let i = 0; i < input.length; i++) {
-    const c = normalizeWord(correct[i] ?? "")
-    const u = normalizeWord(input[i] ?? "")
-
-    result.push({
-      word: input[i],
-      status: c === u ? "correct" : "wrong",
-    })
-  }
-
-  return result
-}
-
-function WordDiffResult({ diff }: { diff: { word: string; status: "correct" | "wrong" }[] }) {
-  return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-lg border bg-muted/30 p-3">
-      {diff.map((d, i) => (
-        <span
-          key={i}
-          className={cn(
-            "inline-block rounded px-1.5 py-0.5 text-sm font-medium",
-            d.status === "correct"
-              ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
-              : "bg-red-100 text-red-700 line-through dark:bg-red-900/40 dark:text-red-300",
-          )}
-        >
-          {d.word}
-        </span>
-      ))}
-    </div>
-  )
-}
 
 function DictationAreaInner({
   seg,

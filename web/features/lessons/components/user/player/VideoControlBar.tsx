@@ -6,13 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Pause, Play } from "lucide-react"
 import { usePlayerContext } from "@/features/lessons/context/player-context"
 
-export function VideoControlBar({
-  videoLarge = false,
-  onVideoLargeChange,
-}: {
-  videoLarge?: boolean
-  onVideoLargeChange?: (v: boolean) => void
-}) {
+export function VideoControlBar() {
   const { paused, autoStop, setAutoStop, onPlay, onPause } = usePlayerContext()
 
   return (
@@ -27,17 +21,6 @@ export function VideoControlBar({
           />
           <Label htmlFor="auto-stop" className="cursor-pointer text-sm">
             Tự động dừng
-          </Label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            id="video-large"
-            size="sm"
-            checked={videoLarge}
-            onCheckedChange={onVideoLargeChange}
-          />
-          <Label htmlFor="video-large" className="cursor-pointer text-sm">
-            Video kích thước lớn
           </Label>
         </div>
       </div>
