@@ -9,4 +9,7 @@ import retrofit2.http.POST;
 public interface AuthApi {
     @POST("auth/sync")
     Call<ApiResponse<UserResponse>> auth();
+
+    @POST("auth/complete-signup")
+    Call<ApiResponse<String>> completeSignup();
 }

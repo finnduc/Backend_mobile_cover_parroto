@@ -10,16 +10,15 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface TranscriptProgressApi {
-    @GET("transcript-progress/{lessonId}")
+    @GET("dictation-status")
     Call<ApiResponse<List<TranscriptProgressResponse>>>
-    getTranscriptProgress(@Path("lessonId") int lessonId);
+    getTranscriptProgress(@Query("lesson_id") int lessonId);
 
-    @POST("transcript-progress/{lessonId}")
+    @POST("dictation-status")
     Call<ApiResponse<TranscriptProgressResponse>>
-    createTranscriptProgress(@Path("lessonId") int lessonId,
-                             @Body CreateTranscriptProgressRequest request);
+    createTranscriptProgress(@Body CreateTranscriptProgressRequest request);
 
 }

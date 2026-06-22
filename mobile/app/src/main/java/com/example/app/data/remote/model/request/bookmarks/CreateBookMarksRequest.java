@@ -3,7 +3,7 @@ package com.example.app.data.remote.model.request.bookmarks;
 import com.google.gson.annotations.SerializedName;
 
 public class CreateBookMarksRequest {
-    @SerializedName("transcriptId")
+    @SerializedName("transcript_id")
     private int transcriptId;
 
     @SerializedName("note")

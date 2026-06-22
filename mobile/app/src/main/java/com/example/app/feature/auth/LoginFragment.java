@@ -13,9 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.app.BuildConfig;
 import com.example.app.R;
-import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.AuthRepository;
 
@@ -23,7 +21,6 @@ import com.example.app.data.repository.AuthRepository;
 public class LoginFragment extends Fragment {
 
     AuthRepository authRepository;
-    TokenManager tokenManager;
 
     @Override
     @Nullable
@@ -33,7 +30,6 @@ public class LoginFragment extends Fragment {
          EditText getUsername = view.findViewById(R.id.getUsername);
          EditText getPassword = view.findViewById(R.id.getPassword);
 
-        String key = BuildConfig.FIREBASE_API_KEY;
         Login.setOnClickListener(v ->
          {
              boolean isvalid = true;

@@ -23,7 +23,7 @@ graph TD
     end
 
     subgraph Network & Auth
-        Firebase[Firebase SDK - Auth]
+        Clerk[Clerk Android SDK - Auth]
         API[Backend API - Retrofit Interface]
     end
 
@@ -32,7 +32,7 @@ graph TD
     Repo -->|2. HTTP Request| API
     API -->|3. OkHttp Chain| RetrofitClient
     RetrofitClient -->|Attach Token| TokenManager
-    Fragments -.->|Direct SDK Call| Firebase
+    Fragments -.->|Auth Flow| Clerk
 ```
 
 
@@ -73,14 +73,13 @@ graph TD
 Chức năng đánh giá phát âm AI yêu cầu gửi file ghi âm chất lượng cao lên backend:
 - Sử dụng API **`AudioRecord`** để thu âm trực tiếp tín hiệu âm thanh thô (PCM) từ microphone với tần số lấy mẫu tiêu chuẩn `16000Hz`, kênh đơn (Mono), mã hóa `16-bit PCM`.
 - Sau khi kết thúc thu âm, ứng dụng sẽ thực hiện ghi đè dữ liệu thô vào bộ nhớ đồng thời chèn thêm cấu trúc **WAV Header (44 bytes)** để chuyển đổi luồng dữ liệu PCM thô thành tệp tin âm thanh `.wav` hợp lệ.
-- Gửi tệp tin `.wav` này qua Retrofit dưới dạng dữ liệu nhiều phần (`MultipartBody.Part`) đến endpoint `/api/v1/pronunciation-attempts`.
+- Gửi tệp tin `.wav` này qua Retrofit dưới dạng dữ liệu nhiều phần (`MultipartBody.Part`) đến endpoint `/api/v1/shadowing-status/transcribe`.
 
 ### 3.3. Xác thực người dùng (Authentication Flow)
-1. Người dùng thực hiện đăng nhập/đăng ký thông qua Firebase Auth SDK trên thiết bị di động.
-2. Khi thành công, ứng dụng lấy **Firebase ID Token** (JWT).
+1. Người dùng thực hiện đăng nhập/đăng ký thông qua Clerk Android SDK trên thiết bị di động.
+2. Khi thành công, ứng dụng lấy **Clerk session token** (JWT).
 3. Lưu trữ Token này vào bộ nhớ thiết bị thông qua `TokenManager` (sử dụng `SharedPreferences`).
 4. Gửi một request đồng bộ `POST auth/sync` lên Backend của EngFlex để ghi nhận thông tin tài khoản người dùng vào cơ sở dữ liệu PostgreSQL.
 5. Mọi request API gửi lên sau đó sẽ được đi qua **`AuthInterceptor`** (đăng ký trong OkHttpClient) để tự động đính kèm Token xác thực vào tiêu đề request: `Authorization: Bearer <ID_TOKEN>`.
 
 ---
-

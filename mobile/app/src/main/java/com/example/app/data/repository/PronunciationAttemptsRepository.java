@@ -5,7 +5,6 @@ import android.content.Context;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.PronunciationApi;
 import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.pronunciation.PronunciationAttemptsResponse;
 import com.example.app.data.remote.model.response.pronunciation.PronunciationResponse;
 import com.example.app.utils.ApiCallWrapper;
 import com.example.app.utils.BaseCallback;
@@ -61,9 +60,4 @@ public class PronunciationAttemptsRepository {
         pronunciationApi.assessPronunciation(audioPart, referenceTextBody,lessonIdBody,transcriptIdBody)
                 .enqueue(new ApiCallWrapper<>(callback));
     }
-
-    public void deletePronunciationAttempt(int attemptId, BaseCallback<ApiResponse<PronunciationAttemptsResponse>> callback) {
-        pronunciationApi.deletePronunciationAttempt(attemptId).enqueue(new ApiCallWrapper<>(callback));
-    };
-
 }

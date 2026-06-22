@@ -29,7 +29,7 @@ public interface LessonsApi {
             @Path("lessonId") int lessonId
     );
 
-    @POST("admin/lessons/youtube")
+    @POST("admin/lessons")
     Call<ApiResponse<LessonsResponse>> createLesson(@Body CreateLessonRequest request);
 
 

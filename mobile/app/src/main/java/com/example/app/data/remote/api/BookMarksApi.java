@@ -12,32 +12,31 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.PUT;
 
 public interface BookMarksApi {
-    @GET("bookmarks")
+    @GET("transcript-bookmarks")
     Call<ApiResponse<List<BookmarksModel>>>
     getBookmarks(
-            @Query("lessonId") Integer lessonId,
+            @Query("lesson_id") Integer lessonId,
                  @Query("limit") String limit,
                  @Query("page") String page);
 
-    @GET("bookmarks/{lessonId}")
+    @GET("transcript-bookmarks/{lessonId}")
     Call<ApiResponse<BookmarksModel>>
     getBookmarkByLessonId(@Path("lessonId") int lessonId, @Query("page") int page, @Query("limit") int limit);
 
-    @POST("bookmarks/{lessonId}")
+    @POST("transcript-bookmarks")
     Call<ApiResponse<BookmarksResponse>>
-    createBookmark(@Path("lessonId") int lessonId,
-                   @Body CreateBookMarksRequest request);
-    @PATCH("bookmarks/{transcriptId}")
+    createBookmark(@Body CreateBookMarksRequest request);
+    @PUT("transcript-bookmarks/{transcriptId}")
     Call<ApiResponse<BookmarksResponse>>
     updateBookmark(@Path("transcriptId") int transcriptId,
                    @Body UpdateNoteRequest request);
-    @DELETE("bookmarks/{transcriptId}")
+    @DELETE("transcript-bookmarks/{transcriptId}")
     Call<ApiResponse<BookmarksResponse>>
     deleteBookmark(@Path("transcriptId") int transcriptId);
 

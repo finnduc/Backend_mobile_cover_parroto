@@ -8,7 +8,7 @@ Nền tảng học tiếng Anh qua video — bao gồm backend API (Go), web fro
 |------------|---------|-----------|-------|
 | **API** | [`api/`](./api/) | Go, Gin, GORM, PostgreSQL, Clerk | Backend REST API xử lý bài học, từ vựng, bookmark, shadowing, dictation |
 | **Web** | [`web/`](./web/) | Next.js 16, TypeScript, Tailwind CSS, shadcn/ui | Frontend web cho người dùng và admin |
-| **Mobile** | [`mobile/`](./mobile/) | Android (Java), Firebase, Retrofit | Ứng dụng di động Android |
+| **Mobile** | [`mobile/`](./mobile/) | Android (Java/Kotlin), Clerk, Retrofit | Ứng dụng di động Android |
 
 ---
 
@@ -39,7 +39,7 @@ App chạy tại `http://localhost:3000`. Xem chi tiết tại [`web/README.md`]
 
 ### Mobile
 
-Mở thư mục `mobile/` bằng Android Studio, cấu hình `google-services.json` và chạy. Xem chi tiết tại [`mobile/README.md`](./mobile/README.md).
+Mở thư mục `mobile/` bằng Android Studio, cấu hình `CLERK_PUBLISHABLE_KEY` trong `local.properties` và chạy. Xem chi tiết tại [`mobile/README.md`](./mobile/README.md).
 
 ---
 

@@ -16,7 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.example.app.R;
 import com.example.app.data.local.TokenManager;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.app.data.remote.ClerkAuthBridge;
 
 public class SettingsFragment extends Fragment {
 
@@ -126,8 +126,18 @@ public class SettingsFragment extends Fragment {
     }
 
     private void performLogout() {
-        FirebaseAuth.getInstance().signOut();
-        tokenManager.clear();
-        updateProfileUI();
+        ClerkAuthBridge.signOut(new ClerkAuthBridge.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                tokenManager.clear();
+                updateProfileUI();
+            }
+
+            @Override
+            public void onError(String message) {
+                tokenManager.clear();
+                updateProfileUI();
+            }
+        });
     }
 }

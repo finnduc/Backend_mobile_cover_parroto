@@ -20,7 +20,7 @@ func NewAuthController(svc services.IAuthService) *AuthController {
 
 // CompleteSignUp godoc
 // @Summary Finalize user registration
-// @Description Sets initial user claims and roles after the first Firebase authentication
+// @Description Sets initial user claims and roles after the first Clerk authentication
 // @Tags auth
 // @Accept json
 // @Produce json

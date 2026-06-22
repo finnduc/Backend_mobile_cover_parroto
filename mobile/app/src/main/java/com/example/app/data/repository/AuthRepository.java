@@ -3,15 +3,13 @@ package com.example.app.data.repository;
 import android.content.Context;
 
 import com.example.app.data.local.TokenManager;
+import com.example.app.data.remote.ClerkAuthBridge;
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.AuthApi;
 import com.example.app.data.remote.api.UserApi;
 import com.example.app.data.remote.model.request.auth.UpdateProfileRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.user.UserResponse;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,109 +31,104 @@ public class AuthRepository {
         void onSuccess(T data);
 
         void onError(String message);
+
+        default void onNeedsVerification() {
+            onError("Vui lòng xác minh email để hoàn tất đăng ký");
+        }
     }
 
     public void Register(String email, String password, String name, authCallBack<String> callback) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        String errorMsg = task.getException() != null
-                                ? task.getException().getMessage()
-                                : "Loi dang ky Firebase";
-                        callback.onError(errorMsg);
-                        return;
+        ClerkAuthBridge.signUp(email, password, name, new ClerkAuthBridge.AuthCallback() {
+            @Override
+            public void onSuccess(String token) {
+                saveToken(token);
+                completeSignupAndSync(new authCallBack<UserResponse>() {
+                    @Override
+                    public void onSuccess(UserResponse data) {
+                        callback.onSuccess("Đăng ký thành công");
                     }
 
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if (user == null) {
-                        callback.onError("Khong tim thay nguoi dung Firebase sau dang ky");
-                        return;
+                    @Override
+                    public void onError(String message) {
+                        clearAuthState();
+                        callback.onError(message);
                     }
-
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(name)
-                            .build();
-
-                    user.updateProfile(profileUpdates).addOnCompleteListener(updateTask -> {
-                        if (!updateTask.isSuccessful()) {
-                            user.delete().addOnCompleteListener(d -> {
-                                clearAuthState();
-                                callback.onError("Loi cap nhat ho so Firebase");
-                            });
-                            return;
-                        }
-
-                        user.getIdToken(true).addOnCompleteListener(tokenTask -> {
-                            if (!tokenTask.isSuccessful() || tokenTask.getResult() == null) {
-                                user.delete().addOnCompleteListener(d -> {
-                                    clearAuthState();
-                                    callback.onError("Loi lay token sau dang ky");
-                                });
-                                return;
-                            }
-
-                            tokenManager.saveToken(tokenTask.getResult().getToken(), "");
-                            syncAuthenticatedUser(new authCallBack<UserResponse>() {
-                                @Override
-                                public void onSuccess(UserResponse data) {
-                                    callback.onSuccess("Dang ky thanh cong");
-                                }
-
-                                @Override
-                                public void onError(String message) {
-                                    user.delete().addOnCompleteListener(d -> {
-                                        clearAuthState();
-                                        callback.onError(message);
-                                    });
-                                }
-                            });
-                        });
-                    });
                 });
+            }
+
+            @Override
+            public void onNeedsVerification() {
+                callback.onNeedsVerification();
+            }
+
+            @Override
+            public void onError(String message) {
+                clearAuthState();
+                callback.onError(message);
+            }
+        });
+    }
+
+    public void verifyRegistration(String code, authCallBack<String> callback) {
+        ClerkAuthBridge.verifySignUp(code, new ClerkAuthBridge.AuthCallback() {
+            @Override
+            public void onSuccess(String token) {
+                saveToken(token);
+                completeSignupAndSync(new authCallBack<UserResponse>() {
+                    @Override
+                    public void onSuccess(UserResponse data) {
+                        callback.onSuccess("Đăng ký thành công");
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        clearAuthState();
+                        callback.onError(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onNeedsVerification() {
+                callback.onNeedsVerification();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
     }
 
     public void login(String email, String password, authCallBack<UserResponse> callback) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        String errorMsg = task.getException() != null
-                                ? task.getException().getMessage()
-                                : "Sai tai khoan hoac mat khau";
-                        callback.onError(errorMsg);
-                        return;
+        ClerkAuthBridge.signIn(email, password, new ClerkAuthBridge.AuthCallback() {
+            @Override
+            public void onSuccess(String token) {
+                saveToken(token);
+                syncAuthenticatedUser(new authCallBack<UserResponse>() {
+                    @Override
+                    public void onSuccess(UserResponse data) {
+                        callback.onSuccess(data);
                     }
 
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if (user == null) {
-                        callback.onError("Khong tim thay nguoi dung Firebase sau dang nhap");
-                        return;
+                    @Override
+                    public void onError(String message) {
+                        clearAuthState();
+                        callback.onError(message);
                     }
-
-                    user.getIdToken(true).addOnCompleteListener(tokenTask -> {
-                        if (!tokenTask.isSuccessful() || tokenTask.getResult() == null) {
-                            callback.onError("Loi xac thuc token");
-                            return;
-                        }
-
-                        tokenManager.saveToken(tokenTask.getResult().getToken(), "");
-                        syncAuthenticatedUser(new authCallBack<UserResponse>() {
-                            @Override
-                            public void onSuccess(UserResponse data) {
-                                callback.onSuccess(data);
-                            }
-
-                            @Override
-                            public void onError(String message) {
-                                clearAuthState();
-                                callback.onError(message);
-                            }
-                        });
-                    });
                 });
+            }
+
+            @Override
+            public void onNeedsVerification() {
+                callback.onNeedsVerification();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
     }
 
     public void updateProfile(UpdateProfileRequest request, authCallBack<ApiResponse<UserResponse>> callback) {
@@ -151,7 +144,25 @@ public class AuthRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
-                callback.onError("Loi: " + t.getMessage());
+                callback.onError("Lỗi: " + t.getMessage());
+            }
+        });
+    }
+
+    private void completeSignupAndSync(authCallBack<UserResponse> callback) {
+        authApi.completeSignup().enqueue(new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                if (response.isSuccessful()) {
+                    syncAuthenticatedUser(callback);
+                } else {
+                    callback.onError("Lỗi hoàn tất đăng ký server: " + getErrorMessage(response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                callback.onError("Lỗi hoàn tất đăng ký server: " + t.getMessage());
             }
         });
     }
@@ -165,15 +176,21 @@ public class AuthRepository {
                     saveUserInfo(userResponse);
                     callback.onSuccess(userResponse);
                 } else {
-                    callback.onError("Loi dong bo server: " + getErrorMessage(response));
+                    callback.onError("Lỗi đồng bộ server: " + getErrorMessage(response));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
-                callback.onError("Loi dong bo server: " + t.getMessage());
+                callback.onError("Lỗi đồng bộ server: " + t.getMessage());
             }
         });
+    }
+
+    private void saveToken(String token) {
+        if (token != null && !token.isEmpty()) {
+            tokenManager.saveToken(token, "");
+        }
     }
 
     private void saveUserInfo(UserResponse userResponse) {
@@ -188,7 +205,6 @@ public class AuthRepository {
     }
 
     private void clearAuthState() {
-        FirebaseAuth.getInstance().signOut();
         tokenManager.clear();
     }
 

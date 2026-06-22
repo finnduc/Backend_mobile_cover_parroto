@@ -24,12 +24,12 @@ public interface VocabularyApi {
     @GET("vocabulary-categories")
     Call<ApiResponse<List<VocaCategoryResponse>>> getVocaCategories();
 
-    @GET("vocabulary-decks")
+    @GET("vocabulary-system-decks")
     Call<ApiResponse<List<VocaDecksResponse>>> getVocaDecks(
             @Query("category_id") int categoryId
     );
 
-    @GET("vocabulary-decks/mine")
+    @GET("vocabulary-decks")
     Call<ApiResponse<List<VocaDecksResponse>>> getMyVocaDecks();
 
     @POST("vocabulary-decks")
@@ -59,19 +59,14 @@ public interface VocabularyApi {
             @Body AddItemsToDeckRequest request
     );
 
-    @PUT("vocabulary-decks/{deckId}/items/{itemId}")
+    @PUT("vocabulary-items/{itemId}")
     Call<ApiResponse<VocaItemsResponse>> updateItem(
-            @Path("deckId") int deckId,
             @Path("itemId") int itemId,
             @Body UpdateVocaItemRequest request
     );
 
-    @DELETE("vocabulary-decks/{deckId}/items/{itemId}")
+    @DELETE("vocabulary-items/{itemId}")
     Call<ApiResponse<VocaItemsResponse>> deleteItem(
-            @Path("deckId") int deckId,
             @Path("itemId") int itemId
     );
-
-    @GET("vocabulary-items")
-    Call<ApiResponse<List<VocaItemsResponse>>> getVocaItems();
 }

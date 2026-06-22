@@ -465,7 +465,7 @@ public class ListeningFragment extends Fragment {
                 sentenceAdapter.notifyItemChanged(currentSentenceIndex);
                 itemPronunciationAdapter.notifyItemChanged(currentSentenceIndex);
                 Log.d("DictationFragment", "Score: " + new Gson().toJson(data));
-                pronunciationProgressRepository.updatePronunciationProgress(transcript.getId(), new BaseCallback<ApiResponse<PronunciationProgressResponse>>() {
+                pronunciationProgressRepository.updatePronunciationProgress(lessonId, transcript.getId(), new BaseCallback<ApiResponse<PronunciationProgressResponse>>() {
                     @Override
                     public void onSuccess(ApiResponse<PronunciationProgressResponse> data) {
                         if (!isAdded() || getView() == null) {

@@ -3,12 +3,6 @@ package com.example.app.data.remote.model.request.vocaDecks;
 import com.google.gson.annotations.SerializedName;
 
 public class UpdateVocaItemRequest {
-    @SerializedName("lesson_id")
-    private Integer lessonId;
-
-    @SerializedName("transcript_id")
-    private Integer transcriptId;
-
     @SerializedName("phrase")
     private String phrase;
 
@@ -31,8 +25,6 @@ public class UpdateVocaItemRequest {
                                   String meaning,
                                   String exampleSentence,
                                   String note) {
-        this.lessonId = lessonId;
-        this.transcriptId = transcriptId;
         this.phrase = phrase;
         this.normalizedPhrase = normalizedPhrase;
         this.meaning = meaning;

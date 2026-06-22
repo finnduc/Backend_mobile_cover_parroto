@@ -23,7 +23,7 @@ public class TranscriptProgressRepository {
         transcriptProgressApi.getTranscriptProgress(lessonId).enqueue(new ApiCallWrapper<>(callback));
     }
     public void createTranscriptProgress(int lessonId,int transcriptId, BaseCallback<ApiResponse<TranscriptProgressResponse>> callback) {
-        transcriptProgressApi.createTranscriptProgress(lessonId, new CreateTranscriptProgressRequest(transcriptId)).enqueue(new ApiCallWrapper<>(callback));
+        transcriptProgressApi.createTranscriptProgress(new CreateTranscriptProgressRequest(transcriptId, lessonId)).enqueue(new ApiCallWrapper<>(callback));
     }
 
 }

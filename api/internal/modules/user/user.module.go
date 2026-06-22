@@ -14,5 +14,6 @@ func RegisterRoutes(r *gin.RouterGroup) {
 	protected := r.Group("/user", middleware.ClerkAuthMiddleware())
 	{
 		protected.GET("/profile", ctrl.GetProfile)
+		protected.PUT("/profile", ctrl.UpdateProfile)
 	}
 }

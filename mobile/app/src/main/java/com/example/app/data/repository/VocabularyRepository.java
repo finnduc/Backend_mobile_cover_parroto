@@ -57,14 +57,10 @@ public class VocabularyRepository {
     }
 
     public void updateItem(int deckId, int itemId, UpdateVocaItemRequest request, BaseCallback<ApiResponse<VocaItemsResponse>> callback) {
-        vocabularyApi.updateItem(deckId, itemId, request).enqueue(new ApiCallWrapper<>(callback));
+        vocabularyApi.updateItem(itemId, request).enqueue(new ApiCallWrapper<>(callback));
     }
 
     public void deleteItem(int deckId, int itemId, BaseCallback<ApiResponse<VocaItemsResponse>> callback) {
-        vocabularyApi.deleteItem(deckId, itemId).enqueue(new ApiCallWrapper<>(callback));
-    }
-
-    public void getVocabularyItems(BaseCallback<ApiResponse<List<VocaItemsResponse>>> callback) {
-        vocabularyApi.getVocaItems().enqueue(new ApiCallWrapper<>(callback));
+        vocabularyApi.deleteItem(itemId).enqueue(new ApiCallWrapper<>(callback));
     }
 }

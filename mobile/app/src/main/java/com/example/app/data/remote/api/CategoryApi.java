@@ -4,8 +4,6 @@ import com.example.app.data.remote.model.request.category.CreateCategoryRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.categories.CategoryDeleteResponse;
 import com.example.app.data.remote.model.response.categories.CategoryResponse;
-import com.google.android.gms.common.api.Api;
-
 import java.util.List;
 
 import retrofit2.Call;

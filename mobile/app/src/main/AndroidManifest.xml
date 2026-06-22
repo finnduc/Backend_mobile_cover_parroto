@@ -6,6 +6,7 @@
 
 
     <application
+        android:name=".EngflixApp"
         android:windowSoftInputMode="adjustResize"
         android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true"
