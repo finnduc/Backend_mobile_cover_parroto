@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_marginBottom="24dp">
 
-    <!-- ===== SECTION HEADER ===== -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
 
         </LinearLayout>
 
-        <!-- Xem tất cả button -->
+        
         <TextView
             android:id="@+id/tvSeeAll"
             android:layout_width="wrap_content"

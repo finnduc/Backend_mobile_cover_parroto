@@ -1,52 +1,70 @@
 package com.example.app.feature.study;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.app.R;
 import com.example.app.adapter.dictation.SentenceAdapter;
 import com.example.app.adapter.dictation.WordCardAdapter;
 import com.example.app.adapter.dictation.WorkCardModel;
-import com.example.app.data.remote.api.TranscriptsApi;
+import com.example.app.data.remote.model.request.progress.CreateProgressRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
+import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
+import com.example.app.data.remote.model.response.bookmarks.noteResponse;
+import com.example.app.data.remote.model.response.progress.ProgressResponse;
+import com.example.app.data.remote.model.response.transcriptBookmarks.TranscriptBookmarksResponse;
+import com.example.app.data.remote.model.response.transcriptProgress.TranscriptProgressResponse;
 import com.example.app.data.remote.model.response.transcripts.TranscriptsResponse;
-import com.example.app.data.remote.model.response.transcripts.WordCardResponse;
+import com.example.app.data.repository.BookMarksRepository;
+import com.example.app.data.repository.ProgressRepository;
+import com.example.app.data.repository.TranscriptBookmarksRepository;
+import com.example.app.data.repository.TranscriptProgressRepository;
 import com.example.app.data.repository.TranscriptsRepository;
 import com.example.app.diaglog.SpoilerWarning;
+import com.example.app.utils.BaseCallback;
+import com.example.app.utils.YouTubeWebViewManager;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxItemDecoration;
-import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-
 public class DictationFragment extends Fragment {
-
+    private TranscriptProgressRepository transcriptProgressRepository;
+    private boolean isCurrentSentenceBookmarked = false;
+    private BookMarksRepository bookMarksRepository;
+    private TranscriptBookmarksRepository transcriptBookmarksRepository;
+    private Button btnKiemTra;
+    private ImageButton btnBookmark;
+    private YouTubeWebViewManager youTubeWebViewManager;
+    private LinearLayout layoutButtonBottom;
+    private ImageButton btnPrevious;
+    private ImageButton btnNext;
+    private ImageButton btnReplay2;
+    private ImageButton btnPlay;
+    private int lessonId;
     private TranscriptsRepository transcriptsRepository;
     private List<TranscriptsResponse> listTranscripts = new ArrayList<>();
     private int currentSentenceIndex = 0;
@@ -55,9 +73,10 @@ public class DictationFragment extends Fragment {
     private List<WorkCardModel> listWordCards = new ArrayList<>();
     private boolean showdiaglogwarning = false;
     private TextView toolbarTitle;
-    private TextView toolbarProgress;
+    private TextView tvProgress;
     private TextView timer;
     private WebView webViewYoutube;
+    private noteResponse currentNoteResponse = null;
     private ImageButton btnClose ;
     private TextView vietnamese;
     private EditText etInput;
@@ -69,8 +88,6 @@ public class DictationFragment extends Fragment {
     private androidx.appcompat.widget.SwitchCompat switchAutoStop;
     private RecyclerView rvSentenceNumbers;
     private RecyclerView rvWordCards;
-
-    private boolean isPlaying = false;
     private static final float[] SPEED_LEVELS = {0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f};
     private int speedIndex = 3;
     private float currentSpeed = 1.0f;
@@ -81,9 +98,11 @@ public class DictationFragment extends Fragment {
     private Handler autoStopHandler = new Handler();
     private Runnable timerRunnable;
     private Runnable autoStopRunnable;
-
-
-
+    private ProgressRepository progressRepository;
+    private int quantityTranscripts = 0;
+    private List<Integer> completedIds = new ArrayList<>();
+    private boolean dictationStartedSent = false;
+    private boolean dictationCompletedSent = false;
 
     @Nullable
     @Override
@@ -94,12 +113,24 @@ public class DictationFragment extends Fragment {
     ) {
 
         View view = inflater.inflate(R.layout.fragment_dictation, container, false);
-
+        transcriptProgressRepository = new TranscriptProgressRepository(requireContext());
+        bookMarksRepository = new BookMarksRepository(requireContext());
+        transcriptBookmarksRepository = new TranscriptBookmarksRepository(requireContext());
         transcriptsRepository = new TranscriptsRepository(requireContext());
+        progressRepository = new ProgressRepository(requireContext());
+        layoutButtonBottom = view.findViewById(R.id.layoutButtonBottom);
+        btnPrevious = view.findViewById(R.id.btnPrevious);
+        btnNext = view.findViewById(R.id.btnNext);
+        btnBookmark = view.findViewById(R.id.btnBookmark);
+        btnReplay2 = view.findViewById(R.id.btnReplay2);
+        btnPlay = view.findViewById(R.id.btnPlay);
+        btnKiemTra = view.findViewById(R.id.btnKiemTra);
+        vietnamese = view.findViewById(R.id.tvvietnamese);
         toolbarTitle = view.findViewById(R.id.tvToolbarTitle);
-        toolbarProgress = view.findViewById(R.id.tvProgress);
+        tvProgress = view.findViewById(R.id.tvProgress);
         timer = view.findViewById(R.id.tvTimer);
         webViewYoutube = view.findViewById(R.id.webViewYoutube);
+        youTubeWebViewManager = new YouTubeWebViewManager(webViewYoutube);
         btnClose = view.findViewById(R.id.btnClose);
         etInput = view.findViewById(R.id.etInput);
         btnStart = view.findViewById(R.id.btnStart);
@@ -145,11 +176,11 @@ public class DictationFragment extends Fragment {
             String lessonTitle = getArguments().getString("lessonTitle");
             String lessonVideoUrl = getArguments().getString("lessonVideoUrl");
             int lessonDuration = getArguments().getInt("lessonDuration");
-            int lessonId = getArguments().getInt("lessonId",-1);
+            lessonId = getArguments().getInt("lessonId",-1);
             toolbarTitle.setText(lessonTitle);
-            toolbarProgress.setText("0% hoàn thành");
+            tvProgress.setText("0% hoàn thành");
 
-            setupYoutubeWebView(lessonVideoUrl);
+            youTubeWebViewManager.setupYoutubeWebView(requireContext(), lessonVideoUrl);
             if (lessonId != -1) {
                 fetchTranscripts(lessonId);
             } else {
@@ -164,26 +195,38 @@ public class DictationFragment extends Fragment {
         transcriptsRepository.getTranscripts(lessonId, new TranscriptsRepository.TranscriptsCallback() {
             @Override
             public void onSuccess(List<TranscriptsResponse> data) {
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
                 if (data != null && !data.isEmpty()) {
                     android.util.Log.d("DictationFragment", "Gọi API thành công! Số lượng câu: " + data.size());
                     listTranscripts = data;
+                    quantityTranscripts = data.size();
                     sentenceAdapter.setData(listTranscripts);
+                    fetchTranscriptProgress(lessonId);
                     currentSentenceIndex = 0;
                     prepareCurrentSentence();
                 } else {
                     android.util.Log.e("DictationFragment", "API gọi thành công nhưng danh sách Transcript bị NULL hoặc RỖNG!");
-                    Toast.makeText(requireContext(), "Không có dữ liệu bài học (Data rỗng)", Toast.LENGTH_SHORT).show();
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Không có dữ liệu bài học (Data rỗng)", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             @Override
             public void onError(String message) {
                 android.util.Log.e("DictationFragment", "Lỗi API tải transcript: " + message);
-                Toast.makeText(requireContext(), "Lỗi tải dữ liệu: " + message, Toast.LENGTH_SHORT).show();
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + message, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
     public  void prepareCurrentSentence(){
-        if(listTranscripts != null && !listTranscripts.isEmpty() && currentSentenceIndex >= listTranscripts.size()){
+        if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
             return;
         }
         showdiaglogwarning = false;
@@ -218,84 +261,40 @@ public class DictationFragment extends Fragment {
         }
         etInput.setText("");
         etInput.setBackgroundResource(R.drawable.bg_input_box);
-        int progress = (currentSentenceIndex * 100) / listTranscripts.size();
-        toolbarProgress.setText(progress + "% hoàn thành");
+        vietnamese.setVisibility(View.GONE);
+        vietnamese.setText("");
         if (rvSentenceNumbers != null) {
             rvSentenceNumbers.smoothScrollToPosition(currentSentenceIndex);
         }
+        checkBookmarkState();
     }
+    public void fetchTranscriptProgress(int lessonId){
+        transcriptProgressRepository.getTranscriptProgress(lessonId, new BaseCallback<ApiResponse<List<TranscriptProgressResponse>>>() {
+            @Override
+            public void onSuccess(ApiResponse<List<TranscriptProgressResponse>> data) {
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
+                if (data != null && data.getData() != null) {
+                    completedIds.clear();
+                    for (TranscriptProgressResponse response : data.getData()) {
+                        if (!completedIds.contains(response.getTranscriptId())) {
+                            completedIds.add(response.getTranscriptId());
+                        }
+                    }
+                    if (sentenceAdapter != null) {
+                        sentenceAdapter.setCompletedTranscripts(completedIds);
+                    }
+                    updateProgressText();
+                    sendDictationCompletedIfNeeded();
+                }
 
-    private void setupYoutubeWebView(String lessonVideoUrl) {
-
-        if (lessonVideoUrl == null || lessonVideoUrl.isEmpty()) {
-            return;
-        }
-
-        WebSettings settings = webViewYoutube.getSettings();
-
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-
-        String defaultUA = settings.getUserAgentString();
-        String fakedUA = defaultUA.replace("; wv", "");
-        settings.setUserAgentString(fakedUA);
-
-        webViewYoutube.setWebChromeClient(new WebChromeClient());
-        webViewYoutube.setWebViewClient(new WebViewClient());
-
-        String embedUrl = lessonVideoUrl;
-
-        if (embedUrl.startsWith("http://")) {
-            embedUrl = embedUrl.replaceFirst("http://", "https://");
-        }
-
-        if (embedUrl.contains("watch?v=")) {
-            embedUrl = embedUrl.replace("watch?v=", "embed/");
-        } else if (embedUrl.contains("youtu.be/")) {
-            embedUrl = "https://www.youtube.com/embed/"
-                    + embedUrl.substring(
-                    embedUrl.lastIndexOf("/") + 1
-            );
-        }
-
-        embedUrl = embedUrl.replace(
-                "youtube.com",
-                "youtube-nocookie.com"
-        );
-
-        String appOrigin = "https://" + requireContext().getPackageName();
-
-        String youtubeParams =
-                "controls=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&origin=" + appOrigin;
-
-        if (embedUrl.contains("?")) {
-            embedUrl += "&" + youtubeParams;
-        } else {
-            embedUrl += "?" + youtubeParams;
-        }
-
-        String html =
-                "<!DOCTYPE html>" +
-                        "<html style='margin:0;padding:0;height:100%;'>" +
-                        "<body style='margin:0;padding:0;height:100%;background:#000;'>" +
-                        "<iframe width='100%' height='100%' " +
-                        "style='display:block;' " +
-                        "src='" + embedUrl + "' " +
-                        "allow='autoplay; encrypted-media; fullscreen' " +
-                        "referrerpolicy='strict-origin-when-cross-origin' " +
-                        "frameborder='0' allowfullscreen>" +
-                        "</iframe>" +
-                        "</body></html>";
-
-        webViewYoutube.loadDataWithBaseURL(
-                appOrigin,
-                html,
-                "text/html",
-                "utf-8",
-                null
-        );
+            }
+            @Override
+            public void onError(String message) {
+                Log.e("DictationFragment", "Lỗi tải dữ liệu: " + message);
+            }
+        });
     }
 
     @Override
@@ -303,92 +302,174 @@ public class DictationFragment extends Fragment {
         super.onDestroyView();
         stopStudyTime();
         cancelAutoStop();
-        if (webViewYoutube != null) {
-            webViewYoutube.loadUrl("about:blank");
-            webViewYoutube.onPause();
-            webViewYoutube.removeAllViews();
-            webViewYoutube.destroy();
-            webViewYoutube = null;
+        if (timerHandler != null) {
+            timerHandler.removeCallbacksAndMessages(null);
         }
+        if (autoStopHandler != null) {
+            autoStopHandler.removeCallbacksAndMessages(null);
+        }
+        if (youTubeWebViewManager != null) {
+            youTubeWebViewManager.destroy();
+        }
+        webViewYoutube = null;
     }
 
     public void setupListeners(){
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (webViewYoutube != null) {
-                    webViewYoutube.loadUrl("about:blank");
-                    webViewYoutube.onPause();
+                if (youTubeWebViewManager != null) {
+                    youTubeWebViewManager.stopVideo();
                 }
                 Navigation.findNavController(v).popBackStack();
             }
         });
 
         btnStart.setOnClickListener(v -> {
+            btnStart.setVisibility(View.GONE);
+            layoutButtonBottom.setVisibility(View.VISIBLE);
+            etInput.setEnabled(true);
+            sendDictationInProgressIfNeeded();
+        });
 
-            if(currentSentenceIndex >= listTranscripts.size()){
-                Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_progressFragment);
-                return;
+        btnPrevious.setOnClickListener(v -> {
+            if (listTranscripts != null && currentSentenceIndex > 0) {
+                currentSentenceIndex--;
+                prepareCurrentSentence();
+                replayCurrentSentence();
+                btnKiemTra.setText("Kiểm tra");
             }
+        });
 
-            if(isWaitingForNext){
+        btnNext.setOnClickListener(v -> {
+            if (listTranscripts != null && currentSentenceIndex < listTranscripts.size() - 1) {
                 currentSentenceIndex++;
-                if(currentSentenceIndex < listTranscripts.size()) {
-                    prepareCurrentSentence();
-                    btnStart.setText("Kiểm tra");
-                    isWaitingForNext = false;
-                    etInput.requestFocus();
-                    etInput.setEnabled(true);
-                }
-                else {
-                    btnStart.setText("Hoàn thành! Xem kết quả");
-                }
+                prepareCurrentSentence();
+                replayCurrentSentence();
+                btnKiemTra.setText("Kiểm tra");
+            }
+        });
+
+        btnSpeed.setOnClickListener(v -> showSpeedDropdown());
+        switchAutoStop.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                replayCurrentSentence();
+            } else {
+                cancelAutoStop();
+                youTubeWebViewManager.playVideo();
+            }
+        });
+        btnBookmark.setOnClickListener(v -> {
+            if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
+                Toast.makeText(requireContext(), "Không có dữ liệu câu để tạo ghi chú!", Toast.LENGTH_SHORT).show();
                 return;
-
             }
+            TranscriptsResponse currentTranscript = listTranscripts.get(currentSentenceIndex);
+            Bundle bundle = new Bundle();
+            if(isCurrentSentenceBookmarked && currentNoteResponse != null){
+                bundle.putString("content", currentNoteResponse.getContent());
+                bundle.putString("phonetic", currentNoteResponse.getPhonetic() != null ? currentNoteResponse.getPhonetic() : "");
+                bundle.putString("note", currentNoteResponse.getNote());
+                bundle.putInt("transcriptId", currentTranscript.getId());
 
-            if(!isPlaying){
-                isPlaying = true;
-                btnStart.setText("Kiểm tra");
-                etInput.setEnabled(true);
-                etInput.requestFocus();
-            }
-            else {
-                String userInput = etInput.getText().toString().trim();
-                checkAnswer(userInput);
+                try{
+                    Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_editNoteFragment, bundle);
+                }catch (IllegalArgumentException e){
+                    android.util.Log.e("DictationFragment", "Lỗi chuyển màn hình Edit: " + e.getMessage());
+                }
 
+            } else {
+                bundle.putInt("lessonId", lessonId);
+                bundle.putInt("transcriptId", currentTranscript.getId());
+                bundle.putString("sentenceEn", currentTranscript.getContent());
+                bundle.putString("sentenceVi", currentTranscript.getVietnamese());
+                try{
+                    Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_addNoteFragment, bundle);
+                }catch (IllegalArgumentException e){
+                    android.util.Log.e("DictationFragment", "Lỗi chuyển màn hình Add: " + e.getMessage());
+                }
             }
         });
-
-        btnSpeed.setOnClickListener(v -> {
-            speedIndex = (speedIndex + 1) % SPEED_LEVELS.length;
-            currentSpeed = SPEED_LEVELS[speedIndex];
-            tvSpeed.setText(currentSpeed + "x");
-            changeVideoSpeed(currentSpeed);
-        });
-
-
         btnReplay.setOnClickListener(v -> {
             replayCurrentSentence();
             btnPlaysentenceState = true;
+            btnKiemTra.setText("Kiểm tra");
 
         });
 
         btnPlaySentence.setOnClickListener(v -> {
             toggleVideoPlayback();
         });
+
+        btnReplay2.setOnClickListener(v -> {
+            replayCurrentSentence();
+            btnPlaysentenceState = true;
+        });
+
+        btnPlay.setOnClickListener(v -> {
+            toggleVideoPlayback();
+        });
+        btnKiemTra.setOnClickListener(v -> {
+            checkAnswer(etInput.getText().toString());
+        });
+
     }
 
     public void changeVideoSpeed(float speed) {
-        if (webViewYoutube != null) {
-            String jsCommand = "javascript:(function() { " +
-                    "var iframe = document.querySelector('iframe'); " +
-                    "if(iframe && iframe.contentWindow) { " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'setPlaybackRate', args: [" + speed + "]}), '*'); " +
-                    "} " +
-                    "})()";
-            webViewYoutube.evaluateJavascript(jsCommand, null);
+        youTubeWebViewManager.changeSpeed(speed);
+    }
+
+    private void showSpeedDropdown() {
+        LinearLayout container = new LinearLayout(requireContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setBackgroundResource(R.drawable.bg_speed_dropdown);
+        container.setPadding(dpToPx(6), dpToPx(6), dpToPx(6), dpToPx(6));
+
+        PopupWindow popupWindow = new PopupWindow(
+                container,
+                dpToPx(112),
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setElevation(dpToPx(8));
+
+        for (int i = 0; i < SPEED_LEVELS.length; i++) {
+            final int selectedIndex = i;
+            TextView item = new TextView(requireContext());
+            item.setText(formatSpeed(SPEED_LEVELS[i]));
+            item.setTextSize(14);
+            item.setGravity(Gravity.CENTER_VERTICAL);
+            item.setPadding(dpToPx(12), dpToPx(9), dpToPx(12), dpToPx(9));
+            item.setTextColor(Color.parseColor("#164F86"));
+            if (selectedIndex == speedIndex) {
+                item.setTextColor(Color.parseColor("#0B63B6"));
+                item.setBackgroundResource(R.drawable.bg_speed_option_selected);
+                item.setTypeface(item.getTypeface(), android.graphics.Typeface.BOLD);
+            }
+            item.setOnClickListener(v -> {
+                setPlaybackSpeed(selectedIndex);
+                popupWindow.dismiss();
+            });
+            container.addView(item, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
         }
+
+        popupWindow.showAsDropDown(btnSpeed, 0, dpToPx(4));
+    }
+
+    private void setPlaybackSpeed(int selectedIndex) {
+        speedIndex = selectedIndex;
+        currentSpeed = SPEED_LEVELS[speedIndex];
+        tvSpeed.setText(formatSpeed(currentSpeed));
+        changeVideoSpeed(currentSpeed);
+    }
+
+    private String formatSpeed(float speed) {
+        return speed + "x";
     }
 
     public void replayCurrentSentence() {
@@ -397,83 +478,244 @@ public class DictationFragment extends Fragment {
         }
         cancelAutoStop();
 
-        float startTimestamp = listTranscripts.get(currentSentenceIndex).getStartTimestamp();
+        TranscriptsResponse currentTranscript = listTranscripts.get(currentSentenceIndex);
+        float startTimestamp = currentTranscript.getStartTimestamp();
 
-        if (webViewYoutube != null) {
-            String jsCommand = "javascript:(function() { " +
-                    "var iframe = document.querySelector('iframe'); " +
-                    "if(iframe && iframe.contentWindow) { " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'seekTo', args: [" + startTimestamp + ", true]}), '*'); " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*'); " +
-                    "} " +
-                    "})()";
-            webViewYoutube.evaluateJavascript(jsCommand, null);
+        if (switchAutoStop.isChecked()) {
+            float endTimestamp = currentTranscript.getEndTimestamp();
+            youTubeWebViewManager.playFromTo(startTimestamp, endTimestamp);
+            scheduleAutoStopStateReset(startTimestamp, endTimestamp);
+        } else {
+            youTubeWebViewManager.seekTo(startTimestamp);
+            youTubeWebViewManager.playVideo();
         }
     }
 
-    private void toggleVideoPlayback() {
-        if (webViewYoutube != null) {
-            String action = btnPlaysentenceState ? "pauseVideo" : "playVideo";
-
-            String jsCommand = "javascript:(function() { " +
-                    "var iframe = document.querySelector('iframe'); " +
-                    "if(iframe && iframe.contentWindow) { " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: '" + action + "', args: []}), '*'); " +
-                    "} " +
-                    "})()";
-
-            webViewYoutube.evaluateJavascript(jsCommand, null);
-
-            btnPlaysentenceState = !btnPlaysentenceState;
-            if (btnPlaysentenceState) {
-                btnPlaySentence.setImageResource(R.drawable.ic_pause);
-            } else {
+    private void scheduleAutoStopStateReset(float startTimestamp, float endTimestamp) {
+        if (endTimestamp <= startTimestamp) {
+            return;
+        }
+        if (autoStopRunnable != null) {
+            autoStopHandler.removeCallbacks(autoStopRunnable);
+        }
+        autoStopRunnable = () -> {
+            if (!isAdded() || getView() == null) {
+                return;
+            }
+            btnPlaysentenceState = false;
+            if (btnPlaySentence != null) {
                 btnPlaySentence.setImageResource(R.drawable.ic_play_filled);
             }
+        };
+        long durationMs = (long) ((endTimestamp - Math.max(0, startTimestamp)) * 1000);
+        autoStopHandler.postDelayed(autoStopRunnable, durationMs);
+    }
+
+    private void toggleVideoPlayback() {
+        if (btnPlaysentenceState) {
+            youTubeWebViewManager.pauseVideo();
+            cancelAutoStop();
+        } else {
+            if (switchAutoStop.isChecked()) {
+                replayCurrentSentence();
+            } else {
+                youTubeWebViewManager.playVideo();
+            }
+        }
+
+        btnPlaysentenceState = !btnPlaysentenceState;
+        if (btnPlaysentenceState) {
+            btnPlaySentence.setImageResource(R.drawable.ic_pause);
+        } else {
+            btnPlaySentence.setImageResource(R.drawable.ic_play_filled);
         }
     }
 
     public void checkAnswer(String userInput) {
-
-        if (listTranscripts == null && currentSentenceIndex > listTranscripts.size()) {
+        if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
             return;
         };
 
-        String correctAnswer = listTranscripts.get(currentSentenceIndex).getContent();
-        String normalizedInput = userInput.replaceAll("\\s+", " ");
-        String normalizedTarget = correctAnswer.replaceAll("\\s+", " ");
+        TranscriptsResponse currentTranscript = listTranscripts.get(currentSentenceIndex);
+        String correctAnswer = currentTranscript.getContent();
+        String normalizedInput = normalizeSentence(userInput);
+        String normalizedTarget = normalizeSentence(correctAnswer);
+        int correctPrefixCount = countCorrectPrefixWords(normalizedInput, normalizedTarget);
+        if (wordCardAdapter != null) {
+            wordCardAdapter.revealCorrectPrefixWords(correctPrefixCount);
+        }
 
         if(normalizedInput.equalsIgnoreCase(normalizedTarget)){
+            vietnamese.setText(currentTranscript.getVietnamese());
+            vietnamese.setVisibility(View.VISIBLE);
+            etInput.setEnabled(false);
+            int completedTranscriptId = currentTranscript.getId();
             if( currentSentenceIndex != listTranscripts.size() - 1){
-            btnStart.setText("Chính xác! Câu tiếp theo");}
+                btnKiemTra.setText("Chính xác!");
+                transcriptProgressRepository.createTranscriptProgress(lessonId, completedTranscriptId, new BaseCallback<ApiResponse<TranscriptProgressResponse>>() {
+                    @Override
+                    public void onSuccess(ApiResponse<TranscriptProgressResponse> data) {
+                        if (!isAdded() || getView() == null) {
+                            return;
+                        }
+                        Log.d("DictationFragment", "gửi api progress thành công ");
+                        if (sentenceAdapter != null) {
+                            sentenceAdapter.addCompletedTranscript(completedTranscriptId);
+                        }
+                        addCompletedTranscriptAndCheck(completedTranscriptId);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e("DictationFragment", "Lỗi tải dữ liệu: " + message);
+                    }
+                });
+                btnKiemTra.setOnClickListener(v -> {
+                     currentSentenceIndex++;
+                     prepareCurrentSentence();
+                     replayCurrentSentence();
+                    btnKiemTra.setText("Kiểm tra");
+                    btnKiemTra.setOnClickListener(view -> checkAnswer(etInput.getText().toString()));
+                });
+
+            }
             else {
-                btnStart.setText("Hoàn thành! Xem kết quả");
+                btnKiemTra.setText("Hoàn thành!");
+                stopStudyTime();
+                transcriptProgressRepository.createTranscriptProgress(lessonId, completedTranscriptId, new BaseCallback<ApiResponse<TranscriptProgressResponse>>() {
+                    @Override
+                    public void onSuccess(ApiResponse<TranscriptProgressResponse> data) {
+                        if (!isAdded() || getView() == null) {
+                            return;
+                        }
+                        Log.d("DictationFragment", "gui api progress thanh cong");
+                        if (sentenceAdapter != null) {
+                            sentenceAdapter.addCompletedTranscript(completedTranscriptId);
+                        }
+                        addCompletedTranscriptAndCheck(completedTranscriptId);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e("DictationFragment", "Loi tai du lieu: " + message);
+                    }
+                });
+                btnKiemTra.setOnClickListener(v -> {
+                    if (isAdded() && getView() != null) {
+                        Navigation.findNavController(v)
+                                .navigate(R.id.action_DictationFragment_to_progressFragment);
+                    }
+                });
+
             }
             isWaitingForNext = true;
             etInput.setEnabled(false);
 
-        }
-        else {
-            btnStart.setText("Sai! Thử lại");
+        } else {
+            btnKiemTra.setText("Sai! Thử lại");
         }
 
+    }
+
+    private void addCompletedTranscriptAndCheck(int transcriptId) {
+        if (!completedIds.contains(transcriptId)) {
+            completedIds.add(transcriptId);
+        }
+        updateProgressText();
+        if (quantityTranscripts > 0 && completedIds.size() >= quantityTranscripts) {
+            sendDictationCompletedIfNeeded();
+        } else {
+            sendDictationInProgressIfNeeded();
+        }
+    }
+
+    private void updateProgressText() {
+        if (quantityTranscripts <= 0) {
+            tvProgress.setText("0% hoàn thành");
+            return;
+        }
+
+        int progress = completedIds.size() * 100 / quantityTranscripts;
+        tvProgress.setText(String.format("%.2f", (float) progress) + "% hoàn thành");
+    }
+
+    private void sendDictationCompletedIfNeeded() {
+        if (dictationCompletedSent || quantityTranscripts <= 0 || completedIds.size() < quantityTranscripts) {
+            return;
+        }
+
+        dictationCompletedSent = true;
+        progressRepository.createProgress(new CreateProgressRequest(lessonId, Boolean.TRUE, null), new BaseCallback<ApiResponse<ProgressResponse>>() {
+            @Override
+            public void onSuccess(ApiResponse<ProgressResponse> data) {
+                Log.d("DictationFragment", "Da gui hoan thanh dictation");
+            }
+
+            @Override
+            public void onError(String message) {
+                dictationCompletedSent = false;
+                Log.e("DictationFragment", "Loi gui hoan thanh dictation: " + message);
+            }
+        });
+    }
+
+    private void sendDictationInProgressIfNeeded() {
+        if (dictationStartedSent || dictationCompletedSent || lessonId <= 0) {
+            return;
+        }
+
+        dictationStartedSent = true;
+        progressRepository.createProgress(new CreateProgressRequest(lessonId, Boolean.FALSE, null), new BaseCallback<ApiResponse<ProgressResponse>>() {
+            @Override
+            public void onSuccess(ApiResponse<ProgressResponse> data) {
+                Log.d("DictationFragment", "Da gui dictation dang hoc");
+            }
+
+            @Override
+            public void onError(String message) {
+                dictationStartedSent = false;
+                Log.e("DictationFragment", "Loi gui dictation dang hoc: " + message);
+            }
+        });
+    }
+
+    private String normalizeSentence(String sentence) {
+        if (sentence == null) {
+            return "";
+        }
+        String normalized = sentence.toLowerCase(java.util.Locale.ROOT);
+        normalized = normalized.replaceAll("[.,?!\"':;…\\-—]", "");
+        return normalized.trim().replaceAll("\\s+", " ");
+    }
+
+    private int countCorrectPrefixWords(String normalizedInput, String normalizedTarget) {
+        if (normalizedInput.isEmpty() || normalizedTarget.isEmpty()) {
+            return 0;
+        }
+
+        String[] inputWords = normalizedInput.split("\\s+");
+        String[] targetWords = normalizedTarget.split("\\s+");
+        int correctPrefixCount = 0;
+        int maxComparableWords = Math.min(inputWords.length, targetWords.length);
+        for (int i = 0; i < maxComparableWords; i++) {
+            if (!inputWords[i].equalsIgnoreCase(targetWords[i])) {
+                break;
+            }
+            correctPrefixCount++;
+        }
+        return correctPrefixCount;
     }
 
     public void seekVideoTo(float seconds) {
-        if (webViewYoutube != null) {
-            String jsCommand = "javascript:(function() { " +
-                    "var iframe = document.querySelector('iframe'); " +
-                    "if(iframe && iframe.contentWindow) { " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'seekTo', args: [" + seconds + ", true]}), '*'); " +
-                    "   iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*'); " +
-                    "} " +
-                    "})()";
-            webViewYoutube.evaluateJavascript(jsCommand, null);
-        }
+        youTubeWebViewManager.seekTo(seconds);
+        youTubeWebViewManager.playVideo();
     }
 
     public int dpToPx(int dp) {
-        float density = requireContext().getResources().getDisplayMetrics().density;
+        if (getContext() == null) {
+            return dp;
+        }
+        float density = getContext().getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
     }
 
@@ -495,29 +737,87 @@ public class DictationFragment extends Fragment {
     }
 
     public void studyTime(){
+        if (timerRunnable != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
         timerRunnable = new Runnable() {
             @Override
             public void run() {
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
                 elapsedSeconds++;
                 int minutes = (int) (elapsedSeconds / 60);
                 int seconds = (int) (elapsedSeconds % 60);
-                timer.setText(String.format("%02d:%02d", minutes, seconds));
-                timerHandler.postDelayed(timerRunnable,1000);
+                if (timer != null) {
+                    timer.setText(String.format("%02d:%02d", minutes, seconds));
+                }
+                timerHandler.postDelayed(timerRunnable, 1000);
             }
-
         };
-        timerHandler.postDelayed(timerRunnable,1000);
+        timerHandler.postDelayed(timerRunnable, 1000);
     }
 
     public void stopStudyTime(){
-        if(timerHandler != null && timerRunnable != null){
-          timerHandler.removeCallbacks(timerRunnable);
-        };
+        if (timerHandler != null && timerRunnable != null){
+            timerHandler.removeCallbacks(timerRunnable);
+        }
     }
 
     public void cancelAutoStop(){
+        if (youTubeWebViewManager != null) {
+            youTubeWebViewManager.cancelSegmentPlayback();
+        }
         if (autoStopHandler != null && autoStopRunnable != null) {
             autoStopHandler.removeCallbacks(autoStopRunnable);
+        }
+    }
+    private void checkBookmarkState(){
+        if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
+            return;
+        }
+        int currentTranscriptId = listTranscripts.get(currentSentenceIndex).getId();
+        bookMarksRepository.getBookmarks(lessonId, null, null,new BaseCallback<ApiResponse<List<BookmarksModel>>>() {
+            @Override
+            public void onSuccess(ApiResponse<List<BookmarksModel>> data) {
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
+                isCurrentSentenceBookmarked = false;
+                currentNoteResponse = null;
+                if (data != null && data.getData() != null) {
+                    for (BookmarksModel model : data.getData()) {
+                        if (model.getTranscripts() != null) {
+                            for (noteResponse note : model.getTranscripts()) {
+                                if (note.getTranscriptId() == currentTranscriptId) {
+                                    isCurrentSentenceBookmarked = true;
+                                    currentNoteResponse = note;
+                                    break;
+                                }
+                            }
+                        }
+                        if (isCurrentSentenceBookmarked) break;
+                    }
+                }
+                updateBookmarkButtonUI();
+            }
+
+            @Override
+            public void onError(String message) {
+                if (!isAdded() || getView() == null) {
+                    return;
+                }
+                isCurrentSentenceBookmarked = false;
+                currentNoteResponse = null;
+                updateBookmarkButtonUI();
+            }
+        });
+    }
+    private void updateBookmarkButtonUI(){
+        if (isCurrentSentenceBookmarked) {
+            btnBookmark.setImageResource(R.drawable.ic_bookmark_filled_yellow);
+        } else {
+            btnBookmark.setImageResource(R.drawable.ic_bookmark);
         }
     }
 }

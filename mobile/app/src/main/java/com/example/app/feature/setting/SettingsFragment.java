@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.example.app.R;
 import com.example.app.data.local.TokenManager;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsFragment extends Fragment {
 
@@ -23,6 +25,8 @@ public class SettingsFragment extends Fragment {
     private TextView tvSubtitle;
     private CardView cardLogin;
     private CardView cardLogout;
+    private LinearLayout rowNotes;
+    private LinearLayout cardProfile;
 
     @Nullable
     @Override
@@ -31,13 +35,15 @@ public class SettingsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
-
+        cardProfile = view.findViewById(R.id.cardProfile);
         tokenManager = TokenManager.getInstance(requireContext());
         tvTitle = view.findViewById(R.id.tvTitle);
         tvSubtitle = view.findViewById(R.id.tvSubtitle);
         cardLogin = view.findViewById(R.id.cardLogin);
         cardLogout = view.findViewById(R.id.cardLogout);
-
+        rowNotes = view.findViewById(R.id.rowNotes);
+        cardProfile.setOnClickListener(v -> navigateToProfileOrLogin(v));
+        rowNotes.setOnClickListener(v -> navigateToNotesOrLogin(v));
         setupMenuRows(view);
         setupLogout();
 
@@ -59,8 +65,10 @@ public class SettingsFragment extends Fragment {
                     && !userName.isEmpty() ? userName : "Người dùng");
             tvSubtitle.setText(userEmail != null ? userEmail : "");
 
-            //set kh cho an vao
-            cardLogin.setOnClickListener(null);
+            cardLogin.setOnClickListener(v -> {
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_settingsFragment_to_ProfileFragment);
+            });
             cardLogout.setVisibility(View.VISIBLE);
 
         } else {
@@ -77,21 +85,33 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setupMenuRows(View view) {
-        view.findViewById(R.id.rowNotes).setOnClickListener(v -> {
-            // TODO: navigate sang NotesFragment
-        });
-
         view.findViewById(R.id.rowProgress).setOnClickListener(v -> {
-            // TODO: navigate sang ProgressFragment
+            Navigation.findNavController(v).navigate(R.id.progressFragment);
         });
 
-        view.findViewById(R.id.rowLeaderboard).setOnClickListener(v -> {
-            // TODO: navigate sang LeaderboardFragment
+        view.findViewById(R.id.rowMyVocabulary).setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.vocabularyFragment);
         });
     }
 
     private void setupLogout() {
         cardLogout.setOnClickListener(v -> showLogoutDialog());
+    }
+
+    private void navigateToProfileOrLogin(View view) {
+        Navigation.findNavController(view).navigate(
+                tokenManager.hasToken()
+                        ? R.id.action_settingsFragment_to_ProfileFragment
+                        : R.id.action_settingsFragment_to_loginFragment
+        );
+    }
+
+    private void navigateToNotesOrLogin(View view) {
+        Navigation.findNavController(view).navigate(
+                tokenManager.hasToken()
+                        ? R.id.action_settingsFragment_to_myNotesFragment
+                        : R.id.action_settingsFragment_to_loginFragment
+        );
     }
 
     private void showLogoutDialog() {
@@ -106,6 +126,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void performLogout() {
+        FirebaseAuth.getInstance().signOut();
         tokenManager.clear();
         updateProfileUI();
     }

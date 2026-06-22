@@ -1,10 +1,12 @@
 package com.example.app.data.remote.interceptor;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.example.app.data.local.TokenManager;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 import java.io.IOException;
 
@@ -28,16 +30,35 @@ public class AuthInterceptor implements Interceptor {
         if (url.contains("identitytoolkit.googleapis.com")) {
             return chain.proceed(originalRequest);
         }
-        String token = tokenManager.getIdToken();
+        String token = getValidToken();
         if (token == null) {
             return chain.proceed(originalRequest);
         }
         Request newRequest = originalRequest.newBuilder()
                 .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "application/json")
                 .build();
-        Log.d("TokenCheck", "Token hiện tại là: " + token);
         return chain.proceed(newRequest);
+    }
+    private String getValidToken() {
+        if (!tokenManager.hasToken()) {
+            return null;
+        }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            try {
+                GetTokenResult tokenResult = Tasks.await(user.getIdToken(false));
+                String freshToken = tokenResult.getToken();
+                if (freshToken != null && !freshToken.isEmpty()) {
+                    tokenManager.saveToken(freshToken, "");
+                    return freshToken;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return tokenManager.getIdToken();
     }
 
 }

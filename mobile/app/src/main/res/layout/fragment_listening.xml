@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp">
+
+        
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_close"
+            android:background="@drawable/bg_btn_circle_gray"
+            android:contentDescription="close" />
+
+        
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp">
+
+            <TextView
+                android:id="@+id/tvToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRINCESS MONONOKE | Official..."
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0% hoàn thành"
+                android:textSize="12sp"
+                android:textColor="#888888" />
+
+        </LinearLayout>
+
+        
+        <LinearLayout
+            android:id="@+id/badgeTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_badge_timer"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_clock_circle"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="timer" />
+
+            <TextView
+                android:id="@+id/tvTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:06"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="210dp">
+
+        <WebView
+            android:id="@+id/webViewYoutube"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dừng tự động"
+                    android:textSize="13sp"
+                    android:textColor="#1A1A1A"
+                    android:layout_marginEnd="8dp" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAutoStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                
+                <LinearLayout
+                    android:id="@+id/btnSpeed"
+                    android:layout_width="92dp"
+                    android:layout_height="36dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_speed_button"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_speed"
+                        android:tint="#2877C9"
+                        android:layout_marginEnd="6dp"
+                        android:contentDescription="speed" />
+
+                    <TextView
+                        android:id="@+id/tvSpeed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="1.0x"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#164F86" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_down"
+                        android:contentDescription="open speed options" />
+
+                </LinearLayout>
+
+
+
+                
+                <ImageButton
+                    android:id="@+id/btnTranscript"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_list"
+                    android:background="@drawable/bg_btn_circle_gray"
+                    android:contentDescription="transcript" />
+
+            </LinearLayout>
+
+            
+
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSentenceNumbers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvItemCard"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp" />
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Bắt đầu"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@drawable/bg_btn_blue_fill"
+        android:stateListAnimator="@null" />
+    <LinearLayout
+        android:id="@+id/layoutButtonBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="16dp"
+        android:gravity="center"
+        android:background="@color/white">
+
+        
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="@drawable/bg_btn_circle_gray"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Previous" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        
+        <ImageButton
+            android:id="@+id/btnMic"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_mic"
+            android:background="@drawable/bg_icon_circle_blue"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Record" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_arrow_forward"
+            android:background="@drawable/bg_btn_circle_gray"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Next" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_chinh_ta.xml -->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- ===== TOOLBAR ===== -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -18,7 +18,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="16dp">
 
-        <!-- Nút X -->
+        
         <ImageButton
             android:id="@+id/btnClose"
             android:layout_width="36dp"
@@ -27,7 +27,7 @@
             android:background="@drawable/bg_btn_circle_gray"
             android:contentDescription="close" />
 
-        <!-- Title + progress -->
+        
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
 
         </LinearLayout>
 
-        <!-- Timer badge -->
+        
         <LinearLayout
             android:id="@+id/badgeTimer"
             android:layout_width="wrap_content"
@@ -91,13 +91,13 @@
 
     </LinearLayout>
 
-    <!-- Divider -->
+    
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#EEEEEE" />
 
-    <!-- ===== VIDEO CỐ ĐỊNH (không scroll) ===== -->
+    
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="210dp">
@@ -109,7 +109,7 @@
 
     </FrameLayout>
 
-    <!-- ===== SCROLL CONTENT (từ controls trở xuống) ===== -->
+    
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -121,7 +121,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Controls row: Dừng tự động / speed / settings / list -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -150,18 +150,17 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <!-- Speed button -->
+                
                 <LinearLayout
                     android:id="@+id/btnSpeed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="92dp"
+                    android:layout_height="36dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:background="@drawable/bg_pill_gray"
-                    android:paddingStart="10dp"
+                    android:background="@drawable/bg_speed_button"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingStart="12dp"
                     android:paddingEnd="10dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
                     android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:focusable="true">
@@ -170,30 +169,31 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_speed"
-                        android:layout_marginEnd="4dp"
+                        android:tint="#2877C9"
+                        android:layout_marginEnd="6dp"
                         android:contentDescription="speed" />
 
                     <TextView
                         android:id="@+id/tvSpeed"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="1.0x"
                         android:textSize="13sp"
-                        android:textColor="#1A1A1A" />
+                        android:textStyle="bold"
+                        android:textColor="#164F86" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_down"
+                        android:contentDescription="open speed options" />
 
                 </LinearLayout>
 
-                <!-- Settings -->
-                <ImageButton
-                    android:id="@+id/btnSettings"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_settings"
-                    android:background="@drawable/bg_btn_circle_gray"
-                    android:contentDescription="settings"
-                    android:layout_marginEnd="8dp" />
+                
 
-                <!-- List/transcript -->
+                
                 <ImageButton
                     android:id="@+id/btnTranscript"
                     android:layout_width="36dp"
@@ -204,7 +204,7 @@
 
             </LinearLayout>
 
-            <!-- ===== SENTENCE SELECTOR (số câu) ===== -->
+            
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSentenceNumbers"
                 android:layout_width="match_parent"
@@ -215,10 +215,10 @@
                 android:clipToPadding="false"
                 android:orientation="horizontal" />
 
-            <!-- ===== WORD CARDS (câu bị ẩn) ===== -->
+            
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
+                android:layout_height="200dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -233,8 +233,7 @@
                     android:orientation="vertical"
                     android:padding="12dp">
 
-                    <!-- Play + Replay + Bookmark + Flag -->
-
+                    
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -274,17 +273,9 @@
                             android:contentDescription="bookmark"
                             android:layout_marginEnd="4dp" />
 
-                        <ImageButton
-                            android:id="@+id/btnFlag"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:src="@drawable/ic_flag"
-                            android:background="@android:color/transparent"
-                            android:contentDescription="flag" />
-
                     </LinearLayout>
 
-                    <!-- Word cards: RecyclerView với FlexboxLayoutManager -->
+                    
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvWordCards"
                         android:layout_width="match_parent"
@@ -292,9 +283,11 @@
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_word_card" />
                     <TextView
-                        android:id="@+id/vietnamese"
+                        android:id="@+id/tvvietnamese"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="Việt Nam"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
 
@@ -313,7 +306,7 @@
             <EditText
                 android:id="@+id/etInput"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="130dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -329,10 +322,11 @@
 
     </ScrollView>
 
-    <!-- ===== BOTTOM BUTTON ===== -->
+    
     <Button
         android:id="@+id/btnStart"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="52dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -342,7 +336,81 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-        android:background="@drawable/bg_btn_primary"
+        android:background="@drawable/bg_btn_blue_fill"
+        android:backgroundTint="@null"
+        app:backgroundTint="@null"
         android:stateListAnimator="@null" />
+    <LinearLayout
+        android:id="@+id/layoutButtonBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:background="@color/white">
+
+        
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_back"
+            android:background="@drawable/bg_btn_gray_outline"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Previous" />
+
+        
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_forward"
+            android:background="@drawable/bg_btn_gray_outline"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Next" />
+
+        
+        <ImageButton
+            android:id="@+id/btnReplay2"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_replay"
+            android:background="@drawable/bg_btn_blue_outline"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Replay" />
+
+        
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_play_arrow"
+            android:background="@drawable/bg_btn_blue_fill"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Play" />
+
+        
+        <Button
+            android:id="@+id/btnKiemTra"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:text="Kiểm tra"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_blue_fill"
+            android:foreground="?attr/selectableItemBackground"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
