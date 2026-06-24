@@ -19,7 +19,7 @@ import retrofit2.http.Query;
 
 public interface PronunciationApi {
     @Multipart
-    @POST("shadowing-status/transcribe")
+    @POST("pronunciation-attempts")
     Call<ApiResponse<PronunciationResponse>> assessPronunciation(
             @Part MultipartBody.Part audio,
             @Part("referenceText") RequestBody referenceText,

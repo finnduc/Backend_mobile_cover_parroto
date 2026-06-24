@@ -169,7 +169,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_speed"
-                        android:tint="#2877C9"
+                        app:tint="#2877C9"
                         android:layout_marginEnd="6dp"
                         android:contentDescription="speed" />
 

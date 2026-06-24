@@ -73,7 +73,7 @@ public class SignupFragment extends Fragment {
             public void onSuccess(String data) {
                 if (isAdded() && getView() != null && getContext() != null) {
                     Toast.makeText(getContext(), "Dang ky thanh cong!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(getView()).navigate(R.id.action_signupFragment_to_loginFragment);
+                    Navigation.findNavController(getView()).navigate(R.id.action_signupFragment_to_StudyFragment);
                 }
             }
 
@@ -125,7 +125,7 @@ public class SignupFragment extends Fragment {
             public void onSuccess(String data) {
                 if (isAdded() && getView() != null && getContext() != null) {
                     Toast.makeText(getContext(), "Dang ky thanh cong!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(getView()).navigate(R.id.action_signupFragment_to_loginFragment);
+                    Navigation.findNavController(getView()).navigate(R.id.action_signupFragment_to_StudyFragment);
                 }
             }
 
