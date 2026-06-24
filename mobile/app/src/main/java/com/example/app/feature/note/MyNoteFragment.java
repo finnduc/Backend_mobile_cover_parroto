@@ -54,7 +54,7 @@ public class MyNoteFragment extends Fragment {
                 bundle.putString("content", note.getContent());
                 bundle.putString("phonetic", note.getPhonetic());
                 bundle.putString("vietnamese", note.getVietnamese());
-                Navigation.findNavController(view).navigate(R.id.action_DictationFragment_to_editNoteFragment, bundle);
+                Navigation.findNavController(view).navigate(R.id.action_myNotesFragment_to_editNoteFragment, bundle);
             }
 
             @Override

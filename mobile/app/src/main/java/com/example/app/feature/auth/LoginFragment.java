@@ -8,7 +8,6 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.example.app.R;
 import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.AuthRepository;
-
 
 public class LoginFragment extends Fragment {
 
@@ -30,38 +28,34 @@ public class LoginFragment extends Fragment {
          EditText getUsername = view.findViewById(R.id.getUsername);
          EditText getPassword = view.findViewById(R.id.getPassword);
 
-        Login.setOnClickListener(v ->
-         {
+         Login.setOnClickListener(v -> {
              boolean isvalid = true;
              String Username = getUsername.getText().toString().trim();
              String Password = getPassword.getText().toString().trim();
+             
              if (Username.isEmpty()) {
                  getUsername.setError("Vui lòng nhập Email");
+                 isvalid = false;
+             } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(Username).matches()){
+                 getUsername.setError("Email không hợp lệ");
                  isvalid = false;
              }
 
              if (Password.isEmpty()) {
                  getPassword.setError("Vui lòng nhập mật khẩu");
                  isvalid = false;
-             }
-
-             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(Username).matches()){
-                 getUsername.setError("Email không hợp lệ");
-                 isvalid = false;
-             }
-
-             if (Password.length()<=5){
+             } else if (Password.length() <= 5){
                  getPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
                  isvalid = false;
              }
+             
              if (isvalid){
-                 Login(Username,Password);
+                 Login(Username, Password);
              }
-
          });
          register(view);
          return view;
-    }
+     }
 
     private void register(View view){
         view.findViewById(R.id.tvRegister).setOnClickListener(v ->{
@@ -88,7 +82,6 @@ public class LoginFragment extends Fragment {
                             + message, android.widget.Toast.LENGTH_SHORT).show();
                 }
             }
-
         });
     }
 }

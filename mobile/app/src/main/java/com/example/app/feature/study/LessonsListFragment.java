@@ -33,7 +33,7 @@ import com.example.app.data.remote.model.response.categories.CategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
-import com.example.app.diaglog.ChooseModeBottomSheet;
+import com.example.app.dialog.ChooseModeBottomSheet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,20 +151,9 @@ public class LessonsListFragment extends Fragment {
                         if (response != null && response.getMeta() != null) {
                             totallessons = response.getMeta().getTotal();
                         }
-                        int done = 0;
-                        int learning = 0;
-                        for (LessonsResponse lesson : lessonsResponseList) {
-                            if (lesson.is_completed() != null) {
-                                if (lesson.is_completed()) {
-                                    done++;
-                                } else {
-                                    learning++;
-                                }
-                            }
-                        }
-                        CountDone.setText(String.valueOf(done));
-                        CountLearning.setText(String.valueOf(learning));
-                        CountNotStarted.setText(String.valueOf(totallessons - done - learning));
+                        CountDone.setText("0");
+                        CountLearning.setText("0");
+                        CountNotStarted.setText(String.valueOf(totallessons));
                     }
                     @Override
                     public void onError(String message) {

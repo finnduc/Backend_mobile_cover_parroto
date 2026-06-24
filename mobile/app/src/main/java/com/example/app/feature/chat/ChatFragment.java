@@ -119,10 +119,22 @@ public class ChatFragment extends Fragment {
 
         btnSend.setOnClickListener(v -> sendMessage());
 
-        loadInitialHistory();
-        connectSse();
+        if (tokenManager.hasToken()) {
+            loadInitialHistory();
+            connectSse();
+        }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TokenManager tokenManager = TokenManager.getInstance(requireContext());
+        if (!tokenManager.hasToken()) {
+            Toast.makeText(getContext(), "Vui lòng đăng nhập để sử dụng chat cộng đồng", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(view).navigate(R.id.LoginFragment);
+        }
     }
 
     private void loadInitialHistory() {
@@ -169,9 +181,9 @@ public class ChatFragment extends Fragment {
         chatRepository.getChatHistory(nextId, 20, new BaseCallback<ApiResponse<ChatHistoryResponse>>() {
             @Override
             public void onSuccess(ApiResponse<ChatHistoryResponse> response) {
+                if (!isAdded()) return;
                 isLoadingMore = false;
                 pbLoadingMore.setVisibility(View.GONE);
-                if (!isAdded()) return;
 
                 if (response != null && response.getData() != null) {
                     ChatHistoryResponse data = response.getData();
@@ -194,9 +206,9 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 isLoadingMore = false;
                 pbLoadingMore.setVisibility(View.GONE);
-                if (!isAdded()) return;
                 Toast.makeText(getContext(), "Không thể tải tin nhắn cũ: " + message, Toast.LENGTH_SHORT).show();
             }
         });
@@ -208,12 +220,16 @@ public class ChatFragment extends Fragment {
             String token = ClerkAuthBridge.getTokenBlocking();
             if (token == null || token.isEmpty()) {
                 mainHandler.post(() -> {
+                    if (!isAdded()) return;
                     updateStatusUI(ConnectionStatus.ERROR);
                     scheduleReconnect();
                 });
                 return;
             }
-            mainHandler.post(() -> startSse(token));
+            mainHandler.post(() -> {
+                if (!isAdded()) return;
+                startSse(token);
+            });
         }).start();
     }
 
@@ -238,7 +254,10 @@ public class ChatFragment extends Fragment {
             @Override
             public void onOpen(@NonNull EventSource eventSource, @NonNull Response response) {
                 reconnectAttempts = 0;
-                mainHandler.post(() -> updateStatusUI(ConnectionStatus.CONNECTED));
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    updateStatusUI(ConnectionStatus.CONNECTED);
+                });
             }
 
             @Override
@@ -247,6 +266,7 @@ public class ChatFragment extends Fragment {
                     try {
                         ChatMessageResponse msg = gson.fromJson(data, ChatMessageResponse.class);
                         mainHandler.post(() -> {
+                            if (!isAdded()) return;
                             chatAdapter.addMessage(msg);
                             rvMessages.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
                         });
@@ -258,12 +278,16 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onClosed(@NonNull EventSource eventSource) {
-                mainHandler.post(() -> updateStatusUI(ConnectionStatus.DISCONNECTED));
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    updateStatusUI(ConnectionStatus.DISCONNECTED);
+                });
             }
 
             @Override
             public void onFailure(@NonNull EventSource eventSource, @Nullable Throwable t, @Nullable Response response) {
                 mainHandler.post(() -> {
+                    if (!isAdded()) return;
                     updateStatusUI(ConnectionStatus.ERROR);
                     scheduleReconnect();
                 });

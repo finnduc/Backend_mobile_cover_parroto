@@ -6,6 +6,8 @@ type ShadowingStatus struct {
 	UserID       string    `gorm:"primaryKey" json:"user_id"`
 	TranscriptID uint      `gorm:"primaryKey" json:"transcript_id"`
 	LessonID     uint      `gorm:"not null;index" json:"lesson_id"`
+	BestScore    float64   `gorm:"column:best_score" json:"best_score"`
+	Feedback     string    `gorm:"column:feedback" json:"feedback"`
 	CompletedAt  time.Time `json:"completed_at"`
 }
 

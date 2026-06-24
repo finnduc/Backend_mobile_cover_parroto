@@ -109,6 +109,7 @@ public class VocabularyFragment extends Fragment {
         vocabularyRepository.createVocaDeck(request, new BaseCallback<ApiResponse<VocaDecksResponse>>() {
             @Override
             public void onSuccess(ApiResponse<VocaDecksResponse> data) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Đã tạo thư mục: " + folderName, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 viewPager.setCurrentItem(1, true);
@@ -120,6 +121,7 @@ public class VocabularyFragment extends Fragment {
 
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 btnCreate.setEnabled(true);
                 Toast.makeText(requireContext(), "Lỗi tạo thư mục: " + message, Toast.LENGTH_SHORT).show();
             }

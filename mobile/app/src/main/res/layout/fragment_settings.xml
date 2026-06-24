@@ -123,7 +123,7 @@
 
             
             <LinearLayout
-                android:id="@+id/rowNotes"
+                android:id="@+id/rowChat"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:orientation="horizontal"
@@ -147,7 +147,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
-                        android:src="@android:drawable/ic_menu_edit"
+                        android:src="@android:drawable/ic_dialog_email"
                         app:tint="#6C63FF" />
                 </FrameLayout>
 
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="16dp"
-                    android:text="Ghi chú của tôi"
+                    android:text="Chat cộng đồng"
                     android:textColor="#1A1A1A"
                     android:textSize="16sp"
                     android:fontFamily="sans-serif-medium" />

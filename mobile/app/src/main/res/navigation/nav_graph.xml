@@ -128,7 +128,7 @@
         android:name="com.example.app.feature.note.MyNoteFragment"
         android:label="Quản lý note">
         <action
-            android:id="@+id/action_DictationFragment_to_editNoteFragment"
+            android:id="@+id/action_myNotesFragment_to_editNoteFragment"
             app:destination="@id/editNoteFragment" />
     </fragment>
 
@@ -153,8 +153,8 @@
             android:id="@+id/action_settingsFragment_to_loginFragment"
             app:destination="@id/LoginFragment" />
         <action
-            android:id="@+id/action_settingsFragment_to_myNotesFragment"
-            app:destination="@id/myNotesFragment" />
+            android:id="@+id/action_settingsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_ProfileFragment"
             app:destination="@id/ProfileFragment" />

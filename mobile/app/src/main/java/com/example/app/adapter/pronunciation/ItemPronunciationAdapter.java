@@ -55,6 +55,13 @@ public class ItemPronunciationAdapter extends RecyclerView.Adapter<ItemPronuncia
         if (progress == null) {
             return;
         }
+        PronunciationProgressResponse existing = pronunciationProgressMap.get(progress.getTranscriptId());
+        if (existing != null && existing.getBestScore() != null && progress.getBestScore() != null) {
+            if (existing.getBestScore() > progress.getBestScore()) {
+                progress.setBestScore(existing.getBestScore());
+                progress.setFeedback(existing.getFeedback());
+            }
+        }
         pronunciationProgressMap.put(progress.getTranscriptId(), progress);
         notifyDataSetChanged();
     }

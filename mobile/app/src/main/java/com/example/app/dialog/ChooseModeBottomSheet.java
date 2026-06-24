@@ -1,4 +1,4 @@
-package com.example.app.diaglog;
+package com.example.app.dialog;
 
 
 import android.os.Bundle;
@@ -66,6 +66,7 @@ public class ChooseModeBottomSheet extends DialogFragment {
             }
             androidx.navigation.Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                     .navigate(R.id.ListeningFragment, listeningBundle);
+            dismiss();
         });
 
     }

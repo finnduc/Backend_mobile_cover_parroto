@@ -25,7 +25,7 @@ import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.repository.BookMarksRepository;
 import com.example.app.data.repository.LessonsRepository;
-import com.example.app.diaglog.ChooseModeBottomSheet;
+import com.example.app.dialog.ChooseModeBottomSheet;
 import com.example.app.utils.BaseCallback;
 import com.bumptech.glide.Glide;
 

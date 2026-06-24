@@ -1,4 +1,4 @@
-package com.example.app.diaglog;
+package com.example.app.dialog;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;

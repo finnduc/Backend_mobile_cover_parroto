@@ -23,6 +23,10 @@ func (r *shadowingStatusRepo) Create(ctx context.Context, status *models.Shadowi
 	return r.db.WithContext(ctx).Create(status).Error
 }
 
+func (r *shadowingStatusRepo) Update(ctx context.Context, status *models.ShadowingStatus) error {
+	return r.db.WithContext(ctx).Save(status).Error
+}
+
 func (r *shadowingStatusRepo) FindByUserAndTranscript(ctx context.Context, userID string, transcriptID uint) (*models.ShadowingStatus, error) {
 	var status models.ShadowingStatus
 	err := r.db.WithContext(ctx).Where("user_id = ? AND transcript_id = ?", userID, transcriptID).First(&status).Error

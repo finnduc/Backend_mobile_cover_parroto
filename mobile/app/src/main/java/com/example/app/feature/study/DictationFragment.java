@@ -37,7 +37,7 @@ import com.example.app.data.repository.TranscriptsRepository;
 import com.example.app.data.repository.BookMarksRepository;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
-import com.example.app.diaglog.SpoilerWarning;
+import com.example.app.dialog.SpoilerWarning;
 import com.example.app.utils.BaseCallback;
 import com.example.app.utils.YouTubeWebViewManager;
 import com.google.android.flexbox.FlexDirection;

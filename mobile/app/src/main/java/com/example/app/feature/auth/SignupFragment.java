@@ -37,19 +37,21 @@ public class SignupFragment extends Fragment {
             String confirmPassword = getConfirmPassword.getText().toString().trim();
 
             boolean isValid = true;
+            if (fullname.isEmpty()) {
+                getFullname.setError("Vui lòng nhập họ và tên");
+                isValid = false;
+            }
             if (username.isEmpty()) {
                 getUsername.setError("Vui long nhap Email");
+                isValid = false;
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
+                getUsername.setError("Email khong hop le");
                 isValid = false;
             }
             if (password.isEmpty()) {
                 getPassword.setError("Vui long nhap mat khau");
                 isValid = false;
-            }
-            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()) {
-                getUsername.setError("Email khong hop le");
-                isValid = false;
-            }
-            if (password.length() <= 5) {
+            } else if (password.length() <= 5) {
                 getPassword.setError("Mat khau phai co it nhat 6 ky tu");
                 isValid = false;
             }

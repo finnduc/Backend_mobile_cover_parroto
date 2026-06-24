@@ -17,6 +17,8 @@ func (q ListShadowingStatusQuery) ToQuery() *database.Query {
 }
 
 type CreateShadowingStatusReq struct {
-	TranscriptID uint `json:"transcript_id" binding:"required"`
-	LessonID     uint `json:"lesson_id" binding:"required"`
+	TranscriptID uint    `json:"transcript_id" binding:"required"`
+	LessonID     uint    `json:"lesson_id" binding:"required"`
+	BestScore    float64 `json:"best_score"`
+	Feedback     string  `json:"feedback"`
 }

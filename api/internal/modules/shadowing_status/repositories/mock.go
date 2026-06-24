@@ -22,6 +22,11 @@ func (m *MockShadowingStatusRepo) Create(ctx context.Context, status *models.Sha
 	return args.Error(0)
 }
 
+func (m *MockShadowingStatusRepo) Update(ctx context.Context, status *models.ShadowingStatus) error {
+	args := m.Called(ctx, status)
+	return args.Error(0)
+}
+
 func (m *MockShadowingStatusRepo) FindByUserAndTranscript(ctx context.Context, userID string, transcriptID uint) (*models.ShadowingStatus, error) {
 	args := m.Called(ctx, userID, transcriptID)
 	if args.Get(0) == nil {

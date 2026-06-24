@@ -4,5 +4,5 @@
 .claude
 .gemini
 *.sql
-!api/internal/database/migrations/
+!api/internal/database/migrations/**
 superpowers

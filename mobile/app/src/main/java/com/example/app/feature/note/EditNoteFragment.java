@@ -70,11 +70,16 @@ public class EditNoteFragment extends Fragment {
         bookMarksRepository.updateBookmark(TranscriptId,request,new BaseCallback<ApiResponse<BookmarksResponse>>() {
             @Override
             public void onSuccess(ApiResponse<BookmarksResponse> data) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Cập nhật ghi chú thành công", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(getView()).popBackStack();
+                View view = getView();
+                if (view != null) {
+                    Navigation.findNavController(view).popBackStack();
+                }
             }
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Cập nhật ghi chú thất bại: " + message, Toast.LENGTH_SHORT).show();
             }
         });
@@ -85,12 +90,17 @@ public class EditNoteFragment extends Fragment {
         bookMarksRepository.deleteTranscriptBookmark(TranscriptId,new BaseCallback<ApiResponse<BookmarksResponse>>(){
             @Override
             public void onSuccess(ApiResponse<BookmarksResponse> data) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Xóa ghi chú thành công", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(getView()).popBackStack();
+                View view = getView();
+                if (view != null) {
+                    Navigation.findNavController(view).popBackStack();
+                }
             }
 
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Xóa ghi chú thất bại: " + message, Toast.LENGTH_SHORT).show();
             }
         });

@@ -12,17 +12,12 @@ public class PronunciationProgressResponse {
     @SerializedName("transcript_id")
     private int transcriptId;
 
-    @SerializedName("best_attempt_id")
-    private Integer bestAttemptId;
-
     @SerializedName("best_score")
     private Double bestScore;
 
-    @SerializedName("created_at")
-    private String createdAt;
+    @SerializedName("completed_at")
+    private String completedAt;
 
-    @SerializedName("updated_at")
-    private String updatedAt;
     private String feedback;
     public String getFeedback() {
         return feedback;
@@ -40,19 +35,19 @@ public class PronunciationProgressResponse {
         return transcriptId;
     }
 
-    public Integer getBestAttemptId() {
-        return bestAttemptId;
-    }
-
     public Double getBestScore() {
         return bestScore;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getCompletedAt() {
+        return completedAt;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
+    public void setBestScore(Double bestScore) {
+        this.bestScore = bestScore;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
     }
 }

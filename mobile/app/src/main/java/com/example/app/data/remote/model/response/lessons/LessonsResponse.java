@@ -22,8 +22,6 @@ public class LessonsResponse {
     private String title ;
     @SerializedName("video_url")
     private String videoUrl ;
-    @SerializedName("is_completed")
-    private Boolean isCompleted;
 
     public String getDescription() {
         return description;
@@ -59,9 +57,5 @@ public class LessonsResponse {
 
     public String getVideoUrl() {
         return videoUrl;
-    }
-
-    public Boolean is_completed() {
-        return isCompleted;
     }
 }

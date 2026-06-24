@@ -25,7 +25,7 @@ public class SettingsFragment extends Fragment {
     private TextView tvSubtitle;
     private CardView cardLogin;
     private CardView cardLogout;
-    private LinearLayout rowNotes;
+    private LinearLayout rowChat;
     private LinearLayout cardProfile;
 
     @Nullable
@@ -41,9 +41,9 @@ public class SettingsFragment extends Fragment {
         tvSubtitle = view.findViewById(R.id.tvSubtitle);
         cardLogin = view.findViewById(R.id.cardLogin);
         cardLogout = view.findViewById(R.id.cardLogout);
-        rowNotes = view.findViewById(R.id.rowNotes);
+        rowChat = view.findViewById(R.id.rowChat);
         cardProfile.setOnClickListener(v -> navigateToProfileOrLogin(v));
-        rowNotes.setOnClickListener(v -> navigateToNotesOrLogin(v));
+        rowChat.setOnClickListener(v -> navigateToChatOrLogin(v));
         setupMenuRows(view);
         setupLogout();
 
@@ -86,11 +86,23 @@ public class SettingsFragment extends Fragment {
 
     private void setupMenuRows(View view) {
         view.findViewById(R.id.rowProgress).setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.bookmarksFragment);
+            androidx.navigation.NavController navController = Navigation.findNavController(v);
+            androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setRestoreState(true)
+                    .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
+                    .build();
+            navController.navigate(R.id.bookmarksFragment, null, navOptions);
         });
 
         view.findViewById(R.id.rowMyVocabulary).setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.vocabularyFragment);
+            androidx.navigation.NavController navController = Navigation.findNavController(v);
+            androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setRestoreState(true)
+                    .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
+                    .build();
+            navController.navigate(R.id.vocabularyFragment, null, navOptions);
         });
     }
 
@@ -106,10 +118,10 @@ public class SettingsFragment extends Fragment {
         );
     }
 
-    private void navigateToNotesOrLogin(View view) {
+    private void navigateToChatOrLogin(View view) {
         Navigation.findNavController(view).navigate(
                 tokenManager.hasToken()
-                        ? R.id.action_settingsFragment_to_myNotesFragment
+                        ? R.id.action_settingsFragment_to_chatFragment
                         : R.id.action_settingsFragment_to_loginFragment
         );
     }

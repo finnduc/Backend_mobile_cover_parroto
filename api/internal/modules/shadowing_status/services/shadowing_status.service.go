@@ -42,13 +42,25 @@ func (s *shadowingStatusService) Create(ctx context.Context, userID string, body
 		return nil, response.Internal("failed to check shadowing status")
 	}
 	if existing != nil {
-		return nil, response.Conflict("transcript already completed")
+		if body.BestScore > existing.BestScore {
+			existing.BestScore = body.BestScore
+			existing.Feedback = body.Feedback
+			existing.CompletedAt = time.Now()
+			if updateErr := s.repo.Update(ctx, existing); updateErr != nil {
+				log.Errorw("failed to update shadowing status", "error", updateErr)
+				return nil, response.Internal("failed to update shadowing status")
+			}
+		}
+		log.Infow("shadowing status already exists, returned status")
+		return existing, nil
 	}
 
 	status := &models.ShadowingStatus{
 		UserID:       userID,
 		TranscriptID: body.TranscriptID,
 		LessonID:     body.LessonID,
+		BestScore:    body.BestScore,
+		Feedback:     body.Feedback,
 		CompletedAt:  time.Now(),
 	}
 

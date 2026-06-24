@@ -22,13 +22,15 @@ public class ApiCallWrapper<T> implements Callback<T> {
                         : "Lỗi không xác định (Code: " + response.code() + ")";
                 callback.onError(errorDetail);
             } catch (Exception e) {
-                callback.onError("Lỗi đọc dữ liệu: " + e.getMessage());
+                String message = e.getMessage();
+                callback.onError("Lỗi đọc dữ liệu: " + (message != null ? message : "Không rõ nguyên nhân"));
             }
         }
     }
 
     @Override
     public void onFailure(Call<T> call, Throwable t) {
-        callback.onError("Lỗi kết nối: " + t.getMessage());
+        String message = t.getMessage();
+        callback.onError("Lỗi kết nối: " + (message != null ? message : "Không thể kết nối đến máy chủ"));
     }
 }

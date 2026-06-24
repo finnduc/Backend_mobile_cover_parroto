@@ -55,11 +55,13 @@ public class AddNoteFragment extends Fragment {
                 bookMarksRepository.createBookmark(lessonId, new CreateBookMarksRequest(transcriptId, note), new BaseCallback<ApiResponse<BookmarksResponse>>(){
                     @Override
                     public void onSuccess(ApiResponse<BookmarksResponse> data) {
+                        if (!isAdded()) return;
                         Toast.makeText(requireContext(), "Thêm ghi chú thành công", Toast.LENGTH_SHORT).show();
                         Navigation.findNavController(v).popBackStack();
                     }
                     @Override
                     public void onError(String message) {
+                        if (!isAdded()) return;
                         Toast.makeText(requireContext(), "Thêm ghi chú thất bại: " + message, Toast.LENGTH_SHORT).show();
                     }
                 });

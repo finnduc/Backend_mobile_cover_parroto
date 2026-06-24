@@ -185,7 +185,7 @@ public class ListeningFragment extends Fragment {
             }
         });
         if(getArguments() != null){
-            lessonId = getArguments().getInt("lessonId");
+            lessonId = getArguments().getInt("lessonId", -1);
             lessonTitle = getArguments().getString("lessonTitle");
             lessonVideoUrl = getArguments().getString("lessonVideoUrl");
             tvToolbarTitle.setText(lessonTitle);
@@ -208,19 +208,27 @@ public class ListeningFragment extends Fragment {
         transcriptsRepository.getTranscripts(lessonId, new TranscriptsRepository.TranscriptsCallback(){
             @Override
             public void onSuccess(List<TranscriptsResponse> data) {
+                if (!isAdded()) return;
                 listTranscripts.clear();
-                listTranscripts.addAll(data);
+                if (data != null) {
+                    listTranscripts.addAll(data);
+                }
                 sentenceAdapter.setData(listTranscripts);
                 sentenceAdapter.setSelectedPosition(currentSentenceIndex);
                 itemPronunciationAdapter.notifyDataSetChanged();
                 itemPronunciationAdapter.setSelectedPosition(currentSentenceIndex);
-                quantityTranscripts = data.size();
+                quantityTranscripts = listTranscripts.size();
                 fetchPronunciationProgress(lessonId);
                 selectSentence(0);
             }
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 Log.e("DictationFragment", "Lỗi tải dữ liệu: " + message);
+                Context context = getContext();
+                if (context != null) {
+                    Toast.makeText(context, "Lỗi tải dữ liệu: " + message, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -247,6 +255,7 @@ public class ListeningFragment extends Fragment {
 
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 Log.e("ListeningFragment", "Lỗi tải pronunciation progress: " + message);
             }
         });
@@ -453,23 +462,30 @@ public class ListeningFragment extends Fragment {
         String referenceText = transcript.getContent();
         pronunciationAttemptsRepository.assessPronunciation(recordedAudioFile.getAbsoluteFile(), referenceText, lessonId, transcript.getId(), new BaseCallback<ApiResponse<PronunciationResponse>>() {
             @Override
-            public void onSuccess(ApiResponse<PronunciationResponse> data) {
+            public void onSuccess(ApiResponse<PronunciationResponse> attemptResponse) {
                 if (!isAdded() || getView() == null) {
                     return;
                 }
                 sentenceAdapter.notifyItemChanged(currentSentenceIndex);
                 itemPronunciationAdapter.notifyItemChanged(currentSentenceIndex);
-                Log.d("DictationFragment", "Score: " + new Gson().toJson(data));
-                pronunciationProgressRepository.updatePronunciationProgress(lessonId, transcript.getId(), new BaseCallback<ApiResponse<PronunciationProgressResponse>>() {
+                Log.d("DictationFragment", "Score: " + new Gson().toJson(attemptResponse));
+
+                final double scoreVal = (attemptResponse != null && attemptResponse.getData() != null) ? attemptResponse.getData().getOverallScore() : 0.0;
+                final String feedbackVal = (attemptResponse != null && attemptResponse.getData() != null) ? attemptResponse.getData().getFeedback() : "";
+
+                pronunciationProgressRepository.updatePronunciationProgress(lessonId, transcript.getId(), scoreVal, feedbackVal, new BaseCallback<ApiResponse<PronunciationProgressResponse>>() {
                     @Override
-                    public void onSuccess(ApiResponse<PronunciationProgressResponse> data) {
+                    public void onSuccess(ApiResponse<PronunciationProgressResponse> progressResponse) {
                         if (!isAdded() || getView() == null) {
                             return;
                         }
-                        if (data != null && data.getData() != null) {
-                            itemPronunciationAdapter.updatePronunciationProgress(data.getData());
-                            sentenceAdapter.addCompletedTranscript(data.getData().getTranscriptId());
-                            int transcriptId = data.getData().getTranscriptId();
+                        if (progressResponse != null && progressResponse.getData() != null) {
+                            PronunciationProgressResponse progressRes = progressResponse.getData();
+                            progressRes.setBestScore(scoreVal);
+                            progressRes.setFeedback(feedbackVal);
+                            itemPronunciationAdapter.updatePronunciationProgress(progressRes);
+                            sentenceAdapter.addCompletedTranscript(progressRes.getTranscriptId());
+                            int transcriptId = progressRes.getTranscriptId();
                             if (!completedIds.contains(transcriptId)) {
                                 completedIds.add(transcriptId);
                             }

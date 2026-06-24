@@ -86,13 +86,18 @@ public class AddVocabularyItemFragment extends Fragment {
         vocabularyRepository.addVocaItemToDeck(deckId, request, new BaseCallback<ApiResponse<VocaItemsResponse>>() {
             @Override
             public void onSuccess(ApiResponse<VocaItemsResponse> data) {
+                if (!isAdded()) return;
                 getParentFragmentManager().setFragmentResult(REQUEST_VOCABULARY_ITEM_CREATED, new Bundle());
                 Toast.makeText(requireContext(), "Đã lưu từ vựng", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).popBackStack();
+                View view = getView();
+                if (view != null) {
+                    Navigation.findNavController(view).popBackStack();
+                }
             }
 
             @Override
             public void onError(String message) {
+                if (!isAdded()) return;
                 btnSaveVocabulary.setEnabled(true);
                 Toast.makeText(requireContext(), "Lỗi lưu từ vựng: " + message, Toast.LENGTH_SHORT).show();
             }

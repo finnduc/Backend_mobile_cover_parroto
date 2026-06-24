@@ -36,7 +36,7 @@ import com.example.app.data.remote.model.response.vocabulary.VocaDecksResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
 import com.example.app.data.repository.UserRepository;
-import com.example.app.diaglog.ChooseModeBottomSheet;
+import com.example.app.dialog.ChooseModeBottomSheet;
 import com.example.app.feature.vocabulary.VocabularyDecksPageFragment;
 import com.example.app.utils.BaseCallback;
 

@@ -12,6 +12,12 @@ import com.example.app.utils.BaseCallback;
 
 import java.util.List;
 
+import com.example.app.data.remote.model.response.pronunciation.PronunciationProgressResponse;
+import com.example.app.utils.ApiCallWrapper;
+import com.example.app.utils.BaseCallback;
+
+import java.util.List;
+
 public class PronunciationProgressRepository {
     private final PronunciationApi pronunciationApi;
 
@@ -21,7 +27,7 @@ public class PronunciationProgressRepository {
     public void getPronunciationProgress(int lessonId, BaseCallback<ApiResponse<List<PronunciationProgressResponse>>> callback) {
         pronunciationApi.getPronunciationProgress(lessonId).enqueue(new ApiCallWrapper<>(callback));
     }
-    public void updatePronunciationProgress(int lessonId, int transcriptId, BaseCallback<ApiResponse<PronunciationProgressResponse>> callback) {
-        pronunciationApi.updatePronunciationProgress(new CreateTranscriptProgressRequest(transcriptId, lessonId)).enqueue(new ApiCallWrapper<>(callback));
+    public void updatePronunciationProgress(int lessonId, int transcriptId, Double bestScore, String feedback, BaseCallback<ApiResponse<PronunciationProgressResponse>> callback) {
+        pronunciationApi.updatePronunciationProgress(new CreateTranscriptProgressRequest(transcriptId, lessonId, bestScore, feedback)).enqueue(new ApiCallWrapper<>(callback));
     }
 }
