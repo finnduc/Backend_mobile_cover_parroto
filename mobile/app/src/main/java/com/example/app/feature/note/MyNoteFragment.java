@@ -67,7 +67,7 @@ public class MyNoteFragment extends Fragment {
         return view;
     }
     public void fetchData(){
-        bookMarksRepository.getBookmarks(1, 100, new BaseCallback<ApiResponse<List<BookmarksModel>>>() {
+        bookMarksRepository.getTranscriptBookmarks(1, 100, new BaseCallback<ApiResponse<List<BookmarksModel>>>() {
             @Override
             public void onSuccess(ApiResponse<List<BookmarksModel>> data) {
                 if (!isAdded()) {
@@ -92,7 +92,7 @@ public class MyNoteFragment extends Fragment {
         });
     }
     public void removeNote(int lessonPosition, int notePosition, noteResponse note) {
-        bookMarksRepository.deleteBookmark(note.getTranscriptId(), new BaseCallback<ApiResponse<BookmarksResponse>>() {
+        bookMarksRepository.deleteTranscriptBookmark(note.getTranscriptId(), new BaseCallback<ApiResponse<BookmarksResponse>>() {
             @Override
             public void onSuccess(ApiResponse<BookmarksResponse> data) {
                 if (!isAdded()) {

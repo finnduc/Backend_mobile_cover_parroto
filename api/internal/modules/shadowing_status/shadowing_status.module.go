@@ -23,4 +23,9 @@ func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB, dgApi *deepgram.Client) {
 		protected.GET("", ctrl.List)
 		protected.POST("/transcribe", ctrl.TranscribeShadowing)
 	}
+
+	protectedAttempts := r.Group("/pronunciation-attempts", middleware.ClerkAuthMiddleware())
+	{
+		protectedAttempts.POST("", ctrl.AssessPronunciation)
+	}
 }

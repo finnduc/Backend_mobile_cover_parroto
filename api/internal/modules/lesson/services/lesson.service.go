@@ -10,6 +10,7 @@ import (
 	"go-cover-parroto/internal/database/models"
 	"go-cover-parroto/internal/modules/lesson/dtos/req"
 	db_repos "go-cover-parroto/internal/database/repositories"
+	"regexp"
 	"go.uber.org/zap"
 )
 
@@ -61,6 +62,24 @@ func (s *lessonService) Get(ctx context.Context, body req.GetLessonReq) (*models
 func (s *lessonService) Create(ctx context.Context, body req.CreateLessonReq) (*models.Lesson, *response.AppError) {
 	log := sLog()
 	log.Infow("creating lesson")
+
+	if body.VideoURL == "" && body.YoutubeURL != "" {
+		body.VideoURL = body.YoutubeURL
+	}
+	if body.VideoURL == "" {
+		return nil, response.BadRequest("video_url is required")
+	}
+	videoID := extractVideoID(body.VideoURL)
+	if body.Title == "" {
+		body.Title = "Lesson " + videoID
+	}
+	if body.ThumbnailURL == "" && videoID != "" {
+		body.ThumbnailURL = "https://img.youtube.com/vi/" + videoID + "/hqdefault.jpg"
+	}
+	if body.Level == "" {
+		body.Level = "beginner"
+	}
+
 	lesson := &models.Lesson{
 		CategoryID:   body.CategoryID,
 		Title:        body.Title,
@@ -135,4 +154,13 @@ func (s *lessonService) Delete(ctx context.Context, id uint) *response.AppError 
 	}
 	log.Infow("lesson deleted")
 	return nil
+}
+
+func extractVideoID(url string) string {
+	r := regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
+	match := r.FindStringSubmatch(url)
+	if len(match) > 1 {
+		return match[1]
+	}
+	return ""
 }

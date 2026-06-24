@@ -1523,7 +1523,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Sets initial user claims and roles after the first Firebase authentication",
+                "description": "Sets initial user claims and roles after the first Clerk authentication",
                 "consumes": [
                     "application/json"
                 ],
@@ -1556,159 +1556,22 @@ const docTemplate = `{
                 }
             }
         },
-        "/bookmarks": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get the authenticated user's bookmarks with lesson details",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "bookmarks"
-                ],
-                "summary": "List user bookmarks",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Filter by user ID",
-                        "name": "user_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Filter by lesson ID",
-                        "name": "lesson_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "Items per page",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    }
-                }
-            }
-        },
-        "/bookmarks/{lessonId}": {
+        "/auth/sync": {
             "post": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Add a lesson to user's bookmarks",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
-                    "bookmarks"
+                    "auth"
                 ],
-                "summary": "Add bookmark",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Lesson ID",
-                        "name": "lessonId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Sync/get current Clerk user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Remove a lesson from user's bookmarks",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "bookmarks"
-                ],
-                "summary": "Remove bookmark",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Lesson ID",
-                        "name": "lessonId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_AuthUserRes"
                         }
                     }
                 }
@@ -1752,6 +1615,104 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/messages": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get global chat messages with cursor-based pagination (newest first)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "List global chat history",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Return messages older than this id",
+                        "name": "before_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Number of messages to return (max 50)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_chat_dtos_res_HistoryRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Send a message to the global chat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Send a chat message",
+                "parameters": [
+                    {
+                        "description": "Message content",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_chat_dtos_req.SendMessageReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -1810,9 +1771,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/dictation-status/{transcriptId}": {
+            },
             "post": {
                 "security": [
                     {
@@ -1831,11 +1790,13 @@ const docTemplate = `{
                 "summary": "Mark transcript as dictation completed",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Transcript ID",
-                        "name": "transcriptId",
-                        "in": "path",
-                        "required": true
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_req.CreateDictationStatusReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -2010,6 +1971,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/pronunciation-attempts": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shadowing-status"
+                ],
+                "summary": "Assess pronunciation of shadowing audio",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Audio file",
+                        "name": "audio",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
         "/shadowing-status": {
             "get": {
                 "security": [
@@ -2061,9 +2070,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/shadowing-status/{transcriptId}": {
+            },
             "post": {
                 "security": [
                     {
@@ -2082,11 +2089,13 @@ const docTemplate = `{
                 "summary": "Mark transcript as shadowing completed",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Transcript ID",
-                        "name": "transcriptId",
-                        "in": "path",
-                        "required": true
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_req.CreateShadowingStatusReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -2110,6 +2119,332 @@ const docTemplate = `{
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/shadowing-status/transcribe": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shadowing-status"
+                ],
+                "summary": "Transcribe audio for shadowing exercise",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Audio file",
+                        "name": "audio",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingTranscribeRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/transcript-bookmarks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcript-bookmarks"
+                ],
+                "summary": "List transcript bookmarks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID (if calling /transcript-bookmarks?lesson_id=...)",
+                        "name": "lesson_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcript-bookmarks"
+                ],
+                "summary": "Create transcript bookmark",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.CreateTranscriptBookmarkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/transcript-bookmarks/{lessonId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcript-bookmarks"
+                ],
+                "summary": "List transcript bookmarks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID (if calling /transcript-bookmarks/:lessonId)",
+                        "name": "lessonId",
+                        "in": "path"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Lesson ID (if calling /transcript-bookmarks?lesson_id=...)",
+                        "name": "lesson_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/transcript-bookmarks/{transcriptId}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcript-bookmarks"
+                ],
+                "summary": "Update transcript bookmark",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transcript ID",
+                        "name": "transcriptId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.UpdateTranscriptBookmarkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transcript-bookmarks"
+                ],
+                "summary": "Delete transcript bookmark",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transcript ID",
+                        "name": "transcriptId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get current user profile from Clerk",
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
@@ -2161,6 +2496,11 @@ const docTemplate = `{
         },
         "/vocabulary-decks": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2170,14 +2510,8 @@ const docTemplate = `{
                 "tags": [
                     "vocabulary-decks"
                 ],
-                "summary": "List vocabulary decks",
+                "summary": "List current user's vocabulary decks",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Filter by category",
-                        "name": "category_id",
-                        "in": "query"
-                    },
                     {
                         "type": "integer",
                         "description": "Page number",
@@ -2196,6 +2530,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any"
                         }
                     }
                 }
@@ -2522,13 +2862,88 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/vocabulary-system-decks": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vocabulary-system-decks"
+                ],
+                "summary": "List default/system vocabulary decks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filter by category",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "go-cover-parroto_internal_core_enums.UserRole": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "user",
+                "guest"
+            ],
+            "x-enum-varnames": [
+                "UserRoleAdmin",
+                "UserRoleUser",
+                "UserRoleGuest"
+            ]
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-any": {
             "type": "object",
             "properties": {
                 "data": {},
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkGroupRes"
+                    }
+                },
                 "error": {},
                 "meta": {
                     "description": "optional",
@@ -2548,23 +2963,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes"
                     }
-                },
-                "error": {},
-                "meta": {
-                    "description": "optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
-                        }
-                    ]
-                }
-            }
-        },
-        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes"
                 },
                 "error": {},
                 "meta": {
@@ -2696,11 +3094,45 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_AuthUserRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.AuthUserRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes": {
             "type": "object",
             "properties": {
                 "data": {
                     "$ref": "#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_chat_dtos_res_HistoryRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_chat_dtos_res.HistoryRes"
                 },
                 "error": {},
                 "meta": {
@@ -2752,6 +3184,40 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingTranscribeRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingTranscribeRes"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
+        "go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkRes"
                 },
                 "error": {},
                 "meta": {
@@ -2832,6 +3298,23 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_core_response.BaseResponse-string": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "error": {},
+                "meta": {
+                    "description": "optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
+                        }
+                    ]
+                }
+            }
+        },
         "go-cover-parroto_internal_core_response.Meta": {
             "type": "object",
             "properties": {
@@ -2847,20 +3330,6 @@ const docTemplate = `{
                 },
                 "total_pages": {
                     "type": "integer"
-                }
-            }
-        },
-        "go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes"
-                    }
-                },
-                "meta": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_core_response.Meta"
                 }
             }
         },
@@ -2962,40 +3431,29 @@ const docTemplate = `{
                 }
             }
         },
-        "go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes": {
+        "go-cover-parroto_internal_modules_auth_dtos_res.AuthUserRes": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
-                "lesson": {
-                    "$ref": "#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo"
-                },
-                "lesson_id": {
-                    "type": "integer"
-                },
-                "user_id": {
+                "email": {
                     "type": "string"
-                }
-            }
-        },
-        "go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo": {
-            "type": "object",
-            "properties": {
-                "duration": {
-                    "type": "number"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "level": {
                     "type": "string"
                 },
-                "thumbnail_url": {
+                "name": {
                     "type": "string"
                 },
-                "title": {
+                "phone": {
                     "type": "string"
+                },
+                "user_role": {
+                    "$ref": "#/definitions/go-cover-parroto_internal_core_enums.UserRole"
                 }
             }
         },
@@ -3032,6 +3490,73 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_modules_chat_dtos_req.SendMessageReq": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Hello world"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_chat_dtos_res.HistoryRes": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_chat_dtos_res.MessageRes"
+                    }
+                },
+                "next_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_chat_dtos_res.MessageRes": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_dictation_status_dtos_req.CreateDictationStatusReq": {
+            "type": "object",
+            "required": [
+                "lesson_id",
+                "transcript_id"
+            ],
+            "properties": {
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes": {
             "type": "object",
             "properties": {
@@ -3051,10 +3576,6 @@ const docTemplate = `{
         },
         "go-cover-parroto_internal_modules_lesson_dtos_req.CreateLessonReq": {
             "type": "object",
-            "required": [
-                "title",
-                "video_url"
-            ],
             "properties": {
                 "category_id": {
                     "type": "integer"
@@ -3075,6 +3596,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "video_url": {
+                    "type": "string"
+                },
+                "youtube_url": {
                     "type": "string"
                 }
             }
@@ -3137,6 +3661,21 @@ const docTemplate = `{
                 }
             }
         },
+        "go-cover-parroto_internal_modules_shadowing_status_dtos_req.CreateShadowingStatusReq": {
+            "type": "object",
+            "required": [
+                "lesson_id",
+                "transcript_id"
+            ],
+            "properties": {
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes": {
             "type": "object",
             "properties": {
@@ -3151,6 +3690,96 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingTranscribeRes": {
+            "type": "object",
+            "properties": {
+                "transcribed_text": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.CreateTranscriptBookmarkReq": {
+            "type": "object",
+            "required": [
+                "transcript_id"
+            ],
+            "properties": {
+                "note": {
+                    "type": "string"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.UpdateTranscriptBookmarkReq": {
+            "type": "object",
+            "required": [
+                "note"
+            ],
+            "properties": {
+                "note": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkGroupRes": {
+            "type": "object",
+            "properties": {
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "lesson_title": {
+                    "type": "string"
+                },
+                "transcripts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkLineRes"
+                    }
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkLineRes": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "phonetic": {
+                    "type": "string"
+                },
+                "transcript_id": {
+                    "type": "integer"
+                },
+                "vietnamese": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkRes": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "lesson_id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "transcript_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -3295,9 +3924,6 @@ const docTemplate = `{
         },
         "go-cover-parroto_internal_modules_vocabulary_category_dtos_req.UpdateVocabularyCategoryReq": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -3349,9 +3975,6 @@ const docTemplate = `{
         },
         "go-cover-parroto_internal_modules_vocabulary_deck_dtos_req.UpdateVocabularyDeckReq": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -3404,11 +4027,6 @@ const docTemplate = `{
         },
         "go-cover-parroto_internal_modules_vocabulary_item_dtos_req.CreateVocabularyItemReq": {
             "type": "object",
-            "required": [
-                "meaning",
-                "normalized_phrase",
-                "phrase"
-            ],
             "properties": {
                 "example_sentence": {
                     "type": "string"
@@ -3435,11 +4053,6 @@ const docTemplate = `{
         },
         "go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq": {
             "type": "object",
-            "required": [
-                "meaning",
-                "normalized_phrase",
-                "phrase"
-            ],
             "properties": {
                 "example_sentence": {
                     "type": "string"

@@ -15,6 +15,7 @@ import (
 	lessonbookmark "go-cover-parroto/internal/modules/lesson_bookmark"
 	"go-cover-parroto/internal/modules/shadowing_status"
 	"go-cover-parroto/internal/modules/transcript"
+	transcriptbookmark "go-cover-parroto/internal/modules/transcript_bookmark"
 	"go-cover-parroto/internal/modules/user"
 	vocabcat "go-cover-parroto/internal/modules/vocabulary_category"
 	vocabdeck "go-cover-parroto/internal/modules/vocabulary_deck"
@@ -108,6 +109,7 @@ func main() {
 		category.RegisterRoutes(v1, db)
 		lessonbookmark.RegisterRoutes(v1, db)
 		transcript.RegisterRoutes(v1, db)
+		transcriptbookmark.RegisterRoutes(v1, db)
 		shadowing_status.RegisterRoutes(v1, db, dgApi)
 		dictation_status.RegisterRoutes(v1, db)
 		vocabcat.RegisterRoutes(v1, db)

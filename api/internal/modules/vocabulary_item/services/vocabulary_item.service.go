@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	coreError "go-cover-parroto/internal/core/errors"
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
@@ -77,7 +78,11 @@ func (s *vocabularyItemService) Create(ctx context.Context, body req.CreateVocab
 		return nil, response.Internal("failed to verify deck")
 	}
 
-	if deck.UserID != nil {
+	if deck.UserID == nil {
+		if actor.Role != enums.UserRoleAdmin {
+			return nil, response.Forbidden("cannot add items to system deck")
+		}
+	} else {
 		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return nil, appErr
 		}
@@ -118,9 +123,15 @@ func (s *vocabularyItemService) Update(ctx context.Context, id uint, body req.Up
 		return nil, response.Internal("failed to get item")
 	}
 
-	if item.Deck != nil && item.Deck.UserID != nil {
-		if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
-			return nil, appErr
+	if item.Deck != nil {
+		if item.Deck.UserID == nil {
+			if actor.Role != enums.UserRoleAdmin {
+				return nil, response.Forbidden("cannot modify system deck items")
+			}
+		} else {
+			if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
+				return nil, appErr
+			}
 		}
 	}
 
@@ -164,9 +175,15 @@ func (s *vocabularyItemService) Delete(ctx context.Context, id uint) *response.A
 		return response.Internal("failed to get item")
 	}
 
-	if item.Deck != nil && item.Deck.UserID != nil {
-		if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
-			return appErr
+	if item.Deck != nil {
+		if item.Deck.UserID == nil {
+			if actor.Role != enums.UserRoleAdmin {
+				return response.Forbidden("cannot delete system deck items")
+			}
+		} else {
+			if appErr := policy.CanMutate(actor, *item.Deck.UserID); appErr != nil {
+				return appErr
+			}
 		}
 	}
 

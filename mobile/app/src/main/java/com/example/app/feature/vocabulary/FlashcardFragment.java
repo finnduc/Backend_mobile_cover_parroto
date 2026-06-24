@@ -48,6 +48,7 @@ public class FlashcardFragment extends Fragment {
     private String deckDescription = "";
     private String deckLevel = "";
     private String deckThumbnailUrl = "";
+    private boolean isUserDeck = false;
 
     @Nullable
     @Override
@@ -65,6 +66,9 @@ public class FlashcardFragment extends Fragment {
         rvVocabularyWords = view.findViewById(R.id.rv_vocabulary_words);
 
         readArguments();
+        if (!isUserDeck) {
+            btnMore.setVisibility(View.GONE);
+        }
         vocabularyRepository = new VocabularyRepository(requireContext());
         flashcardAdapter = new FlashcardAdapter();
         viewPagerFlashcards.setAdapter(flashcardAdapter);
@@ -122,6 +126,7 @@ public class FlashcardFragment extends Fragment {
         deckDescription = bundle.getString("deckDescription", "");
         deckLevel = bundle.getString("deckLevel", "");
         deckThumbnailUrl = bundle.getString("deckThumbnailUrl", "");
+        isUserDeck = bundle.getBoolean("isUserDeck", false);
     }
 
     private void bindDeckInfo() {

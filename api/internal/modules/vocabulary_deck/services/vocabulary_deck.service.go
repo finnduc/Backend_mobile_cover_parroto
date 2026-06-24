@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	coreError "go-cover-parroto/internal/core/errors"
+	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/policy"
 	"go-cover-parroto/internal/core/response"
@@ -121,11 +122,15 @@ func (s *vocabularyDeckService) Update(ctx context.Context, id uint, body req.Up
 		return nil, response.Internal("failed to get deck")
 	}
 
-	if deck.UserID != nil {
-		actor, appErr := policy.ActorFromContext(ctx)
-		if appErr != nil {
-			return nil, appErr
+	actor, appErr := policy.ActorFromContext(ctx)
+	if appErr != nil {
+		return nil, appErr
+	}
+	if deck.UserID == nil {
+		if actor.Role != enums.UserRoleAdmin {
+			return nil, response.Forbidden("cannot modify system deck")
 		}
+	} else {
 		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return nil, appErr
 		}
@@ -162,11 +167,15 @@ func (s *vocabularyDeckService) Delete(ctx context.Context, id uint) *response.A
 		return response.Internal("failed to get deck")
 	}
 
-	if deck.UserID != nil {
-		actor, appErr := policy.ActorFromContext(ctx)
-		if appErr != nil {
-			return appErr
+	actor, appErr := policy.ActorFromContext(ctx)
+	if appErr != nil {
+		return appErr
+	}
+	if deck.UserID == nil {
+		if actor.Role != enums.UserRoleAdmin {
+			return response.Forbidden("cannot delete system deck")
 		}
+	} else {
 		if appErr := policy.CanMutate(actor, *deck.UserID); appErr != nil {
 			return appErr
 		}

@@ -29,12 +29,16 @@ public class BookMarksRepository {
         bookMarksApi.toggleBookmark(lessonId).enqueue(new ApiCallWrapper<>(callback));
     }
 
+    public void getTranscriptBookmarks(int page, int limit, BaseCallback<ApiResponse<List<BookmarksModel>>> callback) {
+        bookMarksApi.getTranscriptBookmarks(page, limit).enqueue(new ApiCallWrapper<>(callback));
+    }
+
     public void createBookmark(
             int lessonId,
             CreateBookMarksRequest request,
             BaseCallback<ApiResponse<BookmarksResponse>> callback
     ) {
-        callback.onError("Note API is not supported by the current backend.");
+        bookMarksApi.createTranscriptBookmark(request).enqueue(new ApiCallWrapper<>(callback));
     }
 
     public void updateBookmark(
@@ -42,10 +46,14 @@ public class BookMarksRepository {
             UpdateNoteRequest request,
             BaseCallback<ApiResponse<BookmarksResponse>> callback
     ) {
-        callback.onError("Note update API is not supported by the current backend.");
+        bookMarksApi.updateTranscriptBookmark(transcriptId, request).enqueue(new ApiCallWrapper<>(callback));
     }
 
     public void deleteBookmark(int id, BaseCallback<ApiResponse<BookmarksResponse>> callback) {
         bookMarksApi.deleteBookmark(id).enqueue(new ApiCallWrapper<>(callback));
+    }
+
+    public void deleteTranscriptBookmark(int transcriptId, BaseCallback<ApiResponse<BookmarksResponse>> callback) {
+        bookMarksApi.deleteTranscriptBookmark(transcriptId).enqueue(new ApiCallWrapper<>(callback));
     }
 }

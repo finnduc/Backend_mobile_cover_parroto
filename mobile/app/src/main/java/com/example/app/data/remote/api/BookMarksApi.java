@@ -1,5 +1,7 @@
 package com.example.app.data.remote.api;
 
+import com.example.app.data.remote.model.request.bookmarks.CreateBookMarksRequest;
+import com.example.app.data.remote.model.request.note.UpdateNoteRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
@@ -7,9 +9,11 @@ import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -28,5 +32,28 @@ public interface BookMarksApi {
     @DELETE("lesson-bookmarks/{id}")
     Call<ApiResponse<BookmarksResponse>> deleteBookmark(
             @Path("id") int id
+    );
+
+    // Transcript / Notes bookmarks
+    @GET("transcript-bookmarks")
+    Call<ApiResponse<List<BookmarksModel>>> getTranscriptBookmarks(
+            @Query("page") int page,
+            @Query("limit") int limit
+    );
+
+    @POST("transcript-bookmarks")
+    Call<ApiResponse<BookmarksResponse>> createTranscriptBookmark(
+            @Body CreateBookMarksRequest request
+    );
+
+    @PUT("transcript-bookmarks/{transcriptId}")
+    Call<ApiResponse<BookmarksResponse>> updateTranscriptBookmark(
+            @Path("transcriptId") int transcriptId,
+            @Body UpdateNoteRequest request
+    );
+
+    @DELETE("transcript-bookmarks/{transcriptId}")
+    Call<ApiResponse<BookmarksResponse>> deleteTranscriptBookmark(
+            @Path("transcriptId") int transcriptId
     );
 }

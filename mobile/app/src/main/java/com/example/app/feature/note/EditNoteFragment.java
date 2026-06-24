@@ -82,7 +82,7 @@ public class EditNoteFragment extends Fragment {
 
     }
     public void deleteNote(){
-        bookMarksRepository.deleteBookmark(TranscriptId,new BaseCallback<ApiResponse<BookmarksResponse>>(){
+        bookMarksRepository.deleteTranscriptBookmark(TranscriptId,new BaseCallback<ApiResponse<BookmarksResponse>>(){
             @Override
             public void onSuccess(ApiResponse<BookmarksResponse> data) {
                 Toast.makeText(requireContext(), "Xóa ghi chú thành công", Toast.LENGTH_SHORT).show();

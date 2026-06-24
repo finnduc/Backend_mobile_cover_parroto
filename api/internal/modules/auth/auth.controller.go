@@ -5,6 +5,7 @@ import (
 
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/response"
+	_ "go-cover-parroto/internal/modules/auth/dtos/res"
 	"go-cover-parroto/internal/modules/auth/services"
 
 	"github.com/gin-gonic/gin"

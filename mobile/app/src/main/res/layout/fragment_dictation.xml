@@ -265,6 +265,15 @@
                             android:layout_weight="1" />
 
                         <ImageButton
+                            android:id="@+id/btnVocab"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_vocab"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="vocabulary"
+                            android:layout_marginEnd="8dp" />
+
+                        <ImageButton
                             android:id="@+id/btnBookmark"
                             android:layout_width="36dp"
                             android:layout_height="36dp"

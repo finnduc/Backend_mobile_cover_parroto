@@ -1,8 +1,30 @@
 basePath: /api/v1
 definitions:
+  go-cover-parroto_internal_core_enums.UserRole:
+    enum:
+    - admin
+    - user
+    - guest
+    type: string
+    x-enum-varnames:
+    - UserRoleAdmin
+    - UserRoleUser
+    - UserRoleGuest
   go-cover-parroto_internal_core_response.BaseResponse-any:
     properties:
       data: {}
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes
+  : properties:
+      data:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkGroupRes'
+        type: array
       error: {}
       meta:
         allOf:
@@ -15,16 +37,6 @@ definitions:
         items:
           $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_dtos_res.TranscriptRes'
         type: array
-      error: {}
-      meta:
-        allOf:
-        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
-        description: optional
-    type: object
-  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes
-  : properties:
-      data:
-        $ref: '#/definitions/go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes'
       error: {}
       meta:
         allOf:
@@ -101,10 +113,30 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_AuthUserRes:
+    properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_auth_dtos_res.AuthUserRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
     properties:
       data:
         $ref: '#/definitions/go-cover-parroto_internal_modules_category_dtos_res.CategoryRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_chat_dtos_res_HistoryRes:
+    properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_chat_dtos_res.HistoryRes'
       error: {}
       meta:
         allOf:
@@ -135,6 +167,26 @@ definitions:
   : properties:
       data:
         $ref: '#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingTranscribeRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingTranscribeRes'
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
+  ? go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes
+  : properties:
+      data:
+        $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkRes'
       error: {}
       meta:
         allOf:
@@ -181,6 +233,16 @@ definitions:
         - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
         description: optional
     type: object
+  go-cover-parroto_internal_core_response.BaseResponse-string:
+    properties:
+      data:
+        type: string
+      error: {}
+      meta:
+        allOf:
+        - $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
+        description: optional
+    type: object
   go-cover-parroto_internal_core_response.Meta:
     properties:
       limit:
@@ -192,15 +254,6 @@ definitions:
         type: integer
       total_pages:
         type: integer
-    type: object
-  go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes'
-        type: array
-      meta:
-        $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
     type: object
   go-cover-parroto_internal_core_response.PaginatedResponse-go-cover-parroto_internal_modules_category_dtos_res_CategoryRes:
     properties:
@@ -265,29 +318,22 @@ definitions:
       meta:
         $ref: '#/definitions/go-cover-parroto_internal_core_response.Meta'
     type: object
-  go-cover-parroto_internal_modules_bookmark_dtos_res.BookmarkRes:
+  go-cover-parroto_internal_modules_auth_dtos_res.AuthUserRes:
     properties:
+      avatar_url:
+        type: string
       created_at:
         type: string
-      lesson:
-        $ref: '#/definitions/go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo'
-      lesson_id:
-        type: integer
-      user_id:
+      email:
         type: string
-    type: object
-  go-cover-parroto_internal_modules_bookmark_dtos_res.LessonInfo:
-    properties:
-      duration:
-        type: number
       id:
-        type: integer
-      level:
         type: string
-      thumbnail_url:
+      name:
         type: string
-      title:
+      phone:
         type: string
+      user_role:
+        $ref: '#/definitions/go-cover-parroto_internal_core_enums.UserRole'
     type: object
   go-cover-parroto_internal_modules_category_dtos_req.CreateCategoryReq:
     properties:
@@ -309,6 +355,50 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  go-cover-parroto_internal_modules_chat_dtos_req.SendMessageReq:
+    properties:
+      content:
+        example: Hello world
+        type: string
+    required:
+    - content
+    type: object
+  go-cover-parroto_internal_modules_chat_dtos_res.HistoryRes:
+    properties:
+      has_more:
+        type: boolean
+      messages:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_chat_dtos_res.MessageRes'
+        type: array
+      next_id:
+        type: integer
+    type: object
+  go-cover-parroto_internal_modules_chat_dtos_res.MessageRes:
+    properties:
+      avatar_url:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_dictation_status_dtos_req.CreateDictationStatusReq:
+    properties:
+      lesson_id:
+        type: integer
+      transcript_id:
+        type: integer
+    required:
+    - lesson_id
+    - transcript_id
     type: object
   go-cover-parroto_internal_modules_dictation_status_dtos_res.DictationStatusRes:
     properties:
@@ -337,9 +427,8 @@ definitions:
         type: string
       video_url:
         type: string
-    required:
-    - title
-    - video_url
+      youtube_url:
+        type: string
     type: object
   go-cover-parroto_internal_modules_lesson_dtos_req.UpdateLessonReq:
     properties:
@@ -379,6 +468,16 @@ definitions:
       video_url:
         type: string
     type: object
+  go-cover-parroto_internal_modules_shadowing_status_dtos_req.CreateShadowingStatusReq:
+    properties:
+      lesson_id:
+        type: integer
+      transcript_id:
+        type: integer
+    required:
+    - lesson_id
+    - transcript_id
+    type: object
   go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingStatusRes:
     properties:
       completed_at:
@@ -389,6 +488,64 @@ definitions:
         type: integer
       user_id:
         type: string
+    type: object
+  go-cover-parroto_internal_modules_shadowing_status_dtos_res.ShadowingTranscribeRes:
+    properties:
+      transcribed_text:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.CreateTranscriptBookmarkReq:
+    properties:
+      note:
+        type: string
+      transcript_id:
+        type: integer
+    required:
+    - transcript_id
+    type: object
+  go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.UpdateTranscriptBookmarkReq:
+    properties:
+      note:
+        type: string
+    required:
+    - note
+    type: object
+  go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkGroupRes:
+    properties:
+      lesson_id:
+        type: integer
+      lesson_title:
+        type: string
+      transcripts:
+        items:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkLineRes'
+        type: array
+    type: object
+  go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkLineRes:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      note:
+        type: string
+      phonetic:
+        type: string
+      transcript_id:
+        type: integer
+      vietnamese:
+        type: string
+    type: object
+  go-cover-parroto_internal_modules_transcript_bookmark_dtos_res.TranscriptBookmarkRes:
+    properties:
+      created_at:
+        type: string
+      lesson_id:
+        type: integer
+      note:
+        type: string
+      transcript_id:
+        type: integer
     type: object
   go-cover-parroto_internal_modules_transcript_dtos_req.BulkCreateTranscriptItem:
     properties:
@@ -488,8 +645,6 @@ definitions:
         type: string
       name:
         type: string
-    required:
-    - name
     type: object
   go-cover-parroto_internal_modules_vocabulary_category_dtos_res.VocabularyCategoryRes:
     properties:
@@ -527,8 +682,6 @@ definitions:
         type: string
       thumbnail_url:
         type: string
-    required:
-    - name
     type: object
   go-cover-parroto_internal_modules_vocabulary_deck_dtos_res.VocabularyDeckRes:
     properties:
@@ -569,10 +722,6 @@ definitions:
         type: string
       transcript_id:
         type: integer
-    required:
-    - meaning
-    - normalized_phrase
-    - phrase
     type: object
   go-cover-parroto_internal_modules_vocabulary_item_dtos_req.UpdateVocabularyItemReq:
     properties:
@@ -586,10 +735,6 @@ definitions:
         type: string
       phrase:
         type: string
-    required:
-    - meaning
-    - normalized_phrase
-    - phrase
     type: object
   go-cover-parroto_internal_modules_vocabulary_item_dtos_res.VocabularyItemRes:
     properties:
@@ -1583,7 +1728,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Sets initial user claims and roles after the first Firebase authentication
+      description: Sets initial user claims and roles after the first Clerk authentication
       produces:
       - application/json
       responses:
@@ -1604,107 +1749,18 @@ paths:
       summary: Finalize user registration
       tags:
       - auth
-  /bookmarks:
-    get:
-      consumes:
-      - application/json
-      description: Get the authenticated user's bookmarks with lesson details
-      parameters:
-      - description: Filter by user ID
-        in: query
-        name: user_id
-        type: integer
-      - description: Filter by lesson ID
-        in: query
-        name: lesson_id
-        type: integer
-      - default: 1
-        description: Page number
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_bookmark_dtos_res_BookmarkRes'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: List user bookmarks
-      tags:
-      - bookmarks
-  /bookmarks/{lessonId}:
-    delete:
-      consumes:
-      - application/json
-      description: Remove a lesson from user's bookmarks
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: lessonId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-      security:
-      - BearerAuth: []
-      summary: Remove bookmark
-      tags:
-      - bookmarks
+  /auth/sync:
     post:
-      consumes:
-      - application/json
-      description: Add a lesson to user's bookmarks
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: lessonId
-        required: true
-        type: integer
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_auth_dtos_res_AuthUserRes'
       security:
       - BearerAuth: []
-      summary: Add bookmark
+      summary: Sync/get current Clerk user
       tags:
-      - bookmarks
+      - auth
   /categories:
     get:
       consumes:
@@ -1735,6 +1791,68 @@ paths:
       summary: List categories
       tags:
       - categories
+  /chat/messages:
+    get:
+      consumes:
+      - application/json
+      description: Get global chat messages with cursor-based pagination (newest first)
+      parameters:
+      - description: Return messages older than this id
+        in: query
+        name: before_id
+        type: integer
+      - default: 20
+        description: Number of messages to return (max 50)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_chat_dtos_res_HistoryRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List global chat history
+      tags:
+      - chat
+    post:
+      consumes:
+      - application/json
+      description: Send a message to the global chat
+      parameters:
+      - description: Message content
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_chat_dtos_req.SendMessageReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Send a chat message
+      tags:
+      - chat
   /dictation-status:
     get:
       consumes:
@@ -1768,16 +1886,16 @@ paths:
       summary: List dictation status
       tags:
       - dictation-status
-  /dictation-status/{transcriptId}:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Transcript ID
-        in: path
-        name: transcriptId
+      - description: Request body
+        in: body
+        name: body
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_dictation_status_dtos_req.CreateDictationStatusReq'
       produces:
       - application/json
       responses:
@@ -1896,6 +2014,36 @@ paths:
       summary: Get lesson transcripts
       tags:
       - transcripts
+  /pronunciation-attempts:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Audio file
+        in: formData
+        name: audio
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Assess pronunciation of shadowing audio
+      tags:
+      - shadowing-status
   /shadowing-status:
     get:
       consumes:
@@ -1929,16 +2077,16 @@ paths:
       summary: List shadowing status
       tags:
       - shadowing-status
-  /shadowing-status/{transcriptId}:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Transcript ID
-        in: path
-        name: transcriptId
+      - description: Request body
+        in: body
+        name: body
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_shadowing_status_dtos_req.CreateShadowingStatusReq'
       produces:
       - application/json
       responses:
@@ -1963,6 +2111,209 @@ paths:
       summary: Mark transcript as shadowing completed
       tags:
       - shadowing-status
+  /shadowing-status/transcribe:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Audio file
+        in: formData
+        name: audio
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_shadowing_status_dtos_res_ShadowingTranscribeRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Transcribe audio for shadowing exercise
+      tags:
+      - shadowing-status
+  /transcript-bookmarks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Lesson ID (if calling /transcript-bookmarks?lesson_id=...)
+        in: query
+        name: lesson_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List transcript bookmarks
+      tags:
+      - transcript-bookmarks
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.CreateTranscriptBookmarkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Create transcript bookmark
+      tags:
+      - transcript-bookmarks
+  /transcript-bookmarks/{lessonId}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Lesson ID (if calling /transcript-bookmarks/:lessonId)
+        in: path
+        name: lessonId
+        type: integer
+      - description: Lesson ID (if calling /transcript-bookmarks?lesson_id=...)
+        in: query
+        name: lesson_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-array_go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkGroupRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List transcript bookmarks
+      tags:
+      - transcript-bookmarks
+  /transcript-bookmarks/{transcriptId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Transcript ID
+        in: path
+        name: transcriptId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Delete transcript bookmark
+      tags:
+      - transcript-bookmarks
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Transcript ID
+        in: path
+        name: transcriptId
+        required: true
+        type: integer
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-cover-parroto_internal_modules_transcript_bookmark_dtos_req.UpdateTranscriptBookmarkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_modules_transcript_bookmark_dtos_res_TranscriptBookmarkRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Update transcript bookmark
+      tags:
+      - transcript-bookmarks
+  /user/profile:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: Get current user profile from Clerk
+      tags:
+      - user
   /vocabulary-categories:
     get:
       consumes:
@@ -1995,10 +2346,6 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Filter by category
-        in: query
-        name: category_id
-        type: integer
       - description: Page number
         in: query
         name: page
@@ -2014,7 +2361,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
-      summary: List vocabulary decks
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-any'
+      security:
+      - BearerAuth: []
+      summary: List current user's vocabulary decks
       tags:
       - vocabulary-decks
     post:
@@ -2220,6 +2573,33 @@ paths:
       summary: Update user's item
       tags:
       - vocabulary-items
+  /vocabulary-system-decks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by category
+        in: query
+        name: category_id
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-cover-parroto_internal_core_response.BaseResponse-go-cover-parroto_internal_core_response_PaginatedResponse-go-cover-parroto_internal_modules_vocabulary_deck_dtos_res_VocabularyDeckRes'
+      summary: List default/system vocabulary decks
+      tags:
+      - vocabulary-system-decks
 securityDefinitions:
   BearerAuth:
     in: header

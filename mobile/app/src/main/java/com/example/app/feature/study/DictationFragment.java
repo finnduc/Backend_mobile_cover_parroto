@@ -34,6 +34,9 @@ import com.example.app.data.remote.model.response.transcripts.TranscriptsRespons
 import com.example.app.data.repository.TranscriptProgressRepository;
 import com.example.app.feature.vocabulary.AddToVocabularyBottomSheet;
 import com.example.app.data.repository.TranscriptsRepository;
+import com.example.app.data.repository.BookMarksRepository;
+import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
+import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
 import com.example.app.diaglog.SpoilerWarning;
 import com.example.app.utils.BaseCallback;
 import com.example.app.utils.YouTubeWebViewManager;
@@ -48,6 +51,9 @@ public class DictationFragment extends Fragment {
     private TranscriptProgressRepository transcriptProgressRepository;
     private Button btnKiemTra;
     private ImageButton btnBookmark;
+    private ImageButton btnVocab;
+    private BookMarksRepository bookMarksRepository;
+    private boolean isLessonBookmarked = false;
     private YouTubeWebViewManager youTubeWebViewManager;
     private LinearLayout layoutButtonBottom;
     private ImageButton btnPrevious;
@@ -100,12 +106,14 @@ public class DictationFragment extends Fragment {
     ) {
 
         View view = inflater.inflate(R.layout.fragment_dictation, container, false);
+        bookMarksRepository = new BookMarksRepository(requireContext());
         transcriptProgressRepository = new TranscriptProgressRepository(requireContext());
         transcriptsRepository = new TranscriptsRepository(requireContext());
         layoutButtonBottom = view.findViewById(R.id.layoutButtonBottom);
         btnPrevious = view.findViewById(R.id.btnPrevious);
         btnNext = view.findViewById(R.id.btnNext);
         btnBookmark = view.findViewById(R.id.btnBookmark);
+        btnVocab = view.findViewById(R.id.btnVocab);
         btnReplay2 = view.findViewById(R.id.btnReplay2);
         btnPlay = view.findViewById(R.id.btnPlay);
         btnKiemTra = view.findViewById(R.id.btnKiemTra);
@@ -347,7 +355,7 @@ public class DictationFragment extends Fragment {
                 youTubeWebViewManager.playVideo();
             }
         });
-        btnBookmark.setOnClickListener(v -> {
+        btnVocab.setOnClickListener(v -> {
             if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
                 Toast.makeText(requireContext(), "Không có dữ liệu câu!", Toast.LENGTH_SHORT).show();
                 return;
@@ -359,6 +367,43 @@ public class DictationFragment extends Fragment {
                     currentTranscript.getContent()
             );
             bottomSheet.show(getChildFragmentManager(), "AddToVocabulary");
+        });
+        btnBookmark.setOnClickListener(v -> {
+            bookMarksRepository.toggleBookmark(lessonId, new BaseCallback<ApiResponse<BookmarksResponse>>() {
+                @Override
+                public void onSuccess(ApiResponse<BookmarksResponse> data) {
+                    isLessonBookmarked = !isLessonBookmarked;
+                    if (isLessonBookmarked) {
+                        btnBookmark.setImageResource(R.drawable.ic_bookmark_filled_yellow);
+                        Toast.makeText(requireContext(), "Đã lưu bài học", Toast.LENGTH_SHORT).show();
+                    } else {
+                        btnBookmark.setImageResource(R.drawable.ic_bookmark);
+                        Toast.makeText(requireContext(), "Đã bỏ lưu bài học", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(requireContext(), "Lỗi toggle bookmark: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        bookMarksRepository.getBookmarks(1, 100, new BaseCallback<ApiResponse<List<BookmarksModel>>>() {
+            @Override
+            public void onSuccess(ApiResponse<List<BookmarksModel>> data) {
+                if (data != null && data.getData() != null && isAdded()) {
+                    for (BookmarksModel bm : data.getData()) {
+                        if (bm.getLessonId() == lessonId) {
+                            isLessonBookmarked = true;
+                            btnBookmark.setImageResource(R.drawable.ic_bookmark_filled_yellow);
+                            break;
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onError(String message) {}
         });
         btnReplay.setOnClickListener(v -> {
             replayCurrentSentence();

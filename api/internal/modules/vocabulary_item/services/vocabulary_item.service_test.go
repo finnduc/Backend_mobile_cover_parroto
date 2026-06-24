@@ -23,6 +23,11 @@ func userCtx(userID string) context.Context {
 	return context.WithValue(ctx, enums.ContextKeyUserRole, enums.UserRoleUser)
 }
 
+func adminCtx(userID string) context.Context {
+	ctx := context.WithValue(context.Background(), enums.ContextKeyUserID, userID)
+	return context.WithValue(ctx, enums.ContextKeyUserRole, enums.UserRoleAdmin)
+}
+
 func strPtr(s string) *string { return &s }
 
 func TestVocabularyItemService_List(t *testing.T) {
@@ -171,8 +176,18 @@ func TestVocabularyItemService_Create(t *testing.T) {
 			},
 		},
 		{
-			name: "success — user adds item to system deck",
+			name: "forbidden — non-admin user adds item to system deck returns 403",
 			ctx:  userCtx("user1"),
+			body: req.CreateVocabularyItemFromDeckReq{DeckID: 2, Phrase: "run out", NormalizedPhrase: "run out", Meaning: "Hết"},
+			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
+				dr.On("FindByID", mock.Anything, uint(2)).Return(systemDeck, nil)
+			},
+			wantErr:  true,
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name: "success — admin adds item to system deck",
+			ctx:  adminCtx("admin1"),
 			body: req.CreateVocabularyItemFromDeckReq{DeckID: 2, Phrase: "run out", NormalizedPhrase: "run out", Meaning: "Hết"},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				dr.On("FindByID", mock.Anything, uint(2)).Return(systemDeck, nil)
@@ -282,8 +297,19 @@ func TestVocabularyItemService_Update(t *testing.T) {
 			wantPhrase: "new phrase",
 		},
 		{
-			name: "success — any user updates system deck item",
+			name: "forbidden — non-admin user updates system deck item returns 403",
 			ctx:  userCtx("any_user"),
+			id:   2,
+			body: req.UpdateVocabularyItemReq{Phrase: strPtr("updated"), NormalizedPhrase: strPtr("updated"), Meaning: strPtr("meaning")},
+			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
+				ir.On("FindByID", mock.Anything, uint(2)).Return(itemWithSystemDeck, nil)
+			},
+			wantErr:  true,
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name: "success — admin updates system deck item",
+			ctx:  adminCtx("admin1"),
 			id:   2,
 			body: req.UpdateVocabularyItemReq{Phrase: strPtr("updated"), NormalizedPhrase: strPtr("updated"), Meaning: strPtr("meaning")},
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
@@ -378,8 +404,18 @@ func TestVocabularyItemService_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "success — deletes system deck item",
+			name: "forbidden — non-admin user deletes system deck item returns 403",
 			ctx:  userCtx("any_user"),
+			id:   2,
+			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
+				ir.On("FindByID", mock.Anything, uint(2)).Return(itemWithSystemDeck, nil)
+			},
+			wantErr:  true,
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name: "success — admin deletes system deck item",
+			ctx:  adminCtx("admin1"),
 			id:   2,
 			setup: func(ir *itemrepo.MockVocabularyItemRepo, dr *deckrepo.MockVocabularyDeckRepo) {
 				ir.On("FindByID", mock.Anything, uint(2)).Return(itemWithSystemDeck, nil)
