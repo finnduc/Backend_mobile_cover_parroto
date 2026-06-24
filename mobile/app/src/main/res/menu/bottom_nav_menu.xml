@@ -11,10 +11,6 @@
         android:icon="@drawable/ic_vocab"
         android:title="Từ vựng" />
 
-    <item
-        android:id="@+id/reviewFragment"
-        android:icon="@drawable/ic_review"
-        android:title="Ôn tập" />
 
     <item
         android:id="@+id/progressFragment"

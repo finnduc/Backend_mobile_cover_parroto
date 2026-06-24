@@ -12,8 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.app.R;
-import com.example.app.data.local.TokenManager;
 import com.example.app.data.remote.model.response.user.UserResponse;
 import com.example.app.data.repository.AuthRepository;
 
@@ -21,7 +21,6 @@ import com.example.app.data.repository.AuthRepository;
 public class LoginFragment extends Fragment {
 
     AuthRepository authRepository;
-    TokenManager tokenManager;
 
     @Override
     @Nullable
@@ -30,7 +29,6 @@ public class LoginFragment extends Fragment {
          TextView Login = view.findViewById(R.id.btnLogin);
          EditText getUsername = view.findViewById(R.id.getUsername);
          EditText getPassword = view.findViewById(R.id.getPassword);
-
 
         Login.setOnClickListener(v ->
          {
@@ -77,15 +75,18 @@ public class LoginFragment extends Fragment {
         authRepository.login(email, password, new AuthRepository.authCallBack<UserResponse>() {
             @Override
             public void onSuccess(UserResponse data) {
-                Toast.makeText(requireContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_LoginFragment_to_StudyFragment);
+                if (isAdded() && getView() != null && getContext() != null) {
+                    Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(getView())
+                            .navigate(R.id.action_LoginFragment_to_StudyFragment);
+                }
             }
             @Override
             public void onError(String message) {
-                Toast.makeText(requireContext(), "Lỗi đăng nhập "
-                        + message, android.widget.Toast.LENGTH_SHORT).show();
-
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi đăng nhập "
+                            + message, android.widget.Toast.LENGTH_SHORT).show();
+                }
             }
 
         });

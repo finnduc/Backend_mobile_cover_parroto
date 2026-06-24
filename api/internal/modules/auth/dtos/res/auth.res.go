@@ -8,5 +8,6 @@ type AuthUserRes struct {
 	Name      string         `json:"name"`
 	UserRole  enums.UserRole `json:"user_role"`
 	AvatarURL string         `json:"avatar_url"`
+	Phone     string         `json:"phone"`
 	CreatedAt string         `json:"created_at"`
 }

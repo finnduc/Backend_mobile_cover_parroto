@@ -7,6 +7,8 @@ import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavOptions;
 
 import com.example.app.R;
 
@@ -39,7 +41,6 @@ public class CustomBottomNav extends LinearLayout {
         // Thêm từng tab — đổi icon và destinationId cho đúng với nav_graph của bạn
         addTab(R.drawable.ic_study, "Học tập", R.id.StudyFragment);
         addTab(R.drawable.ic_vocab,    "Từ vựng",  R.id.vocabularyFragment);
-        addTab(R.drawable.ic_review,   "Ôn tập",   R.id.reviewFragment);
         addTab(R.drawable.ic_progress, "Tiến độ",  R.id.progressFragment);
         addTab(R.drawable.ic_settings, "Cài đặt",  R.id.settingsFragment);
 
@@ -66,8 +67,21 @@ public class CustomBottomNav extends LinearLayout {
         item.setIcon(icon);
         item.setLabel(label);
         item.setOnClickListener(v -> {
-            if (navController != null)
-                navController.navigate(destinationId);
+            if (navController == null) {
+                return;
+            }
+
+            NavDestination currentDestination = navController.getCurrentDestination();
+            if (currentDestination != null && currentDestination.getId() == destinationId) {
+                return;
+            }
+
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setRestoreState(true)
+                    .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
+                    .build();
+            navController.navigate(destinationId, null, navOptions);
         });
 
         addView(item);

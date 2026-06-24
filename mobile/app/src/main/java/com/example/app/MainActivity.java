@@ -1,6 +1,7 @@
 package com.example.app;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,24 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
             CustomBottomNav bottomNav = findViewById(R.id.bottom_nav);
             bottomNav.setup(navController);
+            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                if(destination.getId() == R.id.DictationFragment
+                        || destination.getId() == R.id.LessonsListFragment
+                        || destination.getId() == R.id.detailItemsFragment
+                        || destination.getId() == R.id.flashcardFragment
+                        || destination.getId() == R.id.editItemsFragment
+                        || destination.getId() == R.id.LoginFragment
+                        || destination.getId() == R.id.SignupFragment
+                        || destination.getId() == R.id.myNotesFragment
+                        || destination.getId() == R.id.ListeningFragment
+                        || destination.getId() == R.id.addVocabularyItemFragment
+                        || destination.getId() == R.id.ProfileFragment){
+                    bottomNav.setVisibility(View.GONE);
+                }
+                else{
+                    bottomNav.setVisibility(View.VISIBLE);
+                }
+            });
         }
     }
 }
