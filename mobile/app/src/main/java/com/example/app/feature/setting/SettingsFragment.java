@@ -86,7 +86,7 @@ public class SettingsFragment extends Fragment {
 
     private void setupMenuRows(View view) {
         view.findViewById(R.id.rowProgress).setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.progressFragment);
+            Navigation.findNavController(v).navigate(R.id.bookmarksFragment);
         });
 
         view.findViewById(R.id.rowMyVocabulary).setOnClickListener(v -> {

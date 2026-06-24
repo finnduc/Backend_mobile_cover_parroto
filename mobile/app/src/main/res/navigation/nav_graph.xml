@@ -53,9 +53,6 @@
         android:name="com.example.app.feature.study.DictationFragment"
         android:label="Học Chính Tả">
         <action
-            android:id="@+id/action_DictationFragment_to_progressFragment"
-            app:destination="@id/progressFragment" />
-        <action
             android:id="@+id/action_DictationFragment_to_addNoteFragment"
             app:destination="@id/addNoteFragment" />
         <action
@@ -140,12 +137,9 @@
     
 
     <fragment
-        android:id="@+id/progressFragment"
-        android:name="com.example.app.feature.progress.ProgressFragment"
-        android:label="Tiến độ">
-        <action
-            android:id="@+id/action_ProgressFragment_to_studyFragment"
-            app:destination="@id/StudyFragment" />
+        android:id="@+id/bookmarksFragment"
+        android:name="com.example.app.feature.bookmarks.BookmarksFragment"
+        android:label="Đã lưu">
     </fragment>
 
     <fragment

@@ -33,14 +33,12 @@ import com.example.app.data.remote.model.response.categories.CategoryResponse;
 import com.example.app.data.remote.model.response.lessons.LessonsResponse;
 import com.example.app.data.repository.CategoriesRepository;
 import com.example.app.data.repository.LessonsRepository;
-import com.example.app.data.repository.ProgressRepository;
 import com.example.app.diaglog.ChooseModeBottomSheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LessonsListFragment extends Fragment {
-    private ProgressRepository progressRepository;
     private CategoriesRepository categoriesRepository;
     private ImageButton btnCreate;
     private int countDone;

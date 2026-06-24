@@ -37,13 +37,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.R;
 import com.example.app.adapter.dictation.SentenceAdapter;
 import com.example.app.adapter.pronunciation.ItemPronunciationAdapter;
-import com.example.app.data.remote.model.request.progress.CreateProgressRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.progress.ProgressResponse;
 import com.example.app.data.remote.model.response.pronunciation.PronunciationProgressResponse;
 import com.example.app.data.remote.model.response.pronunciation.PronunciationResponse;
 import com.example.app.data.remote.model.response.transcripts.TranscriptsResponse;
-import com.example.app.data.repository.ProgressRepository;
 import com.example.app.data.repository.PronunciationAttemptsRepository;
 import com.example.app.data.repository.PronunciationProgressRepository;
 import com.example.app.data.repository.TranscriptsRepository;
@@ -93,7 +90,6 @@ public class ListeningFragment extends Fragment {
     private TextView tvSpeed;
     private View layoutButtonBottom;
     private int currentSentenceIndex = 0;
-    private ProgressRepository progressRepository;
     private List<Integer> completedIds = new ArrayList<>();
     private boolean pronunciationCompletedSent = false;
     private double progress = 0;
@@ -108,7 +104,6 @@ public class ListeningFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_listening, container, false);
         pronunciationAttemptsRepository = new PronunciationAttemptsRepository(requireContext());
         pronunciationProgressRepository = new PronunciationProgressRepository(requireContext());
-        progressRepository = new ProgressRepository(requireContext());
         btnPrevious = view.findViewById(R.id.btnPrevious);
         btnNext = view.findViewById(R.id.btnNext);
         btnMic = view.findViewById(R.id.btnMic);
@@ -520,24 +515,6 @@ public class ListeningFragment extends Fragment {
             return;
         }
         pronunciationCompletedSent = true;
-        sendPronunciationProgress(true);
-    }
-
-    private void sendPronunciationProgress(boolean completed) {
-        progressRepository.createProgress(new CreateProgressRequest(lessonId, null, completed), new BaseCallback<ApiResponse<ProgressResponse>>() {
-            @Override
-            public void onSuccess(ApiResponse<ProgressResponse> data) {
-                Log.d("ListeningFragment", completed ? "Da gui hoan thanh pronunciation" : "Da gui pronunciation dang hoc");
-            }
-
-            @Override
-            public void onError(String message) {
-                if (completed) {
-                    pronunciationCompletedSent = false;
-                }
-                Log.e("ListeningFragment", "Loi gui pronunciation progress: " + message);
-            }
-        });
     }
 
     private void setMicRecordingState(boolean recording) {

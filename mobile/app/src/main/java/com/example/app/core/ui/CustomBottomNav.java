@@ -41,7 +41,7 @@ public class CustomBottomNav extends LinearLayout {
         // Thêm từng tab — đổi icon và destinationId cho đúng với nav_graph của bạn
         addTab(R.drawable.ic_study, "Học tập", R.id.StudyFragment);
         addTab(R.drawable.ic_vocab,    "Từ vựng",  R.id.vocabularyFragment);
-        addTab(R.drawable.ic_progress, "Tiến độ",  R.id.progressFragment);
+        addTab(R.drawable.ic_bookmark, "Đã lưu",  R.id.bookmarksFragment);
         addTab(R.drawable.ic_settings, "Cài đặt",  R.id.settingsFragment);
 
         // Active tab đầu tiên

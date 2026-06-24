@@ -28,18 +28,11 @@ import com.example.app.R;
 import com.example.app.adapter.dictation.SentenceAdapter;
 import com.example.app.adapter.dictation.WordCardAdapter;
 import com.example.app.adapter.dictation.WorkCardModel;
-import com.example.app.data.remote.model.request.progress.CreateProgressRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
-import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
-import com.example.app.data.remote.model.response.bookmarks.noteResponse;
-import com.example.app.data.remote.model.response.progress.ProgressResponse;
-import com.example.app.data.remote.model.response.transcriptBookmarks.TranscriptBookmarksResponse;
 import com.example.app.data.remote.model.response.transcriptProgress.TranscriptProgressResponse;
 import com.example.app.data.remote.model.response.transcripts.TranscriptsResponse;
-import com.example.app.data.repository.BookMarksRepository;
-import com.example.app.data.repository.ProgressRepository;
-import com.example.app.data.repository.TranscriptBookmarksRepository;
 import com.example.app.data.repository.TranscriptProgressRepository;
+import com.example.app.feature.vocabulary.AddToVocabularyBottomSheet;
 import com.example.app.data.repository.TranscriptsRepository;
 import com.example.app.diaglog.SpoilerWarning;
 import com.example.app.utils.BaseCallback;
@@ -53,9 +46,6 @@ import java.util.List;
 
 public class DictationFragment extends Fragment {
     private TranscriptProgressRepository transcriptProgressRepository;
-    private boolean isCurrentSentenceBookmarked = false;
-    private BookMarksRepository bookMarksRepository;
-    private TranscriptBookmarksRepository transcriptBookmarksRepository;
     private Button btnKiemTra;
     private ImageButton btnBookmark;
     private YouTubeWebViewManager youTubeWebViewManager;
@@ -76,7 +66,6 @@ public class DictationFragment extends Fragment {
     private TextView tvProgress;
     private TextView timer;
     private WebView webViewYoutube;
-    private noteResponse currentNoteResponse = null;
     private ImageButton btnClose ;
     private TextView vietnamese;
     private EditText etInput;
@@ -98,11 +87,9 @@ public class DictationFragment extends Fragment {
     private Handler autoStopHandler = new Handler();
     private Runnable timerRunnable;
     private Runnable autoStopRunnable;
-    private ProgressRepository progressRepository;
     private int quantityTranscripts = 0;
     private List<Integer> completedIds = new ArrayList<>();
-    private boolean dictationStartedSent = false;
-    private boolean dictationCompletedSent = false;
+    private int maxLine = 0;
 
     @Nullable
     @Override
@@ -114,10 +101,7 @@ public class DictationFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_dictation, container, false);
         transcriptProgressRepository = new TranscriptProgressRepository(requireContext());
-        bookMarksRepository = new BookMarksRepository(requireContext());
-        transcriptBookmarksRepository = new TranscriptBookmarksRepository(requireContext());
         transcriptsRepository = new TranscriptsRepository(requireContext());
-        progressRepository = new ProgressRepository(requireContext());
         layoutButtonBottom = view.findViewById(R.id.layoutButtonBottom);
         btnPrevious = view.findViewById(R.id.btnPrevious);
         btnNext = view.findViewById(R.id.btnNext);
@@ -266,7 +250,6 @@ public class DictationFragment extends Fragment {
         if (rvSentenceNumbers != null) {
             rvSentenceNumbers.smoothScrollToPosition(currentSentenceIndex);
         }
-        checkBookmarkState();
     }
     public void fetchTranscriptProgress(int lessonId){
         transcriptProgressRepository.getTranscriptProgress(lessonId, new BaseCallback<ApiResponse<List<TranscriptProgressResponse>>>() {
@@ -282,11 +265,17 @@ public class DictationFragment extends Fragment {
                             completedIds.add(response.getTranscriptId());
                         }
                     }
+                    if (!completedIds.isEmpty()) {
+                        for (int i = 0; i < listTranscripts.size(); i++) {
+                            if (completedIds.contains(listTranscripts.get(i).getId())) {
+                                maxLine = i + 1;
+                            }
+                        }
+                    }
                     if (sentenceAdapter != null) {
                         sentenceAdapter.setCompletedTranscripts(completedIds);
                     }
                     updateProgressText();
-                    sendDictationCompletedIfNeeded();
                 }
 
             }
@@ -329,7 +318,6 @@ public class DictationFragment extends Fragment {
             btnStart.setVisibility(View.GONE);
             layoutButtonBottom.setVisibility(View.VISIBLE);
             etInput.setEnabled(true);
-            sendDictationInProgressIfNeeded();
         });
 
         btnPrevious.setOnClickListener(v -> {
@@ -342,7 +330,7 @@ public class DictationFragment extends Fragment {
         });
 
         btnNext.setOnClickListener(v -> {
-            if (listTranscripts != null && currentSentenceIndex < listTranscripts.size() - 1) {
+            if (listTranscripts != null && currentSentenceIndex < listTranscripts.size() - 1 && currentSentenceIndex < maxLine) {
                 currentSentenceIndex++;
                 prepareCurrentSentence();
                 replayCurrentSentence();
@@ -361,34 +349,16 @@ public class DictationFragment extends Fragment {
         });
         btnBookmark.setOnClickListener(v -> {
             if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
-                Toast.makeText(requireContext(), "Không có dữ liệu câu để tạo ghi chú!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Không có dữ liệu câu!", Toast.LENGTH_SHORT).show();
                 return;
             }
             TranscriptsResponse currentTranscript = listTranscripts.get(currentSentenceIndex);
-            Bundle bundle = new Bundle();
-            if(isCurrentSentenceBookmarked && currentNoteResponse != null){
-                bundle.putString("content", currentNoteResponse.getContent());
-                bundle.putString("phonetic", currentNoteResponse.getPhonetic() != null ? currentNoteResponse.getPhonetic() : "");
-                bundle.putString("note", currentNoteResponse.getNote());
-                bundle.putInt("transcriptId", currentTranscript.getId());
-
-                try{
-                    Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_editNoteFragment, bundle);
-                }catch (IllegalArgumentException e){
-                    android.util.Log.e("DictationFragment", "Lỗi chuyển màn hình Edit: " + e.getMessage());
-                }
-
-            } else {
-                bundle.putInt("lessonId", lessonId);
-                bundle.putInt("transcriptId", currentTranscript.getId());
-                bundle.putString("sentenceEn", currentTranscript.getContent());
-                bundle.putString("sentenceVi", currentTranscript.getVietnamese());
-                try{
-                    Navigation.findNavController(v).navigate(R.id.action_DictationFragment_to_addNoteFragment, bundle);
-                }catch (IllegalArgumentException e){
-                    android.util.Log.e("DictationFragment", "Lỗi chuyển màn hình Add: " + e.getMessage());
-                }
-            }
+            AddToVocabularyBottomSheet bottomSheet = AddToVocabularyBottomSheet.newInstance(
+                    currentTranscript.getId(),
+                    lessonId,
+                    currentTranscript.getContent()
+            );
+            bottomSheet.show(getChildFragmentManager(), "AddToVocabulary");
         });
         btnReplay.setOnClickListener(v -> {
             replayCurrentSentence();
@@ -571,11 +541,13 @@ public class DictationFragment extends Fragment {
                     }
                 });
                 btnKiemTra.setOnClickListener(v -> {
-                     currentSentenceIndex++;
-                     prepareCurrentSentence();
-                     replayCurrentSentence();
-                    btnKiemTra.setText("Kiểm tra");
-                    btnKiemTra.setOnClickListener(view -> checkAnswer(etInput.getText().toString()));
+                    if (currentSentenceIndex < listTranscripts.size() - 1) {
+                        currentSentenceIndex++;
+                        prepareCurrentSentence();
+                        replayCurrentSentence();
+                        btnKiemTra.setText("Kiểm tra");
+                        btnKiemTra.setOnClickListener(view -> checkAnswer(etInput.getText().toString()));
+                    }
                 });
 
             }
@@ -602,8 +574,7 @@ public class DictationFragment extends Fragment {
                 });
                 btnKiemTra.setOnClickListener(v -> {
                     if (isAdded() && getView() != null) {
-                        Navigation.findNavController(v)
-                                .navigate(R.id.action_DictationFragment_to_progressFragment);
+                        Navigation.findNavController(v).popBackStack();
                     }
                 });
 
@@ -621,12 +592,10 @@ public class DictationFragment extends Fragment {
         if (!completedIds.contains(transcriptId)) {
             completedIds.add(transcriptId);
         }
-        updateProgressText();
-        if (quantityTranscripts > 0 && completedIds.size() >= quantityTranscripts) {
-            sendDictationCompletedIfNeeded();
-        } else {
-            sendDictationInProgressIfNeeded();
+        if (currentSentenceIndex >= maxLine) {
+            maxLine = currentSentenceIndex + 1;
         }
+        updateProgressText();
     }
 
     private void updateProgressText() {
@@ -637,46 +606,6 @@ public class DictationFragment extends Fragment {
 
         int progress = completedIds.size() * 100 / quantityTranscripts;
         tvProgress.setText(String.format("%.2f", (float) progress) + "% hoàn thành");
-    }
-
-    private void sendDictationCompletedIfNeeded() {
-        if (dictationCompletedSent || quantityTranscripts <= 0 || completedIds.size() < quantityTranscripts) {
-            return;
-        }
-
-        dictationCompletedSent = true;
-        progressRepository.createProgress(new CreateProgressRequest(lessonId, Boolean.TRUE, null), new BaseCallback<ApiResponse<ProgressResponse>>() {
-            @Override
-            public void onSuccess(ApiResponse<ProgressResponse> data) {
-                Log.d("DictationFragment", "Da gui hoan thanh dictation");
-            }
-
-            @Override
-            public void onError(String message) {
-                dictationCompletedSent = false;
-                Log.e("DictationFragment", "Loi gui hoan thanh dictation: " + message);
-            }
-        });
-    }
-
-    private void sendDictationInProgressIfNeeded() {
-        if (dictationStartedSent || dictationCompletedSent || lessonId <= 0) {
-            return;
-        }
-
-        dictationStartedSent = true;
-        progressRepository.createProgress(new CreateProgressRequest(lessonId, Boolean.FALSE, null), new BaseCallback<ApiResponse<ProgressResponse>>() {
-            @Override
-            public void onSuccess(ApiResponse<ProgressResponse> data) {
-                Log.d("DictationFragment", "Da gui dictation dang hoc");
-            }
-
-            @Override
-            public void onError(String message) {
-                dictationStartedSent = false;
-                Log.e("DictationFragment", "Loi gui dictation dang hoc: " + message);
-            }
-        });
     }
 
     private String normalizeSentence(String sentence) {
@@ -770,54 +699,6 @@ public class DictationFragment extends Fragment {
         }
         if (autoStopHandler != null && autoStopRunnable != null) {
             autoStopHandler.removeCallbacks(autoStopRunnable);
-        }
-    }
-    private void checkBookmarkState(){
-        if (listTranscripts == null || listTranscripts.isEmpty() || currentSentenceIndex >= listTranscripts.size()) {
-            return;
-        }
-        int currentTranscriptId = listTranscripts.get(currentSentenceIndex).getId();
-        bookMarksRepository.getBookmarks(lessonId, null, null,new BaseCallback<ApiResponse<List<BookmarksModel>>>() {
-            @Override
-            public void onSuccess(ApiResponse<List<BookmarksModel>> data) {
-                if (!isAdded() || getView() == null) {
-                    return;
-                }
-                isCurrentSentenceBookmarked = false;
-                currentNoteResponse = null;
-                if (data != null && data.getData() != null) {
-                    for (BookmarksModel model : data.getData()) {
-                        if (model.getTranscripts() != null) {
-                            for (noteResponse note : model.getTranscripts()) {
-                                if (note.getTranscriptId() == currentTranscriptId) {
-                                    isCurrentSentenceBookmarked = true;
-                                    currentNoteResponse = note;
-                                    break;
-                                }
-                            }
-                        }
-                        if (isCurrentSentenceBookmarked) break;
-                    }
-                }
-                updateBookmarkButtonUI();
-            }
-
-            @Override
-            public void onError(String message) {
-                if (!isAdded() || getView() == null) {
-                    return;
-                }
-                isCurrentSentenceBookmarked = false;
-                currentNoteResponse = null;
-                updateBookmarkButtonUI();
-            }
-        });
-    }
-    private void updateBookmarkButtonUI(){
-        if (isCurrentSentenceBookmarked) {
-            btnBookmark.setImageResource(R.drawable.ic_bookmark_filled_yellow);
-        } else {
-            btnBookmark.setImageResource(R.drawable.ic_bookmark);
         }
     }
 }

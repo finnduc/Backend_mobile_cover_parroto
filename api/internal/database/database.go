@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"go-cover-parroto/internal/configs"
-	"go-cover-parroto/internal/database/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -38,9 +37,6 @@ func Init(cfg configs.PostgresConfig) error {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	DB = db
-	if err := db.AutoMigrate(&models.TranscriptBookmark{}, &models.LearningHistory{}); err != nil {
-		return fmt.Errorf("failed to migrate mobile compatibility tables: %w", err)
-	}
 
 	log.Println("PostgreSQL connected successfully")
 	return nil

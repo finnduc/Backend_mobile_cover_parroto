@@ -24,7 +24,6 @@ import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
 import com.example.app.data.remote.model.response.bookmarks.noteResponse;
 import com.example.app.data.repository.BookMarksRepository;
-import com.example.app.data.repository.TranscriptBookmarksRepository;
 import com.example.app.utils.BaseCallback;
 
 import java.util.ArrayList;
