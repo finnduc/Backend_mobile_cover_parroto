@@ -505,8 +505,6 @@ public class ListeningFragment extends Fragment {
         }
         if (completedIds.size() >= quantityTranscripts) {
             sendPronunciationCompletedIfNeeded();
-        } else {
-            sendPronunciationProgress(false);
         }
     }
 

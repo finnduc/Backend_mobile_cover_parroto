@@ -27,7 +27,7 @@ import com.example.app.data.repository.BookMarksRepository;
 import com.example.app.data.repository.LessonsRepository;
 import com.example.app.diaglog.ChooseModeBottomSheet;
 import com.example.app.utils.BaseCallback;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,9 +180,10 @@ public class BookmarksFragment extends Fragment {
             holder.tvDescription.setText(item.description);
 
             if (item.thumbnailUrl != null && !item.thumbnailUrl.isEmpty()) {
-                Picasso.get()
+                Glide.with(holder.itemView.getContext())
                         .load(item.thumbnailUrl)
-                        .placeholder(R.drawable.placeholder_lesson)
+                        .placeholder(R.drawable.ic_placeholder)
+                        .error(R.drawable.ic_error)
                         .into(holder.ivThumbnail);
             }
 

@@ -3,8 +3,12 @@ package com.example.app.data.remote.model.response.bookmarks;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 public class BookmarksModel {
+    @SerializedName("id")
+    private int id;
+
     @SerializedName("lesson_id")
     private int lessonId;
+
     @SerializedName("lesson_title")
     private String lessonTitle;
 
@@ -19,6 +23,11 @@ public class BookmarksModel {
     public int getLessonId() {
         return lessonId;
     }
+
+    public int getId() {
+        return id;
+    }
+
     public String getLessonTitle() {
         return lessonTitle;
     }

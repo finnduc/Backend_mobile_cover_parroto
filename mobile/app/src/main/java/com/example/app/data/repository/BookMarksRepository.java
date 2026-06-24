@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.example.app.data.remote.RetrofitClient;
 import com.example.app.data.remote.api.BookMarksApi;
+import com.example.app.data.remote.model.request.bookmarks.CreateBookMarksRequest;
+import com.example.app.data.remote.model.request.note.UpdateNoteRequest;
 import com.example.app.data.remote.model.response.ApiResponse;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksModel;
 import com.example.app.data.remote.model.response.bookmarks.BookmarksResponse;
@@ -25,6 +27,22 @@ public class BookMarksRepository {
 
     public void toggleBookmark(int lessonId, BaseCallback<ApiResponse<BookmarksResponse>> callback) {
         bookMarksApi.toggleBookmark(lessonId).enqueue(new ApiCallWrapper<>(callback));
+    }
+
+    public void createBookmark(
+            int lessonId,
+            CreateBookMarksRequest request,
+            BaseCallback<ApiResponse<BookmarksResponse>> callback
+    ) {
+        callback.onError("Note API is not supported by the current backend.");
+    }
+
+    public void updateBookmark(
+            int transcriptId,
+            UpdateNoteRequest request,
+            BaseCallback<ApiResponse<BookmarksResponse>> callback
+    ) {
+        callback.onError("Note update API is not supported by the current backend.");
     }
 
     public void deleteBookmark(int id, BaseCallback<ApiResponse<BookmarksResponse>> callback) {
