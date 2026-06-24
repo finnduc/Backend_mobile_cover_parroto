@@ -10,15 +10,15 @@ type UnitOfWork interface {
 	Do(ctx context.Context, fn func(ctx context.Context, p IProvider) error) error
 }
 
-type gormUnitOfWork struct {
+type GormUnitOfWork struct {
 	db *gorm.DB
 }
 
 func NewUnitOfWork(db *gorm.DB) UnitOfWork {
-	return &gormUnitOfWork{db: db}
+	return &GormUnitOfWork{db: db}
 }
 
-func (u *gormUnitOfWork) Do(ctx context.Context, fn func(ctx context.Context, p IProvider) error) error {
+func (u *GormUnitOfWork) Do(ctx context.Context, fn func(ctx context.Context, p IProvider) error) error {
 	return u.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		provider := NewGormProvider(tx)
 		return fn(ctx, provider)
