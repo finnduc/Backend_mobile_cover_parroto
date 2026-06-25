@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"context"
+	"encoding/base64"
 	"go-cover-parroto/internal/configs"
 	"go-cover-parroto/internal/core/enums"
 	"go-cover-parroto/internal/core/logger"
 	"go-cover-parroto/internal/core/response"
 	"net/http"
+	"strings"
 
 	"github.com/clerk/clerk-sdk-go/v2"
 	clerkhttp "github.com/clerk/clerk-sdk-go/v2/http"
@@ -41,6 +43,15 @@ func ClerkAuthMiddleware() gin.HandlerFunc {
 		if c.GetHeader("Authorization") == "" {
 			if token := c.Query("token"); token != "" {
 				c.Request.Header.Set("Authorization", "Bearer "+token)
+			}
+		}
+
+		authHeader := c.GetHeader("Authorization")
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			tokenParts := strings.Split(strings.TrimPrefix(authHeader, "Bearer "), ".")
+			if len(tokenParts) > 1 {
+				decodedPayload, _ := base64.RawURLEncoding.DecodeString(tokenParts[1])
+				logger.Warnw("JWT Token Decoded Payload", "payload", string(decodedPayload))
 			}
 		}
 

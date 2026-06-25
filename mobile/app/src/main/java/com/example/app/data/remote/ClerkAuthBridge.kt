@@ -10,6 +10,7 @@ import com.clerk.api.signup.verifyCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -36,7 +37,21 @@ object ClerkAuthBridge {
                     identifier = email
                     this.password = password
                 }) {
-                    is ClerkResult.Success -> dispatchSuccess(callback)
+                    is ClerkResult.Success -> {
+                        val signIn = result.value
+                        android.util.Log.d("ClerkAuth", "signIn success, status=${signIn.status}, sessionId=${signIn.createdSessionId}")
+                        if (signIn.status.name.equals("COMPLETE", ignoreCase = true)) {
+                            activateSessionAndDispatch(signIn.createdSessionId, callback)
+                        } else {
+                            val statusName = signIn.status.name
+                            val userMsg = when (statusName) {
+                                "NEEDS_SECOND_FACTOR" -> "Tài khoản của bạn yêu cầu xác thực 2 yếu tố (2FA/MFA). Hãy tắt 2FA trong Clerk Dashboard hoặc cấu hình phù hợp."
+                                "NEEDS_NEW_PASSWORD" -> "Bạn cần đặt lại mật khẩu mới để tiếp tục."
+                                else -> "Đăng nhập chưa hoàn tất (Trạng thái: $statusName)."
+                            }
+                            dispatchError(callback, userMsg)
+                        }
+                    }
                     is ClerkResult.Failure -> dispatchError(callback, result.errorMessage)
                 }
             } catch (e: Exception) {
@@ -59,7 +74,7 @@ object ClerkAuthBridge {
                     is ClerkResult.Success -> {
                         val signUp = result.value
                         if (isComplete(signUp)) {
-                            dispatchSuccess(callback)
+                            activateSessionAndDispatch(signUp.createdSessionId, callback)
                         } else {
                             when (val sendResult = signUp.sendCode { this.email = signUp.emailAddress }) {
                                 is ClerkResult.Success -> withContext(Dispatchers.Main) {
@@ -87,7 +102,15 @@ object ClerkAuthBridge {
                     return@launch
                 }
                 when (val result = signUp.verifyCode(code, VerificationType.EMAIL)) {
-                    is ClerkResult.Success -> dispatchSuccess(callback)
+                    is ClerkResult.Success -> {
+                        // After verification, the signUp object should have a createdSessionId
+                        val updatedSignUp = Clerk.auth.currentSignUp ?: result.value
+                        if (isComplete(updatedSignUp)) {
+                            activateSessionAndDispatch(updatedSignUp.createdSessionId, callback)
+                        } else {
+                            dispatchError(callback, "Đăng ký chưa hoàn tất (Trạng thái: ${updatedSignUp.status.name})")
+                        }
+                    }
                     is ClerkResult.Failure -> dispatchError(callback, result.errorMessage)
                 }
             } catch (e: Exception) {
@@ -116,18 +139,61 @@ object ClerkAuthBridge {
 
     @JvmStatic
     fun getTokenBlocking(): String? = runBlocking(Dispatchers.IO) {
-        try {
-            when (val result = Clerk.auth.getToken()) {
-                is ClerkResult.Success -> result.value
-                is ClerkResult.Failure -> null
+        getTokenWithRetry("getToken")
+    }
+
+    private suspend fun getTokenWithRetry(tag: String, maxAttempts: Int = 3): String? {
+        var lastError: String? = null
+        for (attempt in 1..maxAttempts) {
+            try {
+                when (val result = Clerk.auth.getToken()) {
+                    is ClerkResult.Success -> {
+                        val token = result.value
+                        if (token == null || token.isEmpty()) {
+                            android.util.Log.e("ClerkAuth", "$tag returned empty token (attempt $attempt/$maxAttempts)")
+                        } else {
+                            return token
+                        }
+                    }
+                    is ClerkResult.Failure -> {
+                        lastError = result.errorMessage
+                        android.util.Log.w("ClerkAuth", "$tag failed (attempt $attempt/$maxAttempts): $lastError")
+                    }
+                }
+            } catch (e: Exception) {
+                lastError = e.message
+                android.util.Log.w("ClerkAuth", "$tag exception (attempt $attempt/$maxAttempts)", e)
             }
-        } catch (_: Exception) {
-            null
+            if (attempt < maxAttempts) {
+                delay(500L * attempt)
+            }
         }
+        android.util.Log.e("ClerkAuth", "$tag failed after $maxAttempts attempts: $lastError")
+        return null
+    }
+
+    private suspend fun activateSessionAndDispatch(sessionId: String?, callback: AuthCallback) {
+        if (!sessionId.isNullOrEmpty()) {
+            try {
+                when (val activeResult = Clerk.auth.setActive(sessionId)) {
+                    is ClerkResult.Success -> {
+                        android.util.Log.d("ClerkAuth", "setActive success for session: $sessionId")
+                    }
+                    is ClerkResult.Failure -> {
+                        android.util.Log.e("ClerkAuth", "setActive failed: ${activeResult.errorMessage}")
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("ClerkAuth", "setActive exception", e)
+            }
+        } else {
+            android.util.Log.w("ClerkAuth", "No sessionId available for setActive")
+        }
+        dispatchSuccess(callback)
     }
 
     private suspend fun dispatchSuccess(callback: AuthCallback) {
-        val token = getTokenBlocking()
+        val token = getTokenWithRetry("dispatchSuccess")
         withContext(Dispatchers.Main) {
             callback.onSuccess(token)
         }

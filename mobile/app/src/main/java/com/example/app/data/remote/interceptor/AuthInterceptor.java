@@ -1,5 +1,7 @@
 package com.example.app.data.remote.interceptor;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.app.data.local.TokenManager;
@@ -13,18 +15,20 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
 
+    private static final String TAG = "AuthInterceptor";
     private TokenManager tokenManager;
+
     public AuthInterceptor(TokenManager tokenManager) {
         this.tokenManager = tokenManager;
     }
-
 
     @Override
     @NonNull
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request originalRequest = chain.request();
         String token = getValidToken();
-        if (token == null) {
+        if (token == null || token.isEmpty()) {
+            Log.w(TAG, "No auth token available for request: " + originalRequest.url().encodedPath());
             return chain.proceed(originalRequest);
         }
         Request newRequest = originalRequest.newBuilder()
@@ -32,14 +36,21 @@ public class AuthInterceptor implements Interceptor {
                 .build();
         return chain.proceed(newRequest);
     }
+
     private String getValidToken() {
         String freshToken = ClerkAuthBridge.getTokenBlocking();
         if (freshToken != null && !freshToken.isEmpty()) {
             tokenManager.saveToken(freshToken, "");
             return freshToken;
         }
-        return tokenManager.getIdToken();
+        // Fallback to cached token from SharedPreferences
+        String cachedToken = tokenManager.getIdToken();
+        if (cachedToken != null && !cachedToken.isEmpty()) {
+            Log.d(TAG, "Using cached token (fresh Clerk token unavailable)");
+            return cachedToken;
+        }
+        return null;
     }
-
 }
+
 
